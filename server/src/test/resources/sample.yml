@@ -1,0 +1,29 @@
+group: reason
+stream: echo-saying
+inputs:
+
+  - input: saying
+    prompt: Enter saying
+    type: string
+    required: true
+
+tasks:
+
+  - task: stream
+    id: run-a-stream
+    path: src/test/resources/nested.yml
+    inputParameters:
+      saying: hello world nested stream
+
+  - task: set
+    id: my-funky-executable
+    name: aTestVariable
+    value: hello world
+    varType: string
+
+  - task: foreach
+    items: hello, world, from, us
+    currentValue: test
+    tasks:
+      - task: echo
+        value: ${'VALUE -> ' + test}

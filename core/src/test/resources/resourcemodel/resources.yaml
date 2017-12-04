@@ -1,0 +1,32 @@
+resources:
+  - id: abstractServer
+    type: abstract
+    attributes:
+      - name: dns
+        value: fqdn.com
+
+  - id: server1
+    type: server
+    inherits: abstractServer
+    attributes:
+      - name: ip
+        value: 196.168.1.1
+      - name: hostname
+        value: server01
+      - name: cores
+        value: 4
+      - name: users
+        value: john01, jack01, jill01
+
+  - id: server2
+    type: server
+    inherits: abstractServer
+    attributes:
+      - name: ip
+        value: 196.168.1.2
+      - name: hostname
+        value: server02
+      - name: cores
+        value: 2
+      - name: users
+        value: john01, jack01, jill01, james01

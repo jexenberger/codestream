@@ -1,0 +1,18 @@
+definitions:
+  - name: server
+    desc: A simple server
+    attributes:
+      - name: dns
+        type: string
+        required: true
+      - name: ip
+        type: string
+        required: true
+      - name: hostname
+        type: string
+        required: true
+      - name: cores
+        type: int
+        values: 1, 2, 4, 8
+      - name: users
+        type: [string]

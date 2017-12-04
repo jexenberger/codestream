@@ -1,0 +1,8 @@
+{
+  "outputPath" : "src/test",
+  "group" : "resources",
+  "name" : "sample",
+  "id" : "7cb53766-a264-4f11-9592-47e168ec0867",
+  "messages" : [ "VALUE -> hello", "VALUE -> world", "VALUE -> from", "VALUE -> us" ],
+  "errors" : [ ]
+}

@@ -1,0 +1,121 @@
+group: reason
+stream: echo-saying
+inputs:
+
+  - input: saying
+    prompt: Enter saying
+    type: string
+    required: true
+
+tasks:
+
+  - task: stream
+    id: run-a-stream
+    path: src/test/resources/nested.yml
+    inputParameters:
+      saying: hello world nested stream
+
+  - task: set
+    id: my-funky-executable
+    name: aTestVariable
+    value: hello world
+    varType: string
+
+  - task: foreach
+    items: hello, world, from, us
+    currentValue: test
+    tasks:
+      - task: echo
+        value: ${'VALUE -> ' + test}
+
+
+  - task: group
+    id: run-some-random-io
+    tasks:
+      - task: io::mkdirs
+        dir: target/hello_world
+      - task: io::write
+        file: target/hello_world/written.output
+        content: ${aTestVariable}
+      - task: sleep
+        duration: 1000
+      - task: io::read
+        src: target/hello_world/written.output
+        outputVar: fileContent
+      - task: echo
+        value: ${fileContent}
+      - task: io::delete
+        src: target/hello_world
+
+  - task: group
+    tasks:
+      - task: template::basepath
+        basePath: src/test/resources
+      - task: set
+        name: hello
+        value: world
+      - task: template::render
+        template: test
+        outputVar: myCoolTemplateResult
+      - task: io::mkdirs
+        dir: target/hello_world
+      - task: template::renderfile
+        template: test
+        target: target/hello_world/myfile.out
+      - task: io::delete
+        src: target/hello_world
+      - task: echo
+        value: ${'TEMPLATE -> ' + myCoolTemplateResult}
+
+  - task: async
+    tasks:
+      - task: set
+        name: subCnt
+        varType: int
+        value: 0
+      - task: while
+        condition: subCnt < 5
+        tasks:
+          - task: js
+            script: subCnt + 1
+            outputVar: subCnt
+          - task: echo
+            value: ${'ASYNC ->' + subCnt}
+          - task: sleep
+            duration: 1000
+
+  - task: set
+    name: cnt
+    value: 0
+    varType: int
+
+  - task: while
+    condition: cnt < 5
+    tasks:
+      - task: js
+        script: cnt + 1
+        outputVar: cnt
+      - task: echo
+        value: ${'cnt => ' + cnt}
+
+  - task: echo
+    value: ${saying + ' ' + aTestVariable}
+
+  - task: group
+    id: randomly-echo-a-bunch-of-stuff
+    tasks:
+      - task: echo
+        value: ${saying + ' ' + aTestVariable}
+      - task: echo
+        value: ${saying + ' ' + aTestVariable}
+      - task: echo
+        value: ${saying + ' ' + aTestVariable}
+      - task: echo
+        value: ${saying + ' ' + aTestVariable}
+      - task: echo
+        value: ${saying + ' ' + aTestVariable}
+      - task: echo
+        value: ${saying + ' ' + aTestVariable}
+
+
+
