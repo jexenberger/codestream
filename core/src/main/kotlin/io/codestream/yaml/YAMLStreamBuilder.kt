@@ -17,6 +17,7 @@ class YAMLStreamBuilder() {
 
     constructor(yaml: String) : this() {
         this.yaml = yaml
+        @Suppress("UNCHECKED_CAST")
         this.data = Yaml().load(this.yaml) as Map<String, Any?>
     }
 
@@ -24,22 +25,24 @@ class YAMLStreamBuilder() {
         if (!streamFile.exists()) {
             throw IllegalArgumentException("${streamFile.name} does not exist")
         }
-        if (streamFile.isDirectory()) {
+        if (streamFile.isDirectory) {
             throw IllegalArgumentException("${streamFile.name} is a directory")
         }
+        @Suppress("UNCHECKED_CAST")
         this.data = Yaml().load(FileInputStream(streamFile)) as Map<String, Any?>
     }
 
+    @SuppressWarnings("unchecked")
     fun build(): Stream {
         val group = data["group"] as String? ?: "_default"
         val desc = data["desc"] as String? ?: ""
         val streamName = data["stream"] as String? ?: throw IllegalArgumentException("'stream' tag not defined")
+        @Suppress("UNCHECKED_CAST")
         val inputs = data["inputs"] as List<Map<String, Any?>>? ?: listOf<Map<String, String?>>()
         val builder = StreamBuilder(streamName, group, desc)
-        for (input in inputs) {
-            val inputType = defineInput(input)
-            builder.input(inputType)
-        }
+        inputs.map { defineInput(it) }
+                .forEach { builder.input(it) }
+        @Suppress("UNCHECKED_CAST")
         val tasks = data["tasks"] as List<Map<String, Any?>>? ?: listOf<Map<String, String?>>()
         tasks.map {
             defineTask(group, streamName, builder, it)
@@ -47,7 +50,7 @@ class YAMLStreamBuilder() {
         return builder.stream
     }
 
-    fun defineInput(taskMap: Map<String, Any?>): Parameter {
+    internal fun defineInput(taskMap: Map<String, Any?>): Parameter {
         val id = taskMap["input"] as String
         val desc = taskMap["prompt"] as String
         val type = taskMap["type"] as String
@@ -57,9 +60,9 @@ class YAMLStreamBuilder() {
         return Parameter(id, desc, type, default, required, allowedValues)
     }
 
-    fun defineTask(group: String, stream: String, builder: StreamBuilder, taskMap: Map<String, Any?>) {
+    internal fun defineTask(group: String, stream: String, builder: StreamBuilder, taskMap: Map<String, Any?>) {
         val type = TaskType.fromString(required(taskMap["task"], "task", null))
-        val id = taskMap["id"]?.toString() ?: "${type.fqn}-${UUID.randomUUID().toString()}"
+        val id = taskMap["id"]?.toString() ?: "${type.fqn}-${UUID.randomUUID()}"
         val taskId = TaskId(group, stream, id)
         val condition = taskMap["condition"] as String?
 
@@ -67,8 +70,13 @@ class YAMLStreamBuilder() {
                 .filterKeys { !arrayOf("id", "task", "type", "tasks", "condition").contains(it) }
                 .filterValues { it != null }
 
-        val defn = ExecutableDefinition(type, taskId, condition?.let {  scriptCondition(it) } ?: defaultCondition(), parms)
+        val defn = ExecutableDefinition(type = type,
+                id = taskId,
+                condition = condition?.let { scriptCondition(it) } ?: defaultCondition(),
+                binding = MapBinding(taskId, type, parms).toBinding()
+        )
         if (taskMap.containsKey("tasks")) {
+            @Suppress("UNCHECKED_CAST")
             val subTasks = taskMap["tasks"] as List<Map<String, Any?>>
             builder.task(defn) {
                 subTasks.forEach { theTask ->
@@ -82,6 +90,7 @@ class YAMLStreamBuilder() {
 
     fun <Z> required(value: Any?, field: String, id: TaskId?): Z {
         value ?: throw ParseError("RequiredField", "$field is required for task ${id?.let { id.fqid } ?: ""}")
+        @Suppress("UNCHECKED_CAST")
         return value as Z
     }
 

@@ -6,7 +6,8 @@ fun <T, K> ok(value: () -> T): Either<T, K> = Either.left(value())
 fun <T, K> fail(value: K): Either<T, K> = Either.right(value)
 fun <T, K> fail(value: () -> K): Either<T, K> = Either.right(value())
 
-sealed class Either<out L, out R> {
+@Suppress("UNCHECKED_CAST")
+sealed class Either<L, R> {
 
 
     val left: L?
@@ -23,11 +24,11 @@ sealed class Either<out L, out R> {
         }
 
 
-    class Left<out L, out R>(val value: L) : Either<L, R>() {
+    class Left<L, R>(val value: L) : Either<L, R>() {
         override fun toString(): String = "Left: $value"
     }
 
-    class Right<out L, out R>(val value: R) : Either<L, R>() {
+    class Right<L, R>(val value: R) : Either<L, R>() {
         override fun toString(): String = "Right: $value"
     }
 
@@ -53,17 +54,52 @@ sealed class Either<out L, out R> {
         }
     }
 
+    fun <Z, U> flatMap(l: (value: L) -> Either<Z, U>, r: (error: R) -> Either<Z, U>): Either<Z, U> {
+        return when (this) {
+            is Either.Left -> l(this.value)
+            is Either.Right -> r(this.value)
+        }
+    }
+
     fun <Z> mapL(l: (value: L) -> Z): Either<Z, R> {
         return when (this) {
-            is Either.Left -> left<Z, R>(l(this.value))
+            is Either.Left -> left(l(this.value))
             is Either.Right -> this as Either<Z, R>
+        }
+    }
+
+    fun whenL(l: (value: L) -> Unit): Either<L, R> {
+        when (this) {
+            is Either.Left -> l(this.value)
+        }
+        return this
+    }
+
+    fun whenR(r: (value: R) -> Unit): Either<L, R> {
+        when (this) {
+            is Either.Right -> r(this.value)
+        }
+        return this
+    }
+
+    fun <Z> flatMapL(l: (value: L) -> Either<Z, R>): Either<Z, R> {
+        return when (this) {
+            is Either.Left -> l(this.value)
+            is Either.Right -> right(this.value)
+        }
+    }
+
+    fun <Z> flatMapR(r: (value: R) -> Either<L, Z>): Either<L, Z> {
+        return when (this) {
+            is Either.Left -> left(this.value)
+            is Either.Right -> r(this.value)
         }
     }
 
     fun <Z> mapR(r: (value: R) -> Z): Either<L, Z> {
         return when (this) {
             is Either.Left -> this as Either<L, Z>
-            is Either.Right -> right<L, Z>(r(this.value))
+            is Either.Right -> right(r(this.value))
         }
     }
 
@@ -79,11 +115,11 @@ sealed class Either<out L, out R> {
 
     companion object {
         fun <Z, K> left(left: Z): Either<Z, K> {
-            return Either.Left<Z, K>(left)
+            return Either.Left(left)
         }
 
         fun <Z, K> right(right: K): Either<Z, K> {
-            return Either.Right<Z, K>(right)
+            return Either.Right(right)
         }
 
         fun <Z, Y : Exception> onException(handler: () -> Z): Either<Z, Y> {

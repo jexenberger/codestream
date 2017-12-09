@@ -15,15 +15,16 @@ class TaskBinderTest {
 
     @Test
     fun testBind() {
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask", mapOf(
+        val map = mapOf(
                 "testSet" to "hello",
                 "list" to "hello, world",
                 "willFail" to "yes",
                 "testTwo" to "1"
-        ), defaultCondition())
+        )
+        val (ctx, defn) = createTaskContext<MockTask>(bindingParams = map)
         val task = MockTask()
-        val validation = task.bind(defn, ctx)
-        assertNull(validation, validation?.let { it.toString() })
+        val validation = TaskBinder.bind(defn.id, defn.type, task, ctx, map)
+        assertNull(validation, validation.toString())
         Assert.assertArrayEquals(arrayOf("hello", "world"), task.list)
         assertEquals(1, task.testTwo)
         task.execute(defn.id, ctx)
@@ -34,10 +35,10 @@ class TaskBinderTest {
     fun testCreateBadValidation() {
         val factory = taskFromClass(MockTask::class)
         assertNotNull(factory)
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask", condition = defaultCondition())
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask", condition = defaultCondition())
         val task = MockTask()
-        val validation = task.bind(defn, ctx)
-        assertNotNull(validation, validation?.let { it.toString() })
+        val validation = TaskBinder.bind(defn.id, defn.type, task, ctx, mapOf())
+        assertNotNull(validation, validation?.toString())
     }
 
     @Test
@@ -46,16 +47,17 @@ class TaskBinderTest {
         CodestreamRuntime.init(emptyArray())
 
         assertNotNull(factory)
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask",
+        val params = mapOf("server" to "server1")
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask",
                 condition = defaultCondition(),
-                bindingParams = mapOf("server" to "server1"))
+                bindingParams = params)
         DefaultYamlResourceDefinitions("src/test/resources/resourcemodel/resourcedefinitions.yaml").load()
         val registry = DefaultYamlResourceRegistry("src/test/resources/resourcemodel/resources.yaml")
         registry.load()?.let { fail(it.errors.joinToString()) }
         CodestreamRuntime.resourceRegistry = registry
         ctx.resources = registry
         val task = MockTask()
-        task.bind(defn, ctx)
+        TaskBinder.bind(defn.id, defn.type, task, ctx, params)
         assertNotNull(task.server)
 
     }

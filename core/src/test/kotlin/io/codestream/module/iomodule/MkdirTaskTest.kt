@@ -1,7 +1,7 @@
 package io.codestream.module.iomodule
 
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
+import io.codestream.runtime.StreamContext
 import org.junit.Test
 import java.io.File
 import java.util.*
@@ -13,10 +13,10 @@ class MkdirTaskTest {
     fun testExec() {
         val createTempFile = File.createTempFile(UUID.randomUUID().toString(), "test")
         val dir = createTempFile.parent + "/${UUID.randomUUID()}"
-        val (ctx, defn) = createTaskContext(IOModule(), "mkdir", condition = defaultCondition())
+        val ctx = StreamContext()
         val task = MkdirTask()
         task.dir = dir
-        task.execute(defn.id, ctx)
+        task.execute(testId(), ctx)
         assertTrue(File(dir).isDirectory)
     }
 }

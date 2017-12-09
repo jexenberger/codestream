@@ -20,12 +20,14 @@ class TypeDefinitionTest {
 
     @Test
     fun testInvalidModuleMsg() {
-        val task = ExecutableDefinition(mockType, genId("2"), defaultCondition(), mapOf(Pair("willFail", "true")), 100)
+        val id = genId("2")
+        val binding = MapBinding(id, mockType, mapOf(Pair("willFail", "true"))).toBinding()
+        val task = ExecutableDefinition<MockTask>(mockType, id, binding, defaultCondition(), 100)
         val invalidModuleMsg = task.invalidModuleMsg()
         assertTrue(invalidModuleMsg.contains("100"))
         assertTrue(invalidModuleMsg.contains("line"))
 
-        val noLineTask = ExecutableDefinition(mockType, genId("2"), defaultCondition(), mapOf(Pair("willFail", "true")))
+        val noLineTask = ExecutableDefinition<MockTask>(mockType, id, binding, defaultCondition())
         assertFalse(noLineTask.invalidModuleMsg().contains("100"))
         assertFalse(noLineTask.invalidModuleMsg().contains("line"))
     }

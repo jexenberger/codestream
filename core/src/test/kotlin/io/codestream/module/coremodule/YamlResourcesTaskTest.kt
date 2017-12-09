@@ -1,9 +1,9 @@
 package io.codestream.module.coremodule
 
 import io.codestream.core.Parameter
-import io.codestream.core.defaultCondition
 import io.codestream.resourcemodel.ResourceDefinition
 import io.codestream.resourcemodel.ResourceDefinitions
+import io.codestream.runtime.StreamContext
 import org.junit.Test
 import kotlin.test.assertNotNull
 
@@ -40,10 +40,10 @@ class YamlResourcesTaskTest {
 
         ))
 
-        val (ctx, defn) = createTaskContext(CoreModule(), "yaml-resources", condition = defaultCondition())
+        val ctx = StreamContext()
         val task = YamlResourcesTask()
         task.file = "src/test/resources/resourcemodel/resources.yaml"
-        task.execute(defn.id, ctx)
+        task.execute(testId(), ctx)
         assertNotNull(ctx.resources)
         assertNotNull(ctx.resources["server1"])
     }

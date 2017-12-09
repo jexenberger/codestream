@@ -1,9 +1,6 @@
 package io.codestream.runtime
 
-import io.codestream.core.MockModule
-import io.codestream.core.Module
-import io.codestream.core.RunExecutableState
-import io.codestream.core.defaultCondition
+import io.codestream.core.*
 import io.codestream.module.coremodule.createTaskContext
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +18,7 @@ class RunTaskTest {
 
     @Test
     fun testRun() {
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask",
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask",
                 mapOf("testSet" to "A Value"), defaultCondition())
         val runner = RunTask(defn)
         val result = runner.run(ctx)
@@ -31,7 +28,7 @@ class RunTaskTest {
 
     @Test
     fun testRunFailBinding() {
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask", condition = defaultCondition())
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask", condition = defaultCondition())
         val runner = RunTask(defn)
         val result = runner.run(ctx)
         assertNotNull(result)
@@ -42,7 +39,7 @@ class RunTaskTest {
     @Test
     fun testRunWithConditionFalse() {
         var called = false
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask", condition = {d,c ->
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask", condition = { d, c ->
             called = true
             false
         })
@@ -55,7 +52,7 @@ class RunTaskTest {
 
     @Test
     fun testRunFailRunningOfTask() {
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask",
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask",
                 mapOf("testSet" to "A Value",
                         "willFail" to "true"), defaultCondition())
         val runner = RunTask(defn)
@@ -67,7 +64,7 @@ class RunTaskTest {
 
     @Test
     fun testRunFailRunningOfTaskWithThrownException() {
-        val (ctx, defn) = createTaskContext(MockModule(), "mockTask",
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask",
                 mapOf("testSet" to "A Value",
                         "throwException" to "true"), defaultCondition())
         val runner = RunTask(defn)

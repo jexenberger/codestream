@@ -4,6 +4,7 @@ import io.codestream.util.Credentials
 import org.eclipse.jgit.api.CreateBranchCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ListBranchCommand
+import org.eclipse.jgit.transport.RefSpec
 import java.io.File
 
 class GitRepository(val repo: String,
@@ -39,28 +40,34 @@ class GitRepository(val repo: String,
                 .map { it.name }
                 .toSet()
 
+    val commitID: String
+        get() = git.repository.findRef("HEAD").objectId.name
 
-    fun commit(message: String, all: Boolean = true) {
+
+    fun commit(message: String, all: Boolean = true): GitRepository {
         git.commit()
                 .setAll(all)
                 .setMessage(message)
                 .call()
+        return this
     }
 
-    fun fetch(remote: String = this.remote, credentials: Credentials? = this.credentials) {
+    fun fetch(remote: String = this.remote, credentials: Credentials? = this.credentials): GitRepository {
         val fetchCommand = git.fetch()
         credentials?.let { GitServer.setup(it, fetchCommand, true, true) }
         fetchCommand
                 .setCheckFetchedObjects(true)
                 .setRemote(remote)
                 .call()
+        return this
     }
 
-    fun checkout(branch: String) {
+    fun checkout(branch: String): GitRepository {
         git.checkout()
                 .setName(branch)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
                 .call()
+        return this
     }
 
     fun branch(name: String, force: Boolean = false): GitBranch {
@@ -72,12 +79,34 @@ class GitRepository(val repo: String,
         return GitBranch(name)
     }
 
-    fun add(vararg file: String) {
+    fun push(branch: String,
+             remote: String = this.remote,
+             credentials: Credentials? = this.credentials,
+             force: Boolean = false,
+             pushTags: Boolean = false): GitRepository {
+        val pushCommand = git.push()
+        credentials?.let { GitServer.setup(it, pushCommand, true, true) }
+        if (pushTags) {
+            pushCommand.setPushTags()
+        }
+        pushCommand
+                .setRefSpecs(RefSpec(branch))
+                .setAtomic(true)
+                .setRemote(remote)
+                .setForce(force)
+                .setPushTags()
+                .call()
+        return this
+    }
+
+
+    fun add(vararg file: String): GitRepository {
         val addCommand = git.add()
         file.forEach {
             addCommand.addFilepattern(it)
         }
         addCommand.call()
+        return this
     }
 
     companion object {

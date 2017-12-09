@@ -1,9 +1,8 @@
 package io.codestream.modules.atlassian.jira
 
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.CoreModule
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
 import io.codestream.modules.atlassian.AtlassianTestSettings
+import io.codestream.runtime.StreamContext
 import org.junit.Test
 import kotlin.test.assertNull
 
@@ -14,13 +13,13 @@ class SetStatusTaskTest {
 
     @Test
     fun testExecute() {
-        val (ctx, defn) = createTaskContext(CoreModule(), "exec", condition = defaultCondition())
+        val ctx = StreamContext()
         val assignTask = SetStatusTask()
 
         assignTask.server = settings.jiraServer
         assignTask.issue = settings.jiraTestIssue
         assignTask.status = settings.jiraTestStatus
-        val execute = assignTask.execute(defn.id, ctx)
+        val execute = assignTask.execute(testId(), ctx)
         assertNull(execute)
     }
 

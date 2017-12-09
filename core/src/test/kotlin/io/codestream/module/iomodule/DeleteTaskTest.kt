@@ -1,7 +1,7 @@
 package io.codestream.module.iomodule
 
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
+import io.codestream.runtime.StreamContext
 import org.junit.Test
 import java.io.File
 import java.util.*
@@ -18,12 +18,12 @@ class DeleteTaskTest {
         val dirToDelete = File(parentDir)
         val child = File(parentDir, UUID.randomUUID().toString())
         child.mkdirs()
-        val (ctx, defn) = createTaskContext(IOModule(), "delete", condition = defaultCondition())
+        val ctx = StreamContext()
         val deleteTask = DeleteTask()
         deleteTask.recursive = true
         deleteTask.src = parentDir
-        val result = deleteTask.execute(defn.id, ctx)
-        assertNull(result, result?.let { it.toString() })
+        val result = deleteTask.execute(testId(), ctx)
+        assertNull(result, result.toString())
         assertFalse(dirToDelete.exists())
     }
 }

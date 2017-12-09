@@ -21,6 +21,7 @@ class ForEachTask : GroupTask, TaskBinder {
     var iteratorVar: String = "\$iterator"
 
 
+    @Suppress("UNCHECKED_CAST")
     internal fun convertToIterator(id: TaskId, value: Any?, valueName: String): Iterator<Any>? {
         return value?.let {
             return when (it) {
@@ -31,13 +32,14 @@ class ForEachTask : GroupTask, TaskBinder {
         }
     }
 
-    override fun before(defn: ExecutableDefinition, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
+    override fun before(id: TaskId, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
         if (ctx.containsKey(iteratorVar)) {
+            @Suppress("UNCHECKED_CAST")
             return setEvaluation(ctx[iteratorVar] as Iterator<Any>, ctx)
         }
 
         val value = ctx.evalTo<Any>(this.items)
-        val iterator = convertToIterator(defn.id, value, this.items)
+        val iterator = convertToIterator(id, value, this.items)
         return iterator?.let {
             ctx[iteratorVar] = it
             setEvaluation(it, ctx)
@@ -53,7 +55,7 @@ class ForEachTask : GroupTask, TaskBinder {
         }
     }
 
-    override fun after(defn: ExecutableDefinition, ctx: StreamContext): Either<GroupTask.AfterAction, TaskError> {
+    override fun after(id: TaskId, ctx: StreamContext): Either<GroupTask.AfterAction, TaskError> {
         return ok(GroupTask.AfterAction.Loop)
     }
 }

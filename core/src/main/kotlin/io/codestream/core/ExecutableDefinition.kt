@@ -3,23 +3,34 @@ package io.codestream.core
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Eval
 
-typealias Conditional = (defn: ExecutableDefinition, ctx: StreamContext) -> Boolean
+typealias Conditional = (id: TaskId, ctx: StreamContext) -> Boolean
+typealias Binding<T> = (id: TaskId, ctx: StreamContext, executable: T) -> TaskError?
 
-fun defaultCondition() :Conditional = {_,_ -> true}
-fun scriptCondition(script:String) : Conditional {
-    return { _, ctx -> Eval.eval(script, ctx)}
+fun defaultCondition(): Conditional = { _, _ -> true }
+fun scriptCondition(script: String): Conditional {
+    return { _, ctx -> Eval.eval(script, ctx) }
 }
 
-data class ExecutableDefinition(val type: TaskType,
-                                val id: TaskId,
-                                val condition: Conditional = defaultCondition(),
-                                val bindingParams: Map<String, Any?> = mapOf(),
-                                val lineNumber: Long = 0,
-                                val internalId:Int = nextId()) {
+fun <T> emptyBinding(): Binding<T> = { _, _, _ -> null }
+
+data class ExecutableDefinition<in T : Executable>(val type: TaskType,
+                                                   val id: TaskId,
+                                                   val binding: Binding<T>,
+                                                   val condition: Conditional = defaultCondition(),
+                                                   val lineNumber: Long = 0,
+                                                   val internalId: Int = nextId()) {
 
 
     val module: Module
         get() = Module[type.namespace] ?: throw TaskError(id, "InvalidModuleDefined", invalidModuleMsg())
+
+    constructor(type: TaskType,
+                id: TaskId,
+                params: Map<String, Any?>,
+                condition: Conditional = defaultCondition(),
+                lineNumber: Long = 0,
+                internalId: Int = nextId()) : this(
+            type, id, MapBinding(id, type, params).toBinding(), condition, lineNumber, internalId)
 
 
     fun invalidModuleMsg(): String {
@@ -33,7 +44,7 @@ data class ExecutableDefinition(val type: TaskType,
         private var id = 0
 
         @Synchronized
-        fun nextId():Int {
+        fun nextId(): Int {
             return ++id
         }
     }

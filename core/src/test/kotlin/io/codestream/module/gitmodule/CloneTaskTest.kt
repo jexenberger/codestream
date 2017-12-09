@@ -1,8 +1,8 @@
 package io.codestream.module.gitmodule
 
 import io.codestream.TestSettings
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
+import io.codestream.runtime.StreamContext
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertNull
@@ -19,7 +19,7 @@ class CloneTaskTest {
 
     @Test
     fun testExecute() {
-        val (ctx, defn) = createTaskContext(GitModule(), "commit", condition = defaultCondition())
+        val ctx = StreamContext()
         val cloneTask = CloneTask()
 
         cloneTask.uri = settings.gitUrl
@@ -28,14 +28,14 @@ class CloneTaskTest {
         cloneTask.password = settings.gitPassword
         cloneTask.disableHostNameCheck = true
 
-        val result = cloneTask.execute(defn.id, ctx)
+        val result = cloneTask.execute(testId(), ctx)
         assertNull(result)
     }
 
     @Test
     fun testExecuteSSH() {
-        val (ctx, defn) = createTaskContext(GitModule(), "clone", condition = defaultCondition())
         val cloneTask = CloneTask()
+        val ctx = StreamContext()
 
         cloneTask.uri = settings.gitSSHURL
         cloneTask.dir = settings.gitWorkingDir
@@ -43,7 +43,7 @@ class CloneTaskTest {
         cloneTask.password = settings.gitPassword
         cloneTask.keyFile = settings.gitKeyFile
         cloneTask.disableHostNameCheck = true
-        val result = cloneTask.execute(defn.id, ctx)
+        val result = cloneTask.execute(testId(), ctx)
         assertNull(result)
 
 

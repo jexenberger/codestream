@@ -1,8 +1,8 @@
 package io.codestream.module.gitmodule
 
 import io.codestream.TestSettings
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
+import io.codestream.runtime.StreamContext
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertNull
@@ -18,13 +18,14 @@ class CommitTaskTest {
 
     @Test
     fun testExecute() {
-        val (ctx, defn) = createTaskContext(GitModule(), "commit", condition = defaultCondition())
+        val ctx = StreamContext()
         val cloneTask = CommitTask()
+
 
         cloneTask.repoPath = settings.gitWorkingDir
         cloneTask.message = "a commit"
 
-        val result = cloneTask.execute(defn.id, ctx)
+        val result = cloneTask.execute(testId(), ctx)
         assertNull(result)
     }
 }

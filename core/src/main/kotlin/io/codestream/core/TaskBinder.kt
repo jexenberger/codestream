@@ -7,18 +7,10 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.jvm.jvmErasure
 
-interface TaskBinder : Executable {
-
-    override fun bind(defn: ExecutableDefinition, ctx: StreamContext): TaskError? {
-        return TaskBinder.bind(
-                defn = defn,
-                task = this,
-                ctx = ctx
-        )
-    }
+interface TaskBinder {
 
     companion object {
-        fun <T : Executable> extractTaskParameters(clazz: KClass<out T>): Map<String, Type> {
+        fun extractTaskParameters(clazz: KClass<*>): Map<String, Type> {
             val properties = clazz.members.filterIsInstance<KMutableProperty<*>>()
             return properties
                     .filter {
@@ -32,26 +24,26 @@ interface TaskBinder : Executable {
                     }
         }
 
-        fun <T : Executable> bind(defn: ExecutableDefinition, task: T, ctx: StreamContext): TaskError? {
+        fun bind(id: TaskId, taskType: TaskType, task: Any, ctx: StreamContext, params: Map<String, Any?>): TaskError? {
             val taskParameters = extractTaskParameters(task::class)
-            val parentError = taskParameterValidation(defn.id, msg = "There was a problem binding '${defn.type.fqn}'")
-            for ((input, value) in defn.bindingParams) {
-                val type = taskParameters[input] ?: return taskParameterValidation(defn.id, msg = "property '${input}' does not exist on task ${defn.type.fqn}")
+            val parentError = taskParameterValidation(id, msg = "There was a problem binding '${taskType.fqn}'")
+            for ((input, value) in params) {
+                val type = taskParameters[input] ?: return taskParameterValidation(id, msg = "property '${input}' does not exist on task ${taskType.fqn}")
                 try {
                     val typeHint = type.property.returnType.jvmErasure
                     val valueToSet = if (type.disableEvaluation)
                         TransformerService.convertWithNull<Any?>(value, typeHint)
                     else {
-                        ctx.evalTo<Any?>(value, typeHint)
+                        ctx.evalTo(value, typeHint)
                     }
                     type.property.setter.call(task, valueToSet)
                 } catch (e: RuntimeException) {
-                    parentError += taskParameterValidation(defn.id, msg = "property '${input}' failed binding with -> ${e.message}")
+                    parentError += taskParameterValidation(id, msg = "property '${input}' failed binding with -> ${e.message}")
                 }
             }
             val result = validator().validate(task)
             for (error in result) {
-                parentError += taskParameterValidation(defn.id, msg = "${error.propertyPath} ${error.message}")
+                parentError += taskParameterValidation(id, msg = "${error.propertyPath} ${error.message}")
             }
             return parentError.takeIf { it.errors.isNotEmpty() }
         }

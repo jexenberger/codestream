@@ -1,9 +1,10 @@
 package io.codestream.util.git
 
 import io.codestream.TestSettings
-import io.codestream.util.UserPassword
 import org.junit.Test
+import java.io.File
 import java.util.*
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class GitRepositoryTest {
@@ -13,13 +14,13 @@ class GitRepositoryTest {
 
     init {
         settings.clone()
-        repository = GitRepository(settings.gitWorkingDir, "origin", UserPassword(settings.gitUser, settings.gitPassword))
+        repository = settings.getRepo("origin")
     }
 
 
     @Test
     fun testFetch() {
-        repository.fetch("origin")
+        repository.fetch()
     }
 
     @Test
@@ -39,6 +40,25 @@ class GitRepositoryTest {
     @Test
     fun testRemotes() {
         val remotes = repository.remotes
-        assertTrue { remotes.isNotEmpty()}
+        assertTrue { remotes.isNotEmpty() }
+    }
+
+    @Test
+    fun testCommitId() {
+        val id = repository.commitID
+        assertNotNull(id)
+        println(id)
+    }
+
+    @Test
+    fun testPush() {
+        val brn = UUID.randomUUID().toString()
+        repository.branch(brn)
+        repository.checkout(brn)
+        val path = "${settings.gitWorkingDir}/$brn"
+        File(path).appendText("hello")
+        repository.add(brn)
+                .commit("Testing $brn")
+                .push(branch = brn, force = true)
     }
 }

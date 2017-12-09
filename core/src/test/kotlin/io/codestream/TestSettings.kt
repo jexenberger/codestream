@@ -3,6 +3,7 @@ package io.codestream
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.codestream.util.UserPassword
 import io.codestream.util.YamlFactory
+import io.codestream.util.git.GitRepository
 import io.codestream.util.git.GitServer
 import io.codestream.util.system
 import java.io.File
@@ -48,5 +49,7 @@ data class TestSettings(
             workingDir.deleteRecursively()
         }
     }
+
+    fun getRepo(remoteName: String = "origin") = GitRepository(gitWorkingDir, remoteName, UserPassword(gitUser, gitPassword))
 
 }

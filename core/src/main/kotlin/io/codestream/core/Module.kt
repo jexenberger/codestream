@@ -16,23 +16,26 @@ interface Module {
     val name: String
     val factories: MutableMap<TaskType, Pair<AllowedTypes, Factory<out Executable>>>
 
-    fun create(type: ExecutableDefinition, ctx: StreamContext): Either<Executable, TaskError> {
+    fun <T : Executable> create(type: ExecutableDefinition<T>, ctx: StreamContext): Either<out Executable, TaskError> {
         val factory = factories[type.type] ?: return fail {
             taskCreationFailed(type.id, "${type.type.fqn} is not recognized in stream ${this.name}")
         }
-        return factory.second.create(type, ctx, this)
+
+        @Suppress("UNCHECKED_CAST")
+        return factory.second.create(type as ExecutableDefinition<Executable>, ctx, this)
     }
 
-    fun createTask(type: ExecutableDefinition, ctx: StreamContext): Either<Task, TaskError> {
-        return create(type, ctx).apply(
-                {if (it is Task) ok<Task, TaskError>(it) else fail(isGroupTask(type.id,type.type))},
-                {fail(it)})
+    fun <T : Task> createTask(type: ExecutableDefinition<T>, ctx: StreamContext): Either<T, TaskError> {
+        return create(type, ctx).flatMap(
+                { if (it is Task) ok(it as T) else fail<T, TaskError>(isGroupTask(type.id, type.type)) },
+                { fail(it) })
+
     }
 
-    fun createGroupTask(type: ExecutableDefinition, ctx: StreamContext): Either<GroupTask, TaskError> {
+    fun <T : GroupTask> createGroupTask(type: ExecutableDefinition<T>, ctx: StreamContext): Either<GroupTask, TaskError> {
         return create(type, ctx).apply(
-                {if (it is GroupTask) ok<GroupTask, TaskError>(it) else fail(isGroupTask(type.id,type.type))},
-                {fail(it)})
+                { if (it is GroupTask) ok<GroupTask, TaskError>(it) else fail(isGroupTask(type.id, type.type)) },
+                { fail(it) })
     }
 
     fun executableType(type: TaskType): AllowedTypes? {
@@ -44,6 +47,7 @@ interface Module {
     }
 
     fun define(init: Module.() -> Unit) {
+        @Suppress("UNUSED_EXPRESSION")
         init()
     }
 
@@ -56,7 +60,6 @@ interface Module {
         val type = typeOf(task.first)
         factories[type] = AllowedTypes.group to task.second
     }
-
 
 
     companion object {

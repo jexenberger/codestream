@@ -21,25 +21,28 @@ class DefaultTaskClassFactoryTest {
     fun testCreate() {
         val factory = taskFromClass(MockTask::class)
         assertNotNull(factory)
+        val type = TaskType("mock", "mock")
+        val id = TaskId("test", "test")
+        val binding = MapBinding(id, type, params = mapOf(
+                "testSet" to "hello",
+                "list" to "hello, world",
+                //"willFail" to "yes",
+                "testTwo" to "1"
+        ))
         val defn = ExecutableDefinition(
-                TaskType("mock", "mock"),
-                TaskId("test", "test"),
-                defaultCondition(),
-                mapOf(
-                        "testSet" to "hello",
-                        "list" to "hello, world",
-                        //"willFail" to "yes",
-                        "testTwo" to "1"
-                )
-        )
+                type,
+                id,
+                binding.toBinding(),
+                defaultCondition())
 
         val ctx = StreamContext()
+        @Suppress("UNCHECKED_CAST")
         val task = factory.create(
                 defn,
                 ctx,
                 MockModule()
         ) as Either<MockTask, TaskError>
         assertNotNull(task)
-        assertTrue(task.ok(), task.error()?.let { it.toString() })
+        assertTrue(task.ok(), task.error().toString())
     }
 }

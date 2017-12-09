@@ -4,9 +4,6 @@ import io.codestream.core.*
 import io.codestream.resourcemodel.EmptyResourceRegistry
 import io.codestream.resourcemodel.Resource
 import io.codestream.resourcemodel.ResourceRegistry
-import io.codestream.util.bind
-import io.codestream.util.fail
-import io.codestream.util.ok
 import io.codestream.util.transformation.LambdaTransformer
 import io.codestream.util.transformation.TransformerService
 import io.codestream.yaml.YAMLStreamBuilder
@@ -23,13 +20,13 @@ class CodestreamRuntime(modulePaths: Array<String>) {
         })
     }
 
-    fun runStream(stream: File,
+    fun runStream(streamFile: File,
                   inputParms: Map<String, Any?>,
                   ctx: StreamContext = StreamContext(),
                   inputResolver: (String, Parameter) -> String = { _, _ -> "" }): TaskError? {
         val inputs = LinkedHashMap<String, Any?>()
         inputs += inputParms
-        val stream = YAMLStreamBuilder(stream).build()
+        val stream = YAMLStreamBuilder(streamFile).build()
         stream.parameters.forEach { t, u ->
             if (!inputs.containsKey(t)) {
                 inputs += Pair(t, inputResolver(t, u))
@@ -41,17 +38,15 @@ class CodestreamRuntime(modulePaths: Array<String>) {
     fun runTask(task: TaskType, parms: Map<String, Any?>, ctx: StreamContext = StreamContext()): TaskError? {
         val id = TaskId("_default", "_default")
         val module = task.module?.let { it } ?: return invalidModule(id, "${task.namespace} is not a valid module")
-        val defn = ExecutableDefinition(task, id, defaultCondition(), parms)
+        val binding = MapBinding(id, task, parms)
+        val defn = ExecutableDefinition<Task>(task, id, binding.toBinding(), defaultCondition())
         return module
-                .create(defn, ctx)
-                .bind { executable ->
-                    executable.bind(defn, ctx)?.let { fail<Executable, TaskError>(it) } ?: ok(executable)
-                }
-                .bind {
-                    ifTask(defn.id, defn.type, it) {
-                        it.execute(id, ctx)
-                    }?.let { fail<Executable, TaskError>(it) } ?: ok(it)
-                }.right
+                .createTask(defn, ctx)
+                .map({ executable ->
+                    defn.binding(id, ctx, executable)?.let { it }
+                }, {
+                    it
+                })
     }
 
 
@@ -68,7 +63,7 @@ class CodestreamRuntime(modulePaths: Array<String>) {
             get() = rt?.let { it } ?: throw IllegalStateException("runtime not initialised, call init()")
 
         @Synchronized
-        fun init(modulePaths: Array<String>, force:Boolean = false): CodestreamRuntime {
+        fun init(modulePaths: Array<String>, force: Boolean = false): CodestreamRuntime {
             if (force || rt == null) {
                 rt = CodestreamRuntime(modulePaths)
             }

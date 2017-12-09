@@ -1,7 +1,7 @@
 package io.codestream.module.iomodule
 
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
+import io.codestream.runtime.StreamContext
 import org.junit.Test
 import java.io.File
 import java.util.*
@@ -11,7 +11,7 @@ class WriteFileTaskTest {
 
     @Test
     fun testExec() {
-        val (ctx, defn) = createTaskContext(IOModule(), "write", condition = defaultCondition())
+        val ctx = StreamContext()
         val task = WriteFileTask()
         task.content = "hello world"
         task.encoding = "UTF-8"
@@ -19,7 +19,7 @@ class WriteFileTaskTest {
         tempFile.deleteOnExit()
         task.file = tempFile.absolutePath
         task.overwrite = true
-        task.execute(defn.id, ctx)
+        task.execute(testId(), ctx)
         assertEquals("hello world", tempFile.readText())
     }
 }

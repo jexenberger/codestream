@@ -1,9 +1,8 @@
 package io.codestream.modules.atlassian.jira
 
-import io.codestream.core.defaultCondition
-import io.codestream.module.coremodule.CoreModule
-import io.codestream.module.coremodule.createTaskContext
+import io.codestream.module.coremodule.testId
 import io.codestream.modules.atlassian.AtlassianTestSettings
+import io.codestream.runtime.StreamContext
 import org.junit.Test
 import kotlin.test.assertNotNull
 
@@ -13,13 +12,13 @@ class GetIssueTransitionsTaskTest {
 
     @Test
     fun testExecute() {
-
-        val (ctx, defn) = createTaskContext(CoreModule(), "exec", condition = defaultCondition())
+        val ctx = StreamContext()
         val issueTask = GetIssueTransitionsTask()
         issueTask.server = settings.jiraServer
         issueTask.issue = settings.jiraTestIssue
-        issueTask.execute(defn.id, ctx)
+        issueTask.execute(testId(), ctx)
         assertNotNull(ctx[issueTask.transitionsVar])
+        @Suppress("UNCHECKED_CAST")
         ctx[issueTask.transitionsVar] as Map<String, Any?>
         val result = ctx.evalScript<Any?>(issueTask.transitionsVar)
         println(result)

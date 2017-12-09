@@ -7,10 +7,9 @@ import io.codestream.util.events.Events
 class Stream constructor(val id: String,
                          val group: String,
                          val desc: String,
-                         val runnables: Array<RunExecutable>,
-                         val onError: ExecutableDefinition? = null,
+                         internal val runnables: Array<RunExecutable<*>>,
+                         private val onError: ExecutableDefinition<*>? = null,
                          val parameters: Map<String, Parameter> = mapOf()) {
-
 
 
     fun resolveInput(input: Map<String, Any?>): Map<String, Any?> {
@@ -36,9 +35,10 @@ class Stream constructor(val id: String,
     fun run(input: Map<String, Any?> = mapOf(), ctx: StreamContext = StreamContext()): TaskError? {
         ctx += resolveInput(input)
 
-        val defn = ExecutableDefinition(
+        val defn = ExecutableDefinition<GroupTask>(
                 type = TaskType("core", "group"),
-                id = TaskId(this.group, this.id)
+                id = TaskId(this.group, this.id),
+                binding = emptyBinding()
         )
         val result = RunGroupTask(defn, this.runnables)
                 .run(ctx)

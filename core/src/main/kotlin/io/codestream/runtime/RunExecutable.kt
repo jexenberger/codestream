@@ -1,12 +1,13 @@
 package io.codestream.runtime
 
+import io.codestream.core.Executable
 import io.codestream.core.ExecutableDefinition
 import io.codestream.core.RunExecutableState
 import io.codestream.core.TaskError
 
 
-interface RunExecutable {
-    val defn: ExecutableDefinition
+interface RunExecutable<in T : Executable> {
+    val defn: ExecutableDefinition<T>
     val id: Int
     var state: RunExecutableState
 

@@ -4,6 +4,7 @@ import io.codestream.core.ExecutableDefinition
 import io.codestream.core.Parameter
 import io.codestream.core.TaskId
 import io.codestream.core.TaskType
+import io.codestream.module.coremodule.EchoTask
 import org.junit.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -16,10 +17,10 @@ class StreamBuilderTest {
         CodestreamRuntime.init(emptyArray(), force = true)
         val stream = StreamBuilder("test", "group", "this is a test").define {
             input(Parameter(name = "input", desc = "desc", stringType = "string"))
-            task(ExecutableDefinition(
+            task(ExecutableDefinition<EchoTask>(
                     type = TaskType("core", "echo"),
                     id = TaskId("group", "test"),
-                    bindingParams = mapOf("value" to "\${input}")
+                    params = mapOf("value" to "\${input}")
             ))
         }.stream
         assertNotNull(stream)

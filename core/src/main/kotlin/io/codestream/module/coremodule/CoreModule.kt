@@ -3,7 +3,7 @@ package io.codestream.module.coremodule
 import io.codestream.core.*
 
 class CoreModule(override val name: String = "core",
-                 override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<Executable>>> = mutableMapOf()) : Module {
+                 override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>> = mutableMapOf()) : Module {
 
     init {
         define {

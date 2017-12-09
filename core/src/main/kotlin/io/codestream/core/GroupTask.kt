@@ -19,10 +19,10 @@ interface GroupTask : Executable {
     val async
         get() = false
 
-    fun before(defn: ExecutableDefinition, ctx: StreamContext): Either<BeforeAction, TaskError>
+    fun before(id: TaskId, ctx: StreamContext): Either<BeforeAction, TaskError>
 
-    fun after(defn: ExecutableDefinition, ctx: StreamContext): Either<AfterAction, TaskError>
+    fun after(id: TaskId, ctx: StreamContext): Either<AfterAction, TaskError>
 
-    fun onError(defn: ExecutableDefinition, ctx: StreamContext, errorThrown: Exception) {}
+    fun onError(id: TaskId, ctx: StreamContext, errorThrown: Exception) {}
 
 }

@@ -7,7 +7,7 @@ import io.codestream.core.Parameter
 
 class StreamBuilder(name: String, group: String, desc: String = "") {
 
-    var runnables = arrayOf<RunExecutable>()
+    var runnables = arrayOf<RunExecutable<*>>()
     val parameters: MutableMap<String, Parameter> = mutableMapOf()
     val stream: Stream by lazy {
         Stream(name, group, desc, runnables, null, parameters)
@@ -23,7 +23,7 @@ class StreamBuilder(name: String, group: String, desc: String = "") {
         return this
     }
 
-    fun task(defn: ExecutableDefinition, init: (StreamBuilder.() -> Unit)? = null): StreamBuilder {
+    fun task(defn: ExecutableDefinition<*>, init: (StreamBuilder.() -> Unit)? = null): StreamBuilder {
         defn.module.executableType(defn.type)?.let {
             when (it) {
                 Module.AllowedTypes.task -> runnables += RunTask(defn)
