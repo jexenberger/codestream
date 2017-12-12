@@ -25,7 +25,7 @@ class Stream constructor(val id: String,
                 else -> it.value
             }
             if (convertedValue != null && !parameter.isIn(convertedValue)) {
-                throw InputError(it.key, "NotAllowedInputParameter", "'${it.key}' must one of '${parameter.allowedValuesList}'")
+                throw InputError(it.key, "NotAllowedInputParameter", "'${it.key}' must one of '${parameter.values}'")
             }
             convertedValue
         }

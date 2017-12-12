@@ -83,9 +83,9 @@ enum class OS(val unixVariant: Boolean, val rootDir: String, vararg val keys: St
                 .directory(dir)
                 .start()
         val bufferedReader = process.inputStream.bufferedReader()
-        var line: String? = null
+        var line: String?
         do {
-            line = bufferedReader.readLine();
+            line = bufferedReader.readLine()
             line?.let { handler(it) }
         } while (line != null)
         bufferedReader.forEachLine {

@@ -5,6 +5,7 @@ import io.codestream.util.UserPassword
 import io.codestream.util.YamlFactory
 import io.codestream.util.git.GitRepository
 import io.codestream.util.git.GitServer
+import io.codestream.util.rest.Request
 import io.codestream.util.system
 import java.io.File
 
@@ -22,7 +23,11 @@ data class TestSettings(
         val gitWorkingDir: String,
         val gitKeyFile: String,
         val gitSSHURL: String,
-        val gitAlternateBranch: String
+        val gitAlternateBranch: String,
+        val proxyServer: String?,
+        val proxyPort: Int?,
+        val proxyUser: String?,
+        val proxyPassword: String?
 ) {
     companion object {
         private val defaultTestPath = "${system.homeDir}/.cstest/test.yaml"
@@ -39,7 +44,7 @@ data class TestSettings(
 
     fun clone() {
         deleteExistingGitDir()
-        val server = GitServer(gitUrl, UserPassword(gitUser, gitPassword), true)
+        val server = GitServer(gitUrl, UserPassword(gitUser, gitPassword), true, disableSSL = true)
         server.clone(gitWorkingDir)
     }
 
@@ -47,6 +52,12 @@ data class TestSettings(
         val workingDir = File(gitWorkingDir)
         if (workingDir.exists()) {
             workingDir.deleteRecursively()
+        }
+    }
+
+    fun setProxy(request: Request) {
+        if (proxyServer != null) {
+            request.proxy(proxyServer, proxyPort?.let { it } ?: 8080, proxyUser, proxyPassword)
         }
     }
 

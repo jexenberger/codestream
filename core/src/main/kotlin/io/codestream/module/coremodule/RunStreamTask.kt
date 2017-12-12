@@ -40,7 +40,7 @@ class RunStreamTask : Task, TaskBinder {
         val runCtx = if (isolated) StreamContext() else ctx
         return CodestreamRuntime.runtime.runStream(
                 ctx = runCtx,
-                stream = file,
+                streamFile = file,
                 inputParms = input
         )
     }

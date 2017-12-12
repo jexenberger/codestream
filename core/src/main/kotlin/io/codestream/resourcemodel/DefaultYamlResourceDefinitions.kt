@@ -6,6 +6,7 @@ import io.codestream.util.YamlFactory
 import java.io.File
 import java.io.FileInputStream
 
+@Suppress("UNCHECKED_CAST")
 class DefaultYamlResourceDefinitions(val definitionsFile: String) {
 
     fun load(): Either<Unit, ResourceError> {

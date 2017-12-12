@@ -51,6 +51,7 @@ class DefaultYamlResourceRegistryTest {
         assertEquals("fqdn.com", resource?.get("dns"))
         assertEquals(4, resource?.get("cores"))
         resource?.get("users")?.let {
+            @Suppress("UNCHECKED_CAST")
             val userList = it as Array<String>
             assertTrue(userList.contains("jack01"))
             assertTrue(userList.contains("john01"))

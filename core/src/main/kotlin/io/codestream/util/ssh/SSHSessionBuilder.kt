@@ -1,7 +1,6 @@
 package io.codestream.util.ssh
 
 import com.jcraft.jsch.JSch
-import com.jcraft.jsch.JSchException
 import com.jcraft.jsch.Session
 import io.codestream.util.Either
 import io.codestream.util.ok
@@ -16,7 +15,7 @@ class SSHSessionBuilder(val user: String, val host: String, val port: Int = 22) 
     var timeout: Long = 30000
     var xForwarding: Boolean = false
 
-    val session: Either<SSHSession,String>
+    val session: Either<SSHSession, String>
         get() = createSession().mapL { SSHSession(it, xForwarding) }
 
     fun hostsFile(file: String): SSHSessionBuilder {
@@ -44,30 +43,27 @@ class SSHSessionBuilder(val user: String, val host: String, val port: Int = 22) 
         return this
     }
 
-    fun xForwarding(enabled:Boolean): SSHSessionBuilder {
+    fun xForwarding(enabled: Boolean): SSHSessionBuilder {
         this.xForwarding = enabled
         return this
     }
 
     internal fun createSession(): Either<Session, String> {
-        val jsch:JSch = createContext()
+        val jsch: JSch = createContext()
         val session = jsch.getSession(user, host, port)
         if (!strictHostChecking) {
-            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("StrictHostKeyChecking", "no")
         }
         if (keyFile == null && password.isNotBlank()) {
             session.setPassword(password)
         }
-        try {
-            session.connect(timeout.toInt())
-        } catch (e:JSchException) {
-            return error(e.message!!)
-        }
-        return  if (session.isConnected()) {
+        session.connect(timeout.toInt())
+        return if (session.isConnected) {
             ok(session)
         } else {
             error("Unable to connect to $host, unknown error")
         }
+
     }
 
     //done this way so we don't leak JSch classes to external users

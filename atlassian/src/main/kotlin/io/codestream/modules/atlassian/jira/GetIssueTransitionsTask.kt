@@ -30,6 +30,7 @@ class GetIssueTransitionsTask : BaseJiraTask(){
         }
 
         val jiraIssueMap:Map<String, Any?> = mapper.readValue(get.body)
+        @Suppress("UNCHECKED_CAST")
         val transitions = jiraIssueMap["transitions"] as List<Map<String, Any?>>
         val mapping:Map<String,String> = transitions
                 .associateBy { it["name"] as String }

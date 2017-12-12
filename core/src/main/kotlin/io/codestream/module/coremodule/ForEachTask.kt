@@ -10,8 +10,8 @@ class ForEachTask : GroupTask, TaskBinder {
 
 
     @TaskProperty
-    @get:NotBlank
-    var items: String = ""
+    var items: Array<*> = emptyArray<Any>()
+
 
     @TaskProperty
     @get:NotBlank
@@ -20,33 +20,17 @@ class ForEachTask : GroupTask, TaskBinder {
     @TaskProperty
     var iteratorVar: String = "\$iterator"
 
-
-    @Suppress("UNCHECKED_CAST")
-    internal fun convertToIterator(id: TaskId, value: Any?, valueName: String): Iterator<Any>? {
-        return value?.let {
-            return when (it) {
-                is Iterable<*> -> it.iterator() as Iterator<Any>
-                is String -> it.split(",").map { it.trim() }.iterator()
-                else -> throw invalidParameter(id, "$valueName is not an instance of Iterable or a comma delimited string")
-            }
-        }
-    }
-
     override fun before(id: TaskId, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
         if (ctx.containsKey(iteratorVar)) {
             @Suppress("UNCHECKED_CAST")
             return setEvaluation(ctx[iteratorVar] as Iterator<Any>, ctx)
         }
-
-        val value = ctx.evalTo<Any>(this.items)
-        val iterator = convertToIterator(id, value, this.items)
-        return iterator?.let {
-            ctx[iteratorVar] = it
-            setEvaluation(it, ctx)
-        } ?: ok(GroupTask.BeforeAction.Return)
+        val iterator = items.iterator()
+        ctx[iteratorVar] = iterator
+        return setEvaluation(iterator, ctx)
     }
 
-    private fun setEvaluation(it: Iterator<Any>, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
+    private fun setEvaluation(it: Iterator<*>, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
         return if (it.hasNext()) {
             ctx[currentValue] = it.next()
             ok(GroupTask.BeforeAction.Continue)

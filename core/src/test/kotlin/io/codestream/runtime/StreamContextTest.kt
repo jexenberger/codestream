@@ -84,6 +84,7 @@ class StreamContextTest {
         ctx["qwerty"] = "hello123"
         val yaml = ctx.toYaml()
         println(yaml)
+        @Suppress("UNCHECKED_CAST")
         val map = YamlFactory.yaml().load(yaml) as Map<String, Any?>
         val newContext = StreamContext.fromMap(map)
         assertEquals("hello123", newContext["qwerty"])
@@ -96,6 +97,7 @@ class StreamContextTest {
         ctx["qwerty"] = "hello123"
         val yaml = ctx.toYaml()
         println(yaml)
+        @Suppress("UNCHECKED_CAST")
         val map = YamlFactory.yaml().load(yaml) as Map<String, Any?>
         val newContext = testContext().subContext()
         StreamContext.fromMap(map, newContext)

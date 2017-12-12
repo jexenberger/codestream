@@ -34,6 +34,9 @@ object TransformerService {
         addConverter(String::class, Array<String>::class, LambdaTransformer<String, Array<String>> {
             it.split(",").map { it.trim() }.toTypedArray()
         })
+        addConverter(String::class, Array<Any>::class, LambdaTransformer<String, Array<Any>> {
+            it.split(",").map { it.trim() }.toTypedArray()
+        })
         addConverter(String::class, Array<Boolean>::class, LambdaTransformer<String, Array<Boolean>> {
             it.split(",").map { Transformations.toBoolean(it.trim()) }.toTypedArray()
         })
@@ -99,9 +102,10 @@ object TransformerService {
     }
 
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("UNC")
     inline fun <reified K> convert(instance: Any, typeHint: KClass<*>? = null): K {
         val type = typeHint?.let { it } ?: K::class
+        @Suppress("UNCHECKED_CAST")
         val transfomer = findWideningTransformer(instance::class, type) as TypeTransformer<Any, K>?
         return transfomer?.transform(instance) ?: throw SystemException("unable to convert from ${instance::class.qualifiedName} to ${K::class.qualifiedName}")
     }

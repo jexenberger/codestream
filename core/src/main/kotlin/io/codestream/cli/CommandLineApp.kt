@@ -11,17 +11,26 @@ import java.io.File
 class CommandLineApp(args: ArgParser) {
 
 
-    val streamName: File? by args.storing("-s", "--stream", help = "stream YAML src to run") {
+    //Stream name
+    val streamName: File? by args.storing("-s", "--stream", help = "stream YAML/Kotlin src to run") {
         File(this)
     }.default(null)
+
+    //Task to Run
     val task: String? by args.storing("-t", "--task", help = "Task to run").default(null)
+
+    //Input parameters passed at run time
     val inputParms by args.adding("-I", "--input", help = "input parameter (format: [name]=[items]") {
         val parts = this.split("=")
         Pair(parts[0], parts[1])
     }
+
+    //Module Paths
     val modulePaths by args.adding("-M", "--modulepath", help = "Path for loading modules") {
         this
     }.default(listOf(ModuleLoader.defaultPath))
+
+    //Codestream Runtime
     val csRuntime by lazy { CodestreamRuntime.init(modulePaths.toTypedArray()) }
 
 
@@ -32,7 +41,7 @@ class CommandLineApp(args: ArgParser) {
         } else {
 
             streamName?.let {
-                val result = csRuntime.runStream(it, inputParms = inputParms.toMap(), inputResolver = { field, parm ->
+                val result = csRuntime.runStream(it, inputParms = inputParms.toMap(), inputResolver = { _, parm ->
                     var done: Boolean
                     var input: String?
                     val isRequired = parm.required

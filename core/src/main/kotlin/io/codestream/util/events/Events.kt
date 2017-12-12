@@ -5,7 +5,7 @@ object Events {
     var eventProvider: EventProvider = DefaultEventProvider
 
     fun fire(event: Event) {
-        eventProvider?.fire(event)
+        eventProvider.fire(event)
     }
 
     fun set(provider: EventProvider) {

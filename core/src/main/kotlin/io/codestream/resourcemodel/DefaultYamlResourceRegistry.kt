@@ -4,6 +4,7 @@ import io.codestream.util.Either
 import io.codestream.util.YamlFactory
 import java.io.FileReader
 
+@Suppress("UNCHECKED_CAST")
 class DefaultYamlResourceRegistry(val filePath: String) : ResourceRegistry {
 
     protected var registry: Map<String, Resource> = emptyMap()
@@ -22,7 +23,7 @@ class DefaultYamlResourceRegistry(val filePath: String) : ResourceRegistry {
                 val inherits = it["inherits"] as String
                 val attributes = it["attributes"]?.let { (it as List<Map<String, Any>>).map { it["name"].toString() to it["value"] }.toMap() } ?: emptyMap<String, Any?>()
                 ResourceDefinitions[type]?.let { defn ->
-                    val attrMap = inherits?.let { inherited ->
+                    val attrMap = inherits.let { inherited ->
                         ResourceDefinitions.getAbstract(inherited)?.let {
                             val map = mutableMapOf<String, Any?>()
                             map.putAll(it)
@@ -69,7 +70,7 @@ class DefaultYamlResourceRegistry(val filePath: String) : ResourceRegistry {
         }.forEach {
             val id = it["id"]!!.toString()
             val attributes = it["attributes"]?.let { (it as List<Map<String, Any>>).map { it["name"].toString() to it["value"] }.toMap() } ?: emptyMap<String, Any?>()
-            ResourceDefinitions.addAbstract(id, attributes);
+            ResourceDefinitions.addAbstract(id, attributes)
         }
     }
 

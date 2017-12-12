@@ -49,7 +49,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
         val result = variables[variable]
         return result?.let {
             result
-        } ?: parent?.let { it[variable] } ?: null
+        } ?: parent?.let { it[variable] }
     }
 
     operator fun plusAssign(variables: Map<String, Any?>) {
@@ -59,14 +59,15 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     }
 
     inline fun <reified K> evalTo(script: Any?, typeHint: KClass<*>? = null): K? {
+        println(script)
         return script?.let {
-            if (Eval.isScriptString(it.toString())) {
-                return evalScript(script.toString())
+            return if (Eval.isScriptString(it.toString())) {
+                evalScript(script.toString())
             } else {
-                val type = typeHint?.let { it } ?: K::class
-                return TransformerService.convert(script, type)
+                val type = typeHint?.let { hint -> hint } ?: K::class
+                TransformerService.convert(it.toString(), type)
             }
-        } ?: null
+        }
     }
 
     inline fun <reified K> evalScript(script: String): K? {
@@ -115,21 +116,23 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     }
 
     @Synchronized
-    override fun put(variable: String?, value: Any?): Any? {
-        Objects.requireNonNull(variable, "Key cannot be null")
+    override fun put(key: String?, value: Any?): Any? {
+        Objects.requireNonNull(key, "Key cannot be null")
         return parent?.let {
-            if (it.containsKey(variable)) {
-                return it.put(variable, value)
+            if (it.containsKey(key)) {
+                return it.put(key, value)
             } else {
-                setLocalVariable(variable, value)
+                setLocalVariable(key, value)
             }
-        } ?: setLocalVariable(variable, value)
+        } ?: setLocalVariable(key, value)
     }
 
     private fun setLocalVariable(variable: String?, value: Any?): Any? {
-        val old = variables[variable!!]
-        variables[variable!!] = value
-        return old
+        return variable?.let {
+            val old = variables[it]
+            variables[it] = value
+            old
+        }
     }
 
     override fun isEmpty(): Boolean {
@@ -142,7 +145,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     }
 
     override fun toString(): String {
-        return "StreamContext[" + id + "]"
+        return "StreamContext[$id]"
     }
 
     override val size: Int
@@ -170,6 +173,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
             return values
         }
 
+    @Suppress("UNCHECKED_CAST")
     companion object {
 
         val local: ThreadLocal<StreamContext> = ThreadLocal()

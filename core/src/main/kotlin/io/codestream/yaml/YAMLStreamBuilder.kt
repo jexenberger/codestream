@@ -32,7 +32,6 @@ class YAMLStreamBuilder() {
         this.data = Yaml().load(FileInputStream(streamFile)) as Map<String, Any?>
     }
 
-    @SuppressWarnings("unchecked")
     fun build(): Stream {
         val group = data["group"] as String? ?: "_default"
         val desc = data["desc"] as String? ?: ""

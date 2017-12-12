@@ -29,18 +29,18 @@ class ForEachTaskTest {
         ctx["x"] = true
         val taskId = genId("1")
         val stream = ForEachTask()
-        stream.items = "1,2,3"
+        stream.items = arrayOf(1, 2, 3)
         stream.iteratorVar = "theIterator"
         stream.currentValue = "theCurrentValue"
         val result = stream.before(taskId, ctx)
         assertTrue(result.ok(), result.error().toString())
         assertEquals(result.left!!, GroupTask.BeforeAction.Continue)
-        assertEquals("1", ctx[stream.currentValue])
+        assertEquals(1, ctx[stream.currentValue])
         assertTrue { ctx.containsKey(stream.iteratorVar) }
         stream.before(taskId, ctx)
-        assertEquals("2", ctx[stream.currentValue])
+        assertEquals(2, ctx[stream.currentValue])
         stream.before(taskId, ctx)
-        assertEquals("3", ctx[stream.currentValue])
+        assertEquals(3, ctx[stream.currentValue])
         val lastTime = stream.before(taskId, ctx)
         assertEquals(GroupTask.BeforeAction.Return, lastTime.left!!)
     }

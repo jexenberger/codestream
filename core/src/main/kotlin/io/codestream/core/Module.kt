@@ -25,6 +25,7 @@ interface Module {
         return factory.second.create(type as ExecutableDefinition<Executable>, ctx, this)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Task> createTask(type: ExecutableDefinition<T>, ctx: StreamContext): Either<T, TaskError> {
         return create(type, ctx).flatMap(
                 { if (it is Task) ok(it as T) else fail<T, TaskError>(isGroupTask(type.id, type.type)) },

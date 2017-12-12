@@ -63,8 +63,10 @@ sealed class Either<L, R> {
 
     fun <Z> mapL(l: (value: L) -> Z): Either<Z, R> {
         return when (this) {
-            is Either.Left -> left(l(this.value))
-            is Either.Right -> this as Either<Z, R>
+            is Left -> left(l(this.value))
+            is Right -> {
+                this as Either<Z, R>
+            }
         }
     }
 
@@ -127,10 +129,10 @@ sealed class Either<L, R> {
         }
 
         fun <Z, Y, U : Exception> onException(handler: () -> Z, onError: (U) -> Y): Either<Z, Y> {
-            try {
-                return ok(handler())
+            return try {
+                ok(handler())
             } catch (e: Exception) {
-                return fail(onError(e as U))
+                fail(onError(e as U))
             }
         }
     }

@@ -18,6 +18,7 @@ object Eval {
         val engine: ScriptEngine = factory.getEngineByName(SCRIPT_ENGINE)
         val engineScope = newContext.getBindings(ScriptContext.ENGINE_SCOPE)
         variables.forEach({ key: String, value: Any? -> engineScope.put(key, value) })
+        @Suppress("UNCHECKED_CAST")
         return engine.eval(script, newContext) as K
     }
 
@@ -25,11 +26,14 @@ object Eval {
         val newContext = SimpleScriptContext()
         val engine: ScriptEngine = factory.getEngineByName(SCRIPT_ENGINE)
         newContext.setBindings(variables, ScriptContext.ENGINE_SCOPE)
+        @Suppress("UNCHECKED_CAST")
         return engine.eval(script, newContext) as K
     }
 
     fun isScriptString(expr: String): Boolean {
-        return expr.stringify().startsWith("\${") && expr.stringify().endsWith("}")
+        val isDollarForm = expr.stringify().startsWith("\${") && expr.stringify().endsWith("}")
+        val isHashForm = expr.stringify().startsWith("#{") && expr.stringify().endsWith("}")
+        return isDollarForm || isHashForm
     }
 
     fun extractScriptString(expr: String): String {

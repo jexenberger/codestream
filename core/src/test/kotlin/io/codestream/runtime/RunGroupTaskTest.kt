@@ -53,8 +53,7 @@ class RunGroupTaskTest {
         var called = false
         val (_, taskDefn) = createTaskContext<MockTask>(MockModule(), "mockTask", mapOf("testSet" to "hello world", "willFail" to "true"), condition = defaultCondition())
         val taskRunner = RunTask(taskDefn)
-        val (ctx, defn) = createTaskContext<MockGroupTask>(module, "mockGroupTask", condition = {
-            d,c ->
+        val (ctx, defn) = createTaskContext<MockGroupTask>(module, "mockGroupTask", condition = { _, _ ->
             called = true
             false
         })

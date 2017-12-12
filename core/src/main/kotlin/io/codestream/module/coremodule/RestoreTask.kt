@@ -22,6 +22,7 @@ class RestoreTask : Task, TaskBinder {
             return taskFailed(id,  "$file does not exist")
         }
         try {
+            @Suppress("UNCHECKED_CAST")
             val dataMap = YamlFactory.yaml().load(FileInputStream(file)) as Map<String, Any?>
             StreamContext.fromMap(dataMap, ctx)
         } catch (e: IOException) {

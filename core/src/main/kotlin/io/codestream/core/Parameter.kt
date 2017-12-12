@@ -7,34 +7,27 @@ import io.codestream.util.ok
 import io.codestream.util.transformation.TransformerService
 import kotlin.reflect.KClass
 
-data class Parameter(val name: String,
+data class Parameter(val required: Boolean,
+                     val name: String,
                      val desc: String,
-                     private val stringType: String,
-                     private val defaultString: String? = null,
-                     val required: Boolean = true,
-                     val allowedValuesList: String? = null) {
+                     private val type: KClass<*>,
+                     private val defaultValue: Any? = null,
+                     val values: Array<*> = emptyArray<Any>()) {
 
-    val type: KClass<*>
-    val values: Array<Any>
-    val defaultValue: Any?
 
-    init {
-        val targetType = typeFor(stringType)
-        type = targetType ?: throw IllegalStateException("${stringType} is not supported, supported types are '$typeNames'")
-        val isArray = isArrayType(stringType)
-        val conversionType = if (isArray) targetType else typeFor("[$stringType]")
-        if (allowedValuesList != null && !allowedValuesList.trim().isBlank() && !isArray) {
-            values = conversionType?.let { TransformerService.convert<Array<Any>>(allowedValuesList, it) } ?: throw SystemException("${stringType} is not support, supported types are '$typeNames'")
-        } else {
-            values = arrayOf()
-        }
-        if (defaultString != null) {
-            defaultValue = defaultString?.let { TransformerService.convert(it, type) }
-        } else {
-            defaultValue = null
-        }
+    constructor(name: String,
+                desc: String,
+                stringType: String,
+                defaultString: String? = null,
+                required: Boolean = true,
+                allowedValuesList: String? = null) :
+            this(required,
+                    name,
+                    desc,
+                    resolveType(stringType),
+                    resolveDefaultString(defaultString),
+                    resolveAllowedValues(stringType, allowedValuesList))
 
-    }
 
     fun isIn(value: Any): Boolean {
         if (values.isEmpty()) {
@@ -65,7 +58,7 @@ data class Parameter(val name: String,
         }
         val targetValue = from(value!!)
         if (!isIn(targetValue!!)) {
-            return fail(listOf("$value is not in $allowedValuesList"))
+            return fail(listOf("$value is not in ${values.joinToString(", ")}"))
         }
         return ok(targetValue)
     }
@@ -93,6 +86,26 @@ data class Parameter(val name: String,
         fun typeFor(type: String): KClass<*>? {
             return types[type]
         }
+
+        fun stringType(type: KClass<*>): String? = types.filterValues { it == type }.keys.singleOrNull()
+
+        private fun resolveAllowedValues(stringType: String, allowedValuesList: String?): Array<Any> {
+            val isArray = isArrayType(stringType)
+            val conversionType = if (isArray) typeFor(stringType) else typeFor("[$stringType]")
+            if (allowedValuesList != null && !allowedValuesList.trim().isBlank() && !isArray) {
+                return conversionType?.let { TransformerService.convert<Array<Any>>(allowedValuesList, it) } ?: throw SystemException("${stringType} is not support, supported types are '$typeNames'")
+            } else {
+                return arrayOf()
+            }
+        }
+
+        private fun resolveType(stringType: String)
+                = typeFor(stringType) ?: throw IllegalStateException("${stringType} is not supported, supported types are '$typeNames'")
+
+        private fun resolveDefaultString(defaultString: String?): Any? {
+            return defaultString?.let { TransformerService.convert(it) }
+        }
+
 
         private fun isArrayType(arrayType: String) = arrayType.startsWith("[") && arrayType.endsWith("]")
 

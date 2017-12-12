@@ -14,7 +14,7 @@ data class JiraServer(val url:String, val user:String, val pwd:String) {
 
         fun load() = load(defaultPath)
 
-        fun load(path:String?) : JiraServer? {
+        fun load(path: String? = null): JiraServer? {
             val p = Properties()
             val fileToLoad = path?.let { it } ?: defaultPath
             val file = File(fileToLoad)

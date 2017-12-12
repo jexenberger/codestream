@@ -45,7 +45,7 @@ class SSHSession(val session: Session, val xForwarding: Boolean = false, keepAli
     }
 
     private fun disconnect(session: Session) {
-        session?.let { it.disconnect() }
+        session.disconnect()
     }
 
     protected fun waitForAck(input: InputStream): String? {
@@ -64,7 +64,7 @@ class SSHSession(val session: Session, val xForwarding: Boolean = false, keepAli
             return when (b) {
                 1 -> "server error: ${sb}"
                 2 -> "fatal error: ${sb}"
-                else -> "unknown error '${b}' : ${sb.toString()}"
+                else -> "unknown error '${b}' : $sb"
             }
 
         }
@@ -79,7 +79,7 @@ class SSHSession(val session: Session, val xForwarding: Boolean = false, keepAli
     fun scpFrom(localPath: String, remoteFile: String): String? {
         val cmd = "scp -f ${remoteFile}"
         var result: String? = null
-        exec(cmd) { input, output, error ->
+        exec(cmd) { input, output, _ ->
             val buf = ByteArray(1024)
             sendAck(output)
             input.read(buf, 0, 1)
@@ -95,7 +95,7 @@ class SSHSession(val session: Session, val xForwarding: Boolean = false, keepAli
                     if (buf[0] == ' '.toByte()) break
                     filesize = filesize * 10L + (buf[0] - '0'.toByte())
                 }
-                var file: String? = null
+                var file: String?
                 var i = 0
                 while (true) {
                     input.read(buf, i, 1)
@@ -133,7 +133,7 @@ class SSHSession(val session: Session, val xForwarding: Boolean = false, keepAli
         }
         val cmd = "scp -t ${remoteFile}"
         var result: String? = null
-        exec(cmd) { input, output, error ->
+        exec(cmd) { input, output, _ ->
             val command = "C0644 ${file.length()} ${file.name}\n"
             output.write(command.toByteArray())
             output.flush()

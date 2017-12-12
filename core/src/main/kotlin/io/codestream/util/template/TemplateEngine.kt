@@ -27,15 +27,15 @@ object TemplateEngine {
         return writer.toString()
     }
 
-    fun render(template: String, target: Writer, data: Map<String, Any?>) {
+    fun render(src: String, target: Writer, data: Map<String, Any?>) {
         val ctx = Context.newBuilder(data).resolver(MapValueResolver.INSTANCE).build()
-        val template = handlebars.compile(template)
+        val template = handlebars.compile(src)
         template.apply(ctx, target)
     }
 
-    fun renderInline(template: String, data: Map<String, Any?>): String {
+    fun renderInline(src: String, data: Map<String, Any?>): String {
         val ctx = Context.newBuilder(data).resolver(MapValueResolver.INSTANCE).build()
-        val template = handlebars.compileInline(template)
+        val template = handlebars.compileInline(src)
         return template.apply(ctx)
     }
 

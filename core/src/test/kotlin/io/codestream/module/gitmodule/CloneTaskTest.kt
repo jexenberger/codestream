@@ -27,6 +27,7 @@ class CloneTaskTest {
         cloneTask.user = settings.gitUser
         cloneTask.password = settings.gitPassword
         cloneTask.disableHostNameCheck = true
+        cloneTask.disableSSLValidation = true
 
         val result = cloneTask.execute(testId(), ctx)
         assertNull(result)
@@ -43,6 +44,7 @@ class CloneTaskTest {
         cloneTask.password = settings.gitPassword
         cloneTask.keyFile = settings.gitKeyFile
         cloneTask.disableHostNameCheck = true
+        cloneTask.disableSSLValidation = true
         val result = cloneTask.execute(testId(), ctx)
         assertNull(result)
 

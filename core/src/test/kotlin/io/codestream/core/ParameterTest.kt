@@ -21,7 +21,7 @@ class ParameterTest {
                 allowedValuesList = "1, 2, 3"
         )
         val tryConvert = parm.tryConvert("2")
-        assertTrue(tryConvert.ok(), tryConvert.error()?.toString())
+        assertTrue(tryConvert.ok(), tryConvert.error().toString())
         assertEquals(2, tryConvert.left!!)
     }
 
@@ -49,7 +49,7 @@ class ParameterTest {
                 allowedValuesList = "1, 2, 3"
         )
         val tryConvert = parm.tryConvert("9")
-        assertFalse(tryConvert.ok(), tryConvert.error()?.toString())
+        assertFalse(tryConvert.ok(), tryConvert.error().toString())
         assertEquals("9 is not in 1, 2, 3", tryConvert.right?.get(0))
     }
 
@@ -150,6 +150,7 @@ class ParameterTest {
         assertTrue(shouldExist)
         val shouldntExist = parm.isIn(arrayOf("5", "6", "7"))
         assertTrue(shouldntExist)
+        @Suppress("UNCHECKED_CAST")
         Assert.assertArrayEquals(arrayOf("1", "2", "3"), parm.fromString("1, 2, 3") as Array<String>)
     }
 
@@ -165,6 +166,8 @@ class ParameterTest {
         assertTrue(shouldExist)
         val shouldntExist = parm.isIn(99)
         assertTrue(shouldntExist)
+
+        @Suppress("UNCHECKED_CAST")
         Assert.assertArrayEquals(arrayOf(99, 88, 66), parm.fromString("99,88,66") as Array<Int>)
     }
 
@@ -180,6 +183,7 @@ class ParameterTest {
         assertTrue(shouldExist)
         val shouldntExist = parm.isIn(99L)
         assertTrue(shouldntExist)
+        @Suppress("UNCHECKED_CAST")
         Assert.assertArrayEquals(arrayOf(99L, 88L, 66L), parm.fromString("99,88,66") as Array<Long>)
     }
 
@@ -195,6 +199,7 @@ class ParameterTest {
         assertTrue(shouldExist)
         val shouldntExist = parm.isIn(99.0f)
         assertTrue(shouldntExist)
+        @Suppress("UNCHECKED_CAST")
         Assert.assertArrayEquals(arrayOf(99.0f, 88.0f, 66.0f), parm.fromString("99.0,88.0,66.0") as Array<Float>)
     }
 

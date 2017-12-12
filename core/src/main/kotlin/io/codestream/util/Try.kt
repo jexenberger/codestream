@@ -32,7 +32,7 @@ class Try<out T, out K> constructor(val value: T?, val error: K?) {
     }
 
     operator fun not(): Boolean {
-        return error != null;
+        return error != null
     }
 
     companion object {
@@ -48,9 +48,10 @@ class Try<out T, out K> constructor(val value: T?, val error: K?) {
 
         fun <Z, Y, U> onException(handler: () -> Z, onError: (U) -> Y): Try<Z, Y> {
             try {
-                return Try.ok<Z, Y>(handler())
+                return Try.ok(handler())
             } catch (e: Exception) {
-                return Try.error<Z, Y>(onError(e as U))
+                @Suppress("UNCHECKED_CAST")
+                return Try.error(onError(e as U))
             }
         }
 

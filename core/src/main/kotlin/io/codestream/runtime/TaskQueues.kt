@@ -10,11 +10,12 @@ object TaskQueues : Thread() {
 
     init {
         taskQueue = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 5)
-        eventQueue = Executors.newSingleThreadExecutor();
+        eventQueue = Executors.newSingleThreadExecutor()
         Runtime.getRuntime().addShutdownHook(this)
     }
 
     @Synchronized
+    @Suppress("UNCHECKED_CAST")
     fun <T> run(grpId: String, handler: () -> T): Future<T> {
         val future = taskQueue.submit(Callable<T> {
             Thread.yield()

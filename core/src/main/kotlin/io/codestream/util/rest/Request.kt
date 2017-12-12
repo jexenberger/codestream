@@ -4,6 +4,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
+import java.net.Proxy
 import java.net.URL
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -18,6 +19,22 @@ class Request(val url: String, val path: String, var contentType: String = "appl
     private val headers = mutableMapOf<String, String>()
     private var body: String = ""
     private val queryParms = mutableListOf<Pair<String, String>>()
+    private var proxy: Proxy?
+
+    init {
+        proxy = HttpProxy.globalProxy?.toProxy()
+    }
+
+
+    fun proxy(server: String, port: Int = 8080, user: String? = null, password: String? = null): Request {
+        proxy = HttpProxy(server, port, user, password).toProxy()
+        return this
+    }
+
+    fun proxy(proxy: HttpProxy): Request {
+        this.proxy = proxy.toProxy()
+        return this
+    }
 
     fun headers(vararg parms: Pair<String, String>): Request {
         for (parm in parms) {
@@ -45,7 +62,7 @@ class Request(val url: String, val path: String, var contentType: String = "appl
 
     fun body(content: String): Request {
         body = content
-        return this;
+        return this
     }
 
     fun body(content: () -> String): Request {
@@ -55,29 +72,30 @@ class Request(val url: String, val path: String, var contentType: String = "appl
 
     fun post(): Response {
         val uri = url + "/" + path
-        return doRequest(uri, "POST",{body})
+        return doRequest(uri, "POST", { body })
     }
 
     fun put(): Response {
         val uri = url + "/" + path
-        return doRequest(uri, "PUT",{body})
+        return doRequest(uri, "PUT", { body })
     }
 
     fun get(): Response {
         val uri = url + "/" + path + if (queryParms.isNotEmpty()) "?" + queryParms.map { "${it.first}=${it.second}" }.joinToString("&") else ""
-        return doRequest(uri, "GET", {null})
+        return doRequest(uri, "GET", { null })
     }
 
-    private fun doRequest(uri: String, verb: String, body:()->String?): Response {
+    private fun doRequest(uri: String, verb: String, body: () -> String?): Response {
         val url = URL(uri)
-        val conn = url.openConnection() as HttpURLConnection
+        val conn = (proxy?.let { url.openConnection(proxy) } ?: url.openConnection()) as HttpURLConnection
+
         if (conn is HttpsURLConnection && !validateSSL) {
             val sc = SSLContext.getInstance("SSL")
             sc.init(null, arrayOf(NoValidatingTrustManager), SecureRandom())
             conn.sslSocketFactory = sc.socketFactory
         }
         if (conn is HttpsURLConnection && !validateHostName) {
-            conn.hostnameVerifier = HostnameVerifier { s, sslSession ->
+            conn.hostnameVerifier = HostnameVerifier { _, _ ->
                 true
             }
         }
@@ -89,16 +107,16 @@ class Request(val url: String, val path: String, var contentType: String = "appl
         conn.requestMethod = verb
         val bodyStr = body()
         if (bodyStr != null) {
-            conn.outputStream.write(bodyStr?.toByteArray())
+            conn.outputStream.write(bodyStr.toByteArray())
         }
         val responseCode = conn.responseCode
-        val responseMessage:String = conn.responseMessage.let { it } ?: "<EMPTY>"
-        try {
+        val responseMessage: String = conn.responseMessage.let { it } ?: "<EMPTY>"
+        return try {
             val input = BufferedReader(InputStreamReader(conn.inputStream))
             val result = input.readText()
-            return Response(responseCode, responseMessage, result)
+            Response(responseCode, responseMessage, result)
         } catch (e: IOException) {
-            return Response(responseCode, responseMessage, "")
+            Response(responseCode, responseMessage, "")
         }
     }
 

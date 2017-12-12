@@ -39,7 +39,7 @@ class RunTaskTest {
     @Test
     fun testRunWithConditionFalse() {
         var called = false
-        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask", condition = { d, c ->
+        val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask", condition = { _, _ ->
             called = true
             false
         })

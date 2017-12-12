@@ -11,7 +11,7 @@ class ModuleLoaderTest {
         val loader = ModuleLoader(arrayOf(ModuleLoader.defaultPath, "src/test/resources/modules"))
         val result = loader.loadModulesFromPath("src/test/resources/modules/testmodule")
         assertNotNull(result.left!!)
-        val mockModule = result.left?.forEach {
+        result.left?.forEach {
             val cl = loader.moduleScopes[it]
             assertNotNull(cl)
             val clazz = cl?.loadClass("com.jcraft.jsch.JSch")
