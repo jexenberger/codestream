@@ -9,5 +9,4 @@ fun main(args: Array<String>) {
     val application = CommandLineApp(ArgParser(args))
     application.run()
     TaskQueues.shutdown()
-
 }

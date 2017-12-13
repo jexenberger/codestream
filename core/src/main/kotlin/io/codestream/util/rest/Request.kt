@@ -111,12 +111,13 @@ class Request(val url: String, val path: String, var contentType: String = "appl
         }
         val responseCode = conn.responseCode
         val responseMessage: String = conn.responseMessage.let { it } ?: "<EMPTY>"
+        val responseHeaders = conn.headerFields
         return try {
             val input = BufferedReader(InputStreamReader(conn.inputStream))
             val result = input.readText()
-            Response(responseCode, responseMessage, result)
+            Response(responseCode, responseMessage, result, responseHeaders)
         } catch (e: IOException) {
-            Response(responseCode, responseMessage, "")
+            Response(responseCode, responseMessage, conn.errorStream.bufferedReader().readText(), responseHeaders)
         }
     }
 

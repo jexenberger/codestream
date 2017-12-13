@@ -1,7 +1,7 @@
 package io.codestream.modules.atlassian
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.codestream.modules.atlassian.jira.JiraServer
+import io.codestream.util.Server
 import io.codestream.util.YamlFactory
 import io.codestream.util.system
 import java.io.File
@@ -11,11 +11,22 @@ data class AtlassianTestSettings(val jiraUrl: String,
                                  val jiraPassword: String,
                                  val jiraTestIssue: String,
                                  val jiraTestStatus: String,
-                                 val jiraAssignmentUser: String) {
+                                 val jiraAssignmentUser: String,
+                                 val bitbucketUrl: String,
+                                 val bitbucketUser: String,
+                                 val bitbucketPassword: String,
+                                 val bitbucketSourceBranch: String,
+                                 val bitbucketTargetBranch: String,
+                                 val bitbucketReviewer: String,
+                                 val bitbucketProject: String,
+                                 val bitbucketRepo: String) {
 
 
-    val jiraServer: JiraServer
-        get() = JiraServer(jiraUrl, jiraUser, jiraPassword)
+    val jiraServer: Server
+        get() = Server(jiraUrl, jiraUser, jiraPassword)
+
+    val bitbucketServer: Server
+        get() = Server(bitbucketUrl, bitbucketUser, bitbucketPassword)
 
 
     companion object {

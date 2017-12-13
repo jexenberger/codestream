@@ -14,9 +14,13 @@ class SSHSessionBuilder(val user: String, val host: String, val port: Int = 22) 
     var password: String = ""
     var timeout: Long = 30000
     var xForwarding: Boolean = false
+    var keepAlive: Boolean = false
+    var emulation: String? = null
+    var prompt: String = "\$"
+    var eol: String = "\n"
 
     val session: Either<SSHSession, String>
-        get() = createSession().mapL { SSHSession(it, xForwarding) }
+        get() = createSession().mapL { SSHSession(it, xForwarding, prompt, eol, emulation) }
 
     fun hostsFile(file: String): SSHSessionBuilder {
         hostsFile = file
@@ -40,6 +44,26 @@ class SSHSessionBuilder(val user: String, val host: String, val port: Int = 22) 
 
     fun timeout(timeout: Long): SSHSessionBuilder {
         this.timeout = timeout
+        return this
+    }
+
+    fun keepAlive(keepAlive: Boolean = true): SSHSessionBuilder {
+        this.keepAlive = keepAlive
+        return this
+    }
+
+    fun emulation(emulation: String): SSHSessionBuilder {
+        this.emulation = emulation
+        return this
+    }
+
+    fun eol(eol: String): SSHSessionBuilder {
+        this.eol = eol
+        return this
+    }
+
+    fun prompt(prompt: String): SSHSessionBuilder {
+        this.prompt = prompt
         return this
     }
 

@@ -2,6 +2,7 @@ package io.codestream.modules.atlassian.jira
 
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
+import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
@@ -15,7 +16,7 @@ class SetStatusTask : BaseJiraTask() {
     @NotBlank
     var status:String = ""
 
-    override fun runAgainstJira(id: TaskId, ctx: StreamContext, jira: JiraServer): TaskError? {
+    override fun runAgainstServer(id: TaskId, ctx: StreamContext, jira: Server): TaskError? {
 
         val transition = mapOf("transition" to mapOf("id" to status))
 

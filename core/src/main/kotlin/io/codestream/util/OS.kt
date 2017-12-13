@@ -138,11 +138,9 @@ enum class OS(val unixVariant: Boolean, val rootDir: String, vararg val keys: St
     companion object {
         fun os(): OS {
             val osKey = System.getProperty("os.name").toLowerCase()
-            for (os in OS.values()) {
-                if (os.keys.find { osKey.contains(it) } != null) {
-                    return os
-                }
-            }
+            OS.values()
+                    .filter { os -> os.keys.find { osKey.contains(it) } != null }
+                    .forEach { return it }
             throw IllegalStateException("unrecognised OS: '$osKey'")
         }
     }

@@ -2,6 +2,7 @@ package io.codestream.modules.atlassian.jira
 
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
+import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
@@ -16,7 +17,7 @@ class AssignIssueTask : BaseJiraTask() {
     var user:String? = null
 
 
-    override fun runAgainstJira(id: TaskId, ctx: StreamContext, jira: JiraServer): TaskError? {
+    override fun runAgainstServer(id: TaskId, ctx: StreamContext, jira: Server): TaskError? {
 
         val userToUser = user?.let { it.trim() } ?: jira.user
         val assignee = mapOf("name" to userToUser)

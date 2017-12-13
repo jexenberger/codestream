@@ -17,10 +17,20 @@ class MapBuilder<T, K> {
         return this
     }
 
-    fun toMap(): Map<T, K> {
-        return emptyMap()
+    operator fun set(key: T, value: K): MapBuilder<T, K> {
+        map[key] = value
+        return this
     }
 
+    fun toMap(): Map<T, K> {
+        return map
+    }
+}
 
+fun MapBuilder<String, Any?>.nested(key: String, func: MapBuilder<String, Any?>.() -> Unit): MapBuilder<String, Any?> {
+    val nestedMap = MapBuilder<String, Any?>()
+    nestedMap.func()
+    map[key] = nestedMap.map
+    return this
 }
 

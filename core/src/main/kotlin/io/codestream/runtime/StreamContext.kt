@@ -87,6 +87,10 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
         log.info(msg)
     }
 
+    fun error(msg: Any) {
+        log.error(msg)
+    }
+
 
     override fun containsValue(value: Any?): Boolean {
         if (!this.variables.containsValue(value)) {

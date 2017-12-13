@@ -3,6 +3,7 @@ package io.codestream.modules.atlassian.jira
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
+import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
@@ -17,7 +18,7 @@ class GetIssueTransitionsTask : BaseJiraTask(){
     var issue:String = ""
 
 
-    override fun runAgainstJira(id: TaskId, ctx: StreamContext, jira: JiraServer): TaskError? {
+    override fun runAgainstServer(id: TaskId, ctx: StreamContext, jira: Server): TaskError? {
         val get = Request(
                 url = jira.url,
                 path = "rest/api/2/issue/$issue/transitions",

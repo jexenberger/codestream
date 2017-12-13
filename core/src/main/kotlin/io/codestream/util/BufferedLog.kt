@@ -23,19 +23,25 @@ class BufferedLog(val outputPath: String, val group: String, val name: String, v
 
 
     @Synchronized
-    override fun log(msg: Any) {
+    override fun log(msg: Any?) {
         messages += msg.toString()
         writeBuffer()
     }
 
     @Synchronized
-    override fun info(msg: Any) {
+    override fun debug(msg: Any?) {
         messages += msg.toString()
         writeBuffer()
     }
 
     @Synchronized
-    override fun error(msg: Any, vararg exception: Exception) {
+    override fun info(msg: Any?) {
+        messages += msg.toString()
+        writeBuffer()
+    }
+
+    @Synchronized
+    override fun error(msg: Any?, vararg exception: Exception) {
         errors += msg.toString() to exception.map { it.message }.joinToString(separator = ",")
         writeBuffer()
     }
