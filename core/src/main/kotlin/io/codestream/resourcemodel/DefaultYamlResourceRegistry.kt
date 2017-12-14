@@ -6,6 +6,9 @@ import java.io.FileReader
 
 @Suppress("UNCHECKED_CAST")
 class DefaultYamlResourceRegistry(val filePath: String) : ResourceRegistry {
+    override fun findByType(type: String): Collection<Resource> {
+        return registry.values.filter { type == it.defn.type }
+    }
 
     protected var registry: Map<String, Resource> = emptyMap()
 

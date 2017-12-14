@@ -13,11 +13,11 @@ fun KtStreamBuilder.echo(echoVal: String): KtExecutableDefinitionBuilder<EchoTas
 fun KtStreamBuilder.foreach(itemStr: String, builder: KtExecutableDefinitionBuilder<ForEachTask>.() -> Unit): KtExecutableDefinitionBuilder<ForEachTask> {
     return this.groupTask("core", "foreach", builder)
             .bindWithCtx { ctx ->
-                items = ctx.evalTo<Array<Any>>(itemStr)?.let { it } ?: emptyArray<Any>()
+                items = ctx.evalTo<Collection<Any>>(itemStr)?.let { it } ?: emptyList<Any>()
             }
 }
 
-fun KtStreamBuilder.foreach(itemsArr: Array<*>, builder: KtExecutableDefinitionBuilder<ForEachTask>.() -> Unit): KtExecutableDefinitionBuilder<ForEachTask> {
+fun KtStreamBuilder.foreach(itemsArr: Collection<*>, builder: KtExecutableDefinitionBuilder<ForEachTask>.() -> Unit): KtExecutableDefinitionBuilder<ForEachTask> {
     return this.groupTask("core", "foreach", builder)
             .bind {
                 items = itemsArr

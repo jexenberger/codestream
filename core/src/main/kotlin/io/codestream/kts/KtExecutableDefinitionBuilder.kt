@@ -10,7 +10,7 @@ class KtExecutableDefinitionBuilder<T : Executable>(val group: String, val strea
     val defn: ExecutableDefinition<*>
         get() {
             val type = TaskType(module, name)
-            val id = TaskId(group, stream, id)
+            val id = TaskId(group, stream, type, id)
             return ExecutableDefinition(type, id, binding, condition)
         }
 

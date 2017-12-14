@@ -9,7 +9,8 @@ class Stream constructor(val id: String,
                          val desc: String,
                          internal val runnables: Array<RunExecutable<*>>,
                          private val onError: ExecutableDefinition<*>? = null,
-                         val parameters: Map<String, Parameter> = mapOf()) {
+                         val parameters: Map<String, Parameter> = mapOf(),
+                         val echo: Boolean = false) {
 
 
     fun resolveInput(input: Map<String, Any?>): Map<String, Any?> {

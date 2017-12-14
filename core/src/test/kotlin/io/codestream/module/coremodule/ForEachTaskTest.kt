@@ -29,7 +29,7 @@ class ForEachTaskTest {
         ctx["x"] = true
         val taskId = genId("1")
         val stream = ForEachTask()
-        stream.items = arrayOf(1, 2, 3)
+        stream.items = listOf(1, 2, 3)
         stream.iteratorVar = "theIterator"
         stream.currentValue = "theCurrentValue"
         val result = stream.before(taskId, ctx)

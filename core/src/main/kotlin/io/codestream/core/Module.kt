@@ -63,6 +63,10 @@ interface Module {
     }
 
 
+    fun functionObject(): Any? {
+        return null
+    }
+
     companion object {
 
         var moduleRegistry: MutableMap<String, Module> = mutableMapOf()
@@ -77,6 +81,12 @@ interface Module {
 
         operator fun plusAssign(module: Module) {
             moduleRegistry[module.name] = module
+        }
+
+        fun registerFunctionObjects(ctx: StreamContext) {
+            moduleRegistry.forEach { t, u ->
+                u.functionObject()?.let { ctx[t] = it }
+            }
         }
     }
 

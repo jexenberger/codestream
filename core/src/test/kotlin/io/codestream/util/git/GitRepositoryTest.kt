@@ -17,6 +17,13 @@ class GitRepositoryTest {
         repository = settings.getRepo("origin")
     }
 
+    @Test
+    fun testBranch() {
+        val branch = repository.branch
+        assertNotNull(branch)
+        println(branch)
+    }
+
 
     @Test
     fun testFetch() {

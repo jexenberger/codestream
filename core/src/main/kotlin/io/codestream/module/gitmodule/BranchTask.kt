@@ -3,13 +3,14 @@ package io.codestream.module.gitmodule
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.git.GitRepository
+import io.codestream.util.system
 import javax.validation.constraints.NotBlank
 
 class BranchTask : Task, TaskBinder {
 
     @TaskProperty
     @NotBlank
-    var repoPath = ""
+    var repoPath = system.pwd
 
     @TaskProperty
     @NotBlank

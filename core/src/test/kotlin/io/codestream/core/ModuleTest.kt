@@ -6,7 +6,7 @@ import kotlin.test.assertNotNull
 class ModuleTest {
 
     private val mockTaskId = TaskType("mock", "mockTask")
-    private val id = TaskId("grp", "test")
+    private val id = TaskId("grp", "test", mockTaskId)
 
 
     @Test

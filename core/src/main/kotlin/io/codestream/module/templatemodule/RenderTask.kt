@@ -5,7 +5,7 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.template.TemplateEngine
 import javax.validation.constraints.NotBlank
 
-class RenderTask : Task, TaskBinder {
+class RenderTask : Task, TaskBinder, SetOutput {
 
     @TaskProperty
     @get:NotBlank
@@ -13,7 +13,7 @@ class RenderTask : Task, TaskBinder {
 
     @TaskProperty
     @get:NotBlank
-    var outputVar: String = ""
+    override var outputVar: String = "\$templateOutput"
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
         var output = TemplateEngine.render(template, ctx)

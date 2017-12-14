@@ -14,7 +14,7 @@ class TypeDefinitionTest {
     private val mockType = TaskType("mock", "mockTask")
 
     fun genId(id: String = UUID.randomUUID().toString()): TaskId {
-        return TaskId("testGroup", "testStream", id)
+        return TaskId("testGroup", "testStream", mockType, id)
     }
 
 

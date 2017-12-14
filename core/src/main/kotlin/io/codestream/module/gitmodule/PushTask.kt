@@ -5,6 +5,7 @@ import io.codestream.core.TaskProperty
 import io.codestream.core.done
 import io.codestream.util.Credentials
 import io.codestream.util.git.GitRepository
+import io.codestream.util.system
 import javax.validation.constraints.NotBlank
 
 class PushTask : BaseGitAuthenticatedTask() {
@@ -12,7 +13,7 @@ class PushTask : BaseGitAuthenticatedTask() {
 
     @TaskProperty
     @NotBlank
-    var repoPath = ""
+    var repoPath = system.pwd
 
     @TaskProperty
     @NotBlank

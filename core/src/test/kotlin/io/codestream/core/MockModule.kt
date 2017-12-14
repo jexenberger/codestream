@@ -5,7 +5,7 @@ class MockModule(override val name: String = "mock",
 
     private val mockTaskId = TaskType(name, "mockTask")
     private val mockGroupId = TaskType(name, "mockGroupTask")
-    private val id = TaskId("grp", "test")
+    private val id = TaskId("grp", "test", mockTaskId)
 
     init {
         define {

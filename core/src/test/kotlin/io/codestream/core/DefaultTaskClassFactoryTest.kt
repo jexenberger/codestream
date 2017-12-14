@@ -22,7 +22,7 @@ class DefaultTaskClassFactoryTest {
         val factory = taskFromClass(MockTask::class)
         assertNotNull(factory)
         val type = TaskType("mock", "mock")
-        val id = TaskId("test", "test")
+        val id = TaskId("test", "test", type)
         val binding = MapBinding(id, type, params = mapOf(
                 "testSet" to "hello",
                 "list" to "hello, world",

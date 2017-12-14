@@ -4,13 +4,14 @@ import io.codestream.core.TaskError
 import io.codestream.core.TaskProperty
 import io.codestream.core.done
 import io.codestream.util.git.GitServer
+import io.codestream.util.system
 import javax.validation.constraints.NotBlank
 
 
 class CloneTask : BaseGitServerTask() {
     @TaskProperty
     @NotBlank
-    var dir: String = ""
+    var dir: String = system.pwd
 
     @TaskProperty
     var branch: String? = "master"

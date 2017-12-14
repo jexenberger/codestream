@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.codestream.util.BufferedLog
+import io.codestream.util.log.BufferedStreamLog
 import java.io.File
 
 data class StreamRun(val async: Boolean = false,
                      val parameters: Map<String, Any?>,
                      var id: String?,
-                     var log: BufferedLog?) {
+                     var log: BufferedStreamLog?) {
     companion object {
 
         @JsonIgnore

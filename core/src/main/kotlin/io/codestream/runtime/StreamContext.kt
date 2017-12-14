@@ -1,8 +1,13 @@
 package io.codestream.runtime
 
+import io.codestream.core.Module
 import io.codestream.resourcemodel.EmptyResourceRegistry
 import io.codestream.resourcemodel.ResourceRegistry
-import io.codestream.util.*
+import io.codestream.util.Eval
+import io.codestream.util.OS
+import io.codestream.util.YamlFactory
+import io.codestream.util.log.ConsoleLog
+import io.codestream.util.log.Log
 import io.codestream.util.transformation.TransformerService
 import java.time.LocalDateTime
 import java.util.*
@@ -22,6 +27,8 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
         this.put("\$env", OS.os().env)
         this.put("\$system", OS.os().props)
         this.put("\$resources", this.resources)
+        this.put("\$os", OS.os())
+        Module.registerFunctionObjects(this)
     }
 
     val rootId: String

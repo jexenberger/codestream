@@ -22,6 +22,9 @@ class GitRepository(val repo: String,
             return list.map { GitBranch(it.name) }.toSet()
         }
 
+    val branch: String
+        get() = git.repository.branch
+
     val allBranches: Set<GitBranch>
         get() {
             val list = git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()

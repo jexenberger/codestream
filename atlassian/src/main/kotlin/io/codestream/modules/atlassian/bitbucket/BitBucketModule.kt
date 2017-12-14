@@ -9,9 +9,12 @@ class BitBucketModule(
     init {
 
         define {
-            task("create" to taskFromClass(CreatePullRequestTask::class))
-            task("decline" to taskFromClass(DeclinePullRequestTask::class))
+            task("create-pr" to taskFromClass(CreatePullRequestTask::class))
+            task("decline-pr" to taskFromClass(DeclinePullRequestTask::class))
         }
     }
 
+    override fun functionObject(): Any? {
+        return BitbucketFunctions()
+    }
 }

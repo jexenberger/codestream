@@ -5,7 +5,11 @@ import io.codestream.module.gitmodule.GitModule
 import io.codestream.module.iomodule.IOModule
 import io.codestream.module.sshmodule.SSHModule
 import io.codestream.module.templatemodule.TemplateModule
-import io.codestream.util.*
+import io.codestream.util.Either
+import io.codestream.util.fail
+import io.codestream.util.log.ConsoleLog
+import io.codestream.util.ok
+import io.codestream.util.system
 import org.kevoree.kcl.api.FlexyClassLoader
 import org.kevoree.kcl.api.FlexyClassLoaderFactory
 import java.io.File

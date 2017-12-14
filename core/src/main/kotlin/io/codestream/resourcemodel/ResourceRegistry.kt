@@ -6,4 +6,6 @@ interface ResourceRegistry {
 
     fun find(vararg attributes: Pair<String, Any?>): Collection<Resource>
 
+    fun findByType(type: String): Collection<Resource>
+
 }

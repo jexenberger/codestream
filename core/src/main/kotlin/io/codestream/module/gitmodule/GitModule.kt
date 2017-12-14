@@ -15,4 +15,8 @@ class GitModule(override val name: String = "git",
             task("commit-id" to taskFromClass(CommitIDTask::class))
         }
     }
+
+    override fun functionObject(): Any? {
+        return GitFunctions()
+    }
 }

@@ -12,6 +12,7 @@ import java.io.File
 class CodestreamRuntime(modulePaths: Array<String>) {
 
     var registry: ResourceRegistry? = EmptyResourceRegistry()
+    var runningStreams = mutableMapOf<String, Stream>()
 
     init {
         ModuleLoader(modulePaths).load()
@@ -32,7 +33,12 @@ class CodestreamRuntime(modulePaths: Array<String>) {
                 inputs += Pair(t, inputResolver(t, u))
             }
         }
-        return stream.run(inputs, ctx)
+        return try {
+            runningStreams[stream.id] = stream
+            stream.run(inputs, ctx)
+        } finally {
+            runningStreams.remove(stream.id)
+        }
     }
 
     fun runTask(task: TaskType, parms: Map<String, Any?>, ctx: StreamContext = StreamContext()): TaskError? {

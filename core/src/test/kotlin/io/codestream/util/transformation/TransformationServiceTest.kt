@@ -1,6 +1,7 @@
 package io.codestream.util.transformation
 
 import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -45,6 +46,9 @@ class TransformerServiceTest {
         Assert.assertArrayEquals(arrayOf(1.0, 2.0, 3.0), testD)
         val testB: Array<Boolean> = TransformerService.convert("yes, no, true, false, 1, 0")
         Assert.assertArrayEquals(arrayOf(true, false, true, false, true, false), testB)
+
+        var testCS: Collection<String> = TransformerService.convert("1, 2, 3")
+        assertArrayEquals(arrayOf("1", "2", "3"), testCS.toTypedArray())
     }
 
     @Test

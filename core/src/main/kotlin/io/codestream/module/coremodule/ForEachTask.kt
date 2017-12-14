@@ -10,7 +10,7 @@ class ForEachTask : GroupTask, TaskBinder {
 
 
     @TaskProperty
-    var items: Array<*> = emptyArray<Any>()
+    var items: Collection<*> = emptyList<Any>()
 
 
     @TaskProperty

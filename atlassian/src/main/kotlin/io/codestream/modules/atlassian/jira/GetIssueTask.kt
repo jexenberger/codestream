@@ -8,11 +8,11 @@ import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
 
-class GetIssueTask : BaseJiraTask() {
+class GetIssueTask : BaseJiraTask(), SetOutput {
 
     @NotBlank
     @TaskProperty
-    var taskVar:String = "\$jiraIssue"
+    override var outputVar: String = "\$jiraIssue"
 
     @NotBlank
     @TaskProperty
@@ -31,7 +31,7 @@ class GetIssueTask : BaseJiraTask() {
         }
 
         val jiraIssueMap:Map<String, Any?> = mapper.readValue(get.body)
-        ctx[taskVar] = jiraIssueMap
+        ctx[outputVar] = jiraIssueMap
         return done()
     }
 }

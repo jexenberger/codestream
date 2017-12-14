@@ -20,8 +20,8 @@ class GetIssueTaskTest {
         issueTask.server = settings.jiraServer
         issueTask.issue = settings.jiraTestIssue
         issueTask.execute(testId(), ctx)
-        assertNotNull(ctx[issueTask.taskVar])
-        val issue = ctx[issueTask.taskVar] as Map<String, Any?>
+        assertNotNull(ctx[issueTask.outputVar])
+        val issue = ctx[issueTask.outputVar] as Map<String, Any?>
         val fields = issue["fields"] as Map<String, Any?>
         val status = fields["status"] as Map<String, Any?>
         println(status["name"])
@@ -37,6 +37,6 @@ class GetIssueTaskTest {
         val error = issueTask.execute(testId(), ctx)
         assertNotNull(error)
         println(error?.msg)
-        assertNull(ctx[issueTask.taskVar])
+        assertNull(ctx[issueTask.outputVar])
     }
 }
