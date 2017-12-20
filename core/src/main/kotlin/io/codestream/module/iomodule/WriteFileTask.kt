@@ -7,21 +7,22 @@ import java.nio.charset.Charset
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
-class WriteFileTask : Task, TaskBinder {
+@TaskDescriptor("write", description = "Writes content to a file")
+class WriteFileTask : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "Name of destination file")
     @get:NotBlank
     var file: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Content to write to the file")
     @get:NotBlank
     var content: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "File encoding to use, default is 'UTF-8'")
     @get:NotBlank
     var encoding: String = "UTF-8"
 
-    @TaskProperty
+    @TaskProperty(description = "Overwrite existing file if it exists, default is 'true'")
     @get:NotNull
     var overwrite: Boolean = true
 

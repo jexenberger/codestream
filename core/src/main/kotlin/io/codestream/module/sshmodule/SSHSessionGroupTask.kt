@@ -5,10 +5,13 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.fail
 import io.codestream.util.ok
+import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("session", description = "Group tasks manages an SSH session, can be used in conjuction with shell task")
 class SSHSessionGroupTask : BaseSSHHandler(), GroupTask {
 
-    @TaskProperty
+    @TaskProperty(description = "name of variable to set default is '\$ssh'")
+    @get:NotBlank
     var sessionVar: String = "\$ssh"
 
     override fun before(id: TaskId, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
@@ -30,7 +33,7 @@ class SSHSessionGroupTask : BaseSSHHandler(), GroupTask {
         try {
             shutdown()
         } catch (e: Exception) {
-            ctx.error(e)
+            ctx.error(id, e)
         }
     }
 }

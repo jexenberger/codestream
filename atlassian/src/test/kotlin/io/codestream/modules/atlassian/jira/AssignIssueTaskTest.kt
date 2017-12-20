@@ -6,6 +6,7 @@ import io.codestream.runtime.StreamContext
 import org.junit.Test
 import kotlin.test.assertNull
 
+
 class AssignIssueTaskTest {
 
     val settings: AtlassianTestSettings = AtlassianTestSettings.get()

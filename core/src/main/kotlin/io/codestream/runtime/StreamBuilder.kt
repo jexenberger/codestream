@@ -3,6 +3,7 @@ package io.codestream.runtime
 import io.codestream.core.ExecutableDefinition
 import io.codestream.core.Module
 import io.codestream.core.Parameter
+import io.codestream.core.invalidModule
 
 
 class StreamBuilder(name: String, group: String, desc: String = "") {
@@ -36,7 +37,7 @@ class StreamBuilder(name: String, group: String, desc: String = "") {
                     runnables += groupTask
                 }
             }
-        }
+        } ?: throw invalidModule(defn.id, "${defn.type.fqn} is not a recognised type")
         return this
     }
 }

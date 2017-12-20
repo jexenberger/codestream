@@ -18,6 +18,7 @@ data class ExecutableDefinition<in T : Executable>(val type: TaskType,
                                                    val binding: Binding<T>,
                                                    val condition: Conditional = defaultCondition(),
                                                    val lineNumber: Long = 0,
+                                                   val source: String? = null,
                                                    val internalId: Int = nextId()) {
 
 
@@ -29,8 +30,9 @@ data class ExecutableDefinition<in T : Executable>(val type: TaskType,
                 params: Map<String, Any?>,
                 condition: Conditional = defaultCondition(),
                 lineNumber: Long = 0,
+                source: String? = null,
                 internalId: Int = nextId()) : this(
-            type, id, MapBinding(id, type, params).toBinding(), condition, lineNumber, internalId)
+            type, id, MapBinding(id, type, params).toBinding(), condition, lineNumber, source, internalId)
 
 
     fun invalidModuleMsg(): String {

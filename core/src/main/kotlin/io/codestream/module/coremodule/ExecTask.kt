@@ -8,7 +8,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.validation.constraints.NotBlank
 
-class ExecTask : Task, TaskBinder {
+class ExecTask : Task {
 
     @TaskProperty
     @get:NotBlank
@@ -42,7 +42,7 @@ class ExecTask : Task, TaskBinder {
         val result = cmd.exec(dir = pwdDir, timeout = timeout, timeUnit = TimeUnit.SECONDS) {
             buffer += "$it\n"
             if (echo) {
-                ctx.log(it)
+                ctx.echo(it)
             }
         }
         ctx[exitStatus] = result

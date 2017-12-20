@@ -4,7 +4,7 @@ import io.codestream.resourcemodel.Resource
 import io.codestream.runtime.StreamContext
 import javax.validation.constraints.NotNull
 
-class MockTask() : Task, TaskBinder {
+class MockTask : Task {
 
 
     var ran: Boolean = false
@@ -34,7 +34,6 @@ class MockTask() : Task, TaskBinder {
     var list: Array<String>? = null
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        println(this)
         Thread.sleep(200)
         server?.let { ctx["resourceName"] = it.id }
         inputVariable = ctx["inputVariable"] as String?

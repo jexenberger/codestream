@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
-class SetVariableTask : Task, TaskBinder {
+class SetVariableTask : Task {
 
 
     @TaskProperty

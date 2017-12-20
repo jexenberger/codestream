@@ -1,12 +1,15 @@
 package io.codestream.module.coremodule
 
-import io.codestream.core.*
+import io.codestream.core.GroupTask
+import io.codestream.core.TaskError
+import io.codestream.core.TaskId
+import io.codestream.core.TaskProperty
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.ok
 import javax.validation.constraints.NotBlank
 
-class ForEachTask : GroupTask, TaskBinder {
+class ForEachTask : GroupTask {
 
 
     @TaskProperty

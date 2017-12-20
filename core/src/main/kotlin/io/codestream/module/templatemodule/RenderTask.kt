@@ -5,13 +5,14 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.template.TemplateEngine
 import javax.validation.constraints.NotBlank
 
-class RenderTask : Task, TaskBinder, SetOutput {
+@TaskDescriptor("render", description = "Renders a template")
+class RenderTask : Task, SetOutput {
 
-    @TaskProperty
+    @TaskProperty(description = "Path to template file located in templates basepath")
     @get:NotBlank
     var template: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Variable to set using rendered output, default is '\$templateOutput'")
     @get:NotBlank
     override var outputVar: String = "\$templateOutput"
 

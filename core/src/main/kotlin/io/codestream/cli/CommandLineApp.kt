@@ -4,20 +4,25 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import com.xenomachina.argparser.mainBody
 import io.codestream.core.ModuleLoader
-import io.codestream.core.TaskType
 import io.codestream.runtime.CodestreamRuntime
-import java.io.File
+import io.codestream.util.log.Log
+
+
+enum class Command(val description: String, val handler: (Log, CodestreamRuntime, String?, Map<String, Any?>) -> Unit) {
+    run("Run a stream file. COMMAND_OPTION is passed stream file", ::run),
+    task("Run a Task. COMMAND_OPTION is fully qualified task type", ::task),
+    help("Display help information. COMMAND_OPTION is optional help topic", ::help)
+
+}
 
 class CommandLineApp(args: ArgParser) {
 
 
-    //Stream name
-    val streamName: File? by args.storing("-s", "--stream", help = "stream YAML/Kotlin src to run") {
-        File(this)
-    }.default(null)
+    val command: Command? by args.positional(name = "COMMAND", help = "Can be 'run' to run a stream, 'task' to run a task or 'help' for help pages") {
+        Command.valueOf(this)
+    }
+    val commandOption: String? by args.positional(name = "COMMAND_OPTION", help = "Option associated with the command")
 
-    //Task to Run
-    val task: String? by args.storing("-t", "--task", help = "Task to run").default(null)
 
     //Input parameters passed at run time
     val inputParms by args.adding("-I", "--input", help = "input parameter (format: [name]=[items]") {
@@ -35,33 +40,7 @@ class CommandLineApp(args: ArgParser) {
 
 
     fun run() = mainBody("cs") {
-
-        if (streamName == null && task == null) {
-            println("stream or task is required")
-        } else {
-
-            streamName?.let {
-                val result = csRuntime.runStream(it, inputParms = inputParms.toMap(), inputResolver = { _, parm ->
-                    var done: Boolean
-                    var input: String?
-                    val isRequired = parm.required
-                    val prompt = "${parm.desc} ${if (isRequired) "(required)" else ""} :"
-                    do {
-                        print(prompt)
-                        input = readLine()?.trim()
-                        done = !(isRequired && input.isNullOrEmpty())
-                    } while (!done)
-                    input!!
-                })
-                result?.let { errors ->
-                    println(errors.message)
-                    errors.errors.forEach { println(it.message) }
-                }
-            }
-            task?.let {
-                csRuntime.runTask(TaskType.fromString(it), inputParms.toMap())
-            }
-        }
+        val parms = inputParms.toTypedArray().toMap()
+        command?.handler?.invoke(csRuntime.log, csRuntime, commandOption, parms)
     }
-
 }

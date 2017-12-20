@@ -8,13 +8,14 @@ import java.io.FileWriter
 import java.io.IOException
 import javax.validation.constraints.NotBlank
 
-class RenderToFileTask : Task, TaskBinder {
+@TaskDescriptor("renderfile", description = "Renders a template to an output file")
+class RenderToFileTask : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "Path to template file located in templates basepath")
     @get:NotBlank
     var template: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Target file to render output")
     @get:NotBlank
     var target: String = ""
 

@@ -5,7 +5,7 @@ import io.codestream.runtime.StreamContext
 
 
 fun testId(module: String = "test", name: String = "test"): TaskId {
-    return TaskId(module, name)
+    return TaskId(module, name, TaskType("test", "test"))
 }
 
 fun <T : Executable> createTaskContext(coreModule: Module = MockModule(),

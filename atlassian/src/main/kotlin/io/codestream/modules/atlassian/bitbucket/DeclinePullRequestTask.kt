@@ -6,19 +6,20 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("decline-pr", description = "Decline a Bitbucket Pull Request")
 class DeclinePullRequestTask : BaseBitbucketTask() {
 
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Bitbucket project")
+    @get:NotBlank
     var project: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Bitbucket repo slug")
+    @get:NotBlank
     var repo: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "ID of the PR")
+    @get:NotBlank
     var id: String = ""
 
 

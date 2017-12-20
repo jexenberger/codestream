@@ -6,7 +6,7 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotEmpty
 
-class YamlResourceDefinitionsTask : Task, TaskBinder {
+class YamlResourceDefinitionsTask : Task {
     @TaskProperty
     @NotEmpty
     var file: String = ""

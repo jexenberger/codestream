@@ -6,7 +6,7 @@ import io.codestream.util.Credentials
 import io.codestream.util.SSHKey
 import io.codestream.util.UserPassword
 
-abstract class BaseGitAuthenticatedTask : Task, TaskBinder {
+abstract class BaseGitAuthenticatedTask : Task {
     @TaskProperty
     var user: String? = null
     @TaskProperty

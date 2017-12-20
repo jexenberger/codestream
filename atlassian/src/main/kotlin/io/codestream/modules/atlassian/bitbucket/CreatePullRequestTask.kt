@@ -9,44 +9,45 @@ import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 
+@TaskDescriptor("create-pr", description = "Create a new Bitbucket Pull Request")
 class CreatePullRequestTask : BaseBitbucketTask(), SetOutput {
 
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Name of variable to set from PR reference, default is '\$bitbucketRequestId' ")
+    @get:NotBlank
     override var outputVar: String = "\$bitbucketRequestId"
 
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Source branch to use in PR")
+    @get:NotBlank
     var src: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Bitbucket project to use")
+    @get:NotBlank
     var project: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Target branch to use in PR")
+    @get:NotBlank
     var target: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Description to use in the PR")
+    @get:NotBlank
     var description: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Title to use in the PR")
+    @get:NotBlank
     var title: String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Repo slug for the PR")
+    @get:NotBlank
     var repo: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "User name of the reviewers who will review the PR")
     @NotEmpty
     var reviewers: Array<String> = emptyArray()
 
     override fun runAgainstServer(id: TaskId, ctx: StreamContext, server: Server): TaskError? {
-        val path = "$basePath/projects/$project/repos/$repo/pull-requests"
+        val path = "$basePath/repositories/$project/repos/$repo/pull-requests"
         val postBody = mapper.writeValueAsString(buildRequest())
         val response = Request(
                 url = server.url,

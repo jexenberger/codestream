@@ -1,5 +1,6 @@
-stream(name = "MyCoolTestStream") {
+package io.codestream.kts
 
+stream(name = "MyCoolTestStream") {
 
 
 }

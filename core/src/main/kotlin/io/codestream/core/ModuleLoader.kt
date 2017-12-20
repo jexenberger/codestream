@@ -5,9 +5,10 @@ import io.codestream.module.gitmodule.GitModule
 import io.codestream.module.iomodule.IOModule
 import io.codestream.module.sshmodule.SSHModule
 import io.codestream.module.templatemodule.TemplateModule
+import io.codestream.module.utilmodule.UtilModule
+import io.codestream.runtime.CodestreamRuntime
 import io.codestream.util.Either
 import io.codestream.util.fail
-import io.codestream.util.log.ConsoleLog
 import io.codestream.util.ok
 import io.codestream.util.system
 import org.kevoree.kcl.api.FlexyClassLoader
@@ -20,11 +21,18 @@ class ModuleLoader(private val paths: Array<String>) {
 
     val moduleScopes: MutableMap<Module, FlexyClassLoader> = mutableMapOf()
 
-    val log = ConsoleLog()
+    val log = CodestreamRuntime.runtime.log
 
     init {
 
-        val defaultModules: Array<Module> = arrayOf(CoreModule(), TemplateModule(), IOModule(), GitModule(), SSHModule())
+        val defaultModules: Array<Module> = arrayOf(
+                CoreModule(),
+                UtilModule(),
+                TemplateModule(),
+                IOModule(),
+                GitModule(),
+                SSHModule()
+        )
         log.debug("Loading core modules")
         defaultModules.forEach {
             log.debug("Loading module -> ${it.name}")
@@ -47,6 +55,7 @@ class ModuleLoader(private val paths: Array<String>) {
                                 Module += it
                             }
                         }, {
+
                             moduleThatCouldNotBeLoaded.add(it)
                         })
                     }

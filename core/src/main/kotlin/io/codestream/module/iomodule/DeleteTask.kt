@@ -4,16 +4,15 @@ import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
-class DeleteTask : Task, TaskBinder {
+@TaskDescriptor("delete", description = "Deletes a file or directory")
+class DeleteTask : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "Path to delete")
     @get:NotBlank
     var src: String = ""
 
-    @TaskProperty
-    @get:NotNull
+    @TaskProperty(description = "Recursively delete this path if it's a directory")
     var recursive: Boolean = true
 
 

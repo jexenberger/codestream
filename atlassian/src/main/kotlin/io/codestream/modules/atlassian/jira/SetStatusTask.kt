@@ -6,14 +6,15 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("set-status", description = "Sets the status for a Jira issue")
 class SetStatusTask : BaseJiraTask() {
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Jira issue to set the status of")
+    @get:NotBlank
     var issue:String = ""
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Status to set the Jira issue to (This is the status ID)")
+    @get:NotBlank
     var status:String = ""
 
     override fun runAgainstServer(id: TaskId, ctx: StreamContext, jira: Server): TaskError? {

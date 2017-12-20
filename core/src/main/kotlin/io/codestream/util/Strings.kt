@@ -5,11 +5,12 @@ import java.util.concurrent.TimeUnit
 
 fun Any?.stringify(): String = this.toString().trim()
 
+
 fun String.exec(dir: File = File(System.getProperty("user.dir")),
                 timeout: Long = 60,
                 timeUnit: TimeUnit = TimeUnit.MINUTES): Pair<Int, String> {
     val parts = this.split(" ")
-    var process = ProcessBuilder(parts)
+    val process = ProcessBuilder(parts)
             .redirectOutput(ProcessBuilder.Redirect.INHERIT)
             .redirectError(ProcessBuilder.Redirect.INHERIT)
             .directory(dir)
@@ -28,7 +29,7 @@ fun String.exec(dir: File = File(System.getProperty("user.dir")),
                 timeUnit: TimeUnit = TimeUnit.MINUTES,
                 handler:(String)-> Unit): Int {
     val parts = this.split(" ")
-    var process = ProcessBuilder(parts)
+    val process = ProcessBuilder(parts)
             .redirectOutput(ProcessBuilder.Redirect.INHERIT)
             .redirectError(ProcessBuilder.Redirect.INHERIT)
             .directory(dir)

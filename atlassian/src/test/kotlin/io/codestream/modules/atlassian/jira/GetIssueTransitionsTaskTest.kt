@@ -17,10 +17,10 @@ class GetIssueTransitionsTaskTest {
         issueTask.server = settings.jiraServer
         issueTask.issue = settings.jiraTestIssue
         issueTask.execute(testId(), ctx)
-        assertNotNull(ctx[issueTask.transitionsVar])
+        assertNotNull(ctx[issueTask.outputVar])
         @Suppress("UNCHECKED_CAST")
-        ctx[issueTask.transitionsVar] as Map<String, Any?>
-        val result = ctx.evalScript<Any?>(issueTask.transitionsVar)
+        ctx[issueTask.outputVar] as Map<String, Any?>
+        val result = ctx.evalScript<Any?>(issueTask.outputVar)
         println(result)
     }
 

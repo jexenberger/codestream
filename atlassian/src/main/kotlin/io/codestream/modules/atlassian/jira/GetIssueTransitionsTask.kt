@@ -7,14 +7,15 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
-class GetIssueTransitionsTask : BaseJiraTask(){
+@TaskDescriptor("issue-transitions", description = "gets the issues for a transition and sets them in a Map of Transition ID to Transition Name")
+class GetIssueTransitionsTask : BaseJiraTask(), SetOutput {
 
-    @NotBlank
-    @TaskProperty
-    var transitionsVar:String = "\$transitions"
+    @get:NotBlank
+    @TaskProperty(description = "Variable to set, default is '\$transitions'")
+    override var outputVar: String = "\$transitions"
 
-    @NotBlank
-    @TaskProperty
+    @get:NotBlank
+    @TaskProperty(description = "Jira issur to get transitions from ")
     var issue:String = ""
 
 
@@ -38,7 +39,7 @@ class GetIssueTransitionsTask : BaseJiraTask(){
                 .mapValues { (_, value) ->
                     value["id"] as String
                 }
-        ctx[transitionsVar] = mapping
+        ctx[outputVar] = mapping
         return done()
     }
 }

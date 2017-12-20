@@ -14,7 +14,7 @@ data class TaskId(val group: String,
     companion object {
         fun fromString(str: String): TaskId {
             val parts = str.trim().split("::")
-            if (parts.size != 3) throw IllegalStateException("'$str' is not in valid format '[group]::[stream]::[id]'")
+            if (parts.size != 5) throw IllegalStateException("'$str' is not in valid format '[group]::[stream]::[id]'")
             return TaskId(parts[0], parts[1], TaskType(parts[2], parts[3]), parts[4])
         }
     }

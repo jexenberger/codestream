@@ -14,8 +14,14 @@ class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
                                   override var state: RunExecutableState = RunExecutableState.Pending) : RunExecutable<T> {
 
     override fun run(ctx: StreamContext): TaskError? {
+        var buffer = ""
+        (0..ctx.depthCnt).forEach {
+            buffer += "  "
+        }
+        ctx.echo("$buffer[${defn.type}] ~")
+        val currentCtx = ctx
         state = RunExecutableState.Running
-        val (task, theError) = defn.module.createGroupTask(defn, ctx)
+        val (task, theError) = defn.module.createGroupTask(defn, currentCtx)
         if (theError != null) {
             return theError
         }
@@ -24,7 +30,7 @@ class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
             var resultAction: GroupTask.AfterAction = GroupTask.AfterAction.Return
             do {
                 @Suppress("UNCHECKED_CAST")
-                val exec = runGroupTask(task!! as T, ctx)
+                val exec = runGroupTask(task!! as T, currentCtx)
                 exec.left?.let {
                     when (it) {
                         GroupTask.AfterAction.Skipped -> state = RunExecutableState.Skipped
@@ -40,9 +46,13 @@ class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
             return error
         } catch (e: Exception) {
             state = RunExecutableState.ThrewException
-            task!!.onError(defn.id, ctx, e)
+            task!!.onError(defn.id, currentCtx, e)
             return taskFailedWithException(defn.id, "${e::class.qualifiedName.toString()} -> ${e.message ?: "<NO MESSAGE>"}")
+        } finally {
+            //println empty line break
+            ctx.echo("${buffer}~")
         }
+
     }
 
     private fun runGroupTask(task: T, ctx: StreamContext): Either<GroupTask.AfterAction, TaskError> {

@@ -22,7 +22,8 @@ fun ifTask(id:TaskId,type:TaskType, task:Executable, f: (Task)-> TaskError?) : T
 data class TaskError(val id: TaskId,
                      val code: String,
                      val msg: String,
-                     var errors: Array<TaskError> = arrayOf()) : Exception("${id.fqid}::$code -> $msg") {
+                     var errors: Array<TaskError> = arrayOf(),
+                     var lineNumber: Long = 0) : Exception("${id.fqid}::$code -> $msg") {
 
 
     override fun toString(): String {

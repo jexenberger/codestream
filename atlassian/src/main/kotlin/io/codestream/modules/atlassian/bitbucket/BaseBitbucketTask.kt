@@ -7,7 +7,7 @@ import io.codestream.util.Server
 abstract class BaseBitbucketTask : BaseAtlassianTask() {
 
     @TaskProperty
-    val basePath = "rest/api/1.0"
+    var basePath = "rest/api/2.0"
 
     override fun name(): String {
         return "BitBucket"

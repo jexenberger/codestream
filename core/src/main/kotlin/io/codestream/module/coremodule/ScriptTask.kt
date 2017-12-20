@@ -5,7 +5,7 @@ import io.codestream.runtime.StreamContext
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 
-class ScriptTask : Task, TaskBinder {
+class ScriptTask : Task {
 
     @TaskProperty
     @get:NotBlank

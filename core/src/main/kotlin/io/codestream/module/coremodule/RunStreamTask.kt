@@ -7,7 +7,7 @@ import java.io.File
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 
-class RunStreamTask : Task, TaskBinder {
+class RunStreamTask : Task {
 
 
     @TaskProperty()

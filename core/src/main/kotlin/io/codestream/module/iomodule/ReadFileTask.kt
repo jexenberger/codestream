@@ -6,17 +6,18 @@ import java.io.File
 import java.nio.charset.Charset
 import javax.validation.constraints.NotBlank
 
-class ReadFileTask : Task, TaskBinder {
+@TaskDescriptor("read", description = "Reads a file")
+class ReadFileTask : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "File to read")
     @get:NotBlank
     var src: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Name of output variable to set with file content, default is '\$readFile'")
     @get:NotBlank
-    var outputVar: String = ""
+    var outputVar: String = "\$readFile"
 
-    @TaskProperty
+    @TaskProperty(description = "Source file encoding, default is 'UTF-8'")
     @get:NotBlank
     var encoding: String = "UTF-8"
 
@@ -25,7 +26,7 @@ class ReadFileTask : Task, TaskBinder {
         if (!theFile.exists()) {
             return invalidParameter(id, "$src does not exist")
         }
-        if (theFile.isDirectory()) {
+        if (theFile.isDirectory) {
             return invalidParameter(id, "$src does is a directory")
         }
         if (!theFile.canRead()) {

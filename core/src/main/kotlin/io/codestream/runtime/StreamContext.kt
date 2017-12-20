@@ -1,13 +1,14 @@
 package io.codestream.runtime
 
 import io.codestream.core.Module
+import io.codestream.core.TaskId
 import io.codestream.resourcemodel.EmptyResourceRegistry
 import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.Eval
 import io.codestream.util.OS
 import io.codestream.util.YamlFactory
-import io.codestream.util.log.ConsoleLog
-import io.codestream.util.log.Log
+import io.codestream.util.log.FileLog
+import io.codestream.util.log.RunLog
 import io.codestream.util.transformation.TransformerService
 import java.time.LocalDateTime
 import java.util.*
@@ -18,7 +19,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                          val timeStamp: LocalDateTime = LocalDateTime.now(),
                          var variables: MutableMap<String, Any?> = mutableMapOf<String, Any?>(),
                          var parent: StreamContext? = null,
-                         val log: Log = ConsoleLog(),
+                         val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), CodestreamRuntime.defaultLog),
                          var resources: ResourceRegistry = EmptyResourceRegistry()) : Bindings {
 
 
@@ -32,7 +33,10 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     }
 
     val rootId: String
-        get() = parent?.let { it.id } ?: id
+        get() = parent?.id ?: id
+
+    val depthCnt: Int
+        get() = parent?.let { 1 + it.depthCnt } ?: 0
 
     fun asMap(): Map<String, Any?> {
         val contextVar = mapOf(Pair("id", id), Pair("timeStamp", timeStamp))
@@ -66,7 +70,6 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     }
 
     inline fun <reified K> evalTo(script: Any?, typeHint: KClass<*>? = null): K? {
-        println(script)
         return script?.let {
             return if (Eval.isScriptString(it.toString())) {
                 evalScript(script.toString())
@@ -86,16 +89,25 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                 id = UUID.randomUUID().toString(),
                 timeStamp = LocalDateTime.now(),
                 variables = mutableMapOf(),
-                parent = this
+                parent = this,
+                log = this.log
         )
     }
 
-    fun log(msg: Any) {
-        log.info(msg)
+    fun log(id: TaskId, msg: Any) {
+        log.info(id, msg)
     }
 
-    fun error(msg: Any) {
-        log.error(msg)
+    fun echo(msg: Any) {
+        log.echo(msg)
+    }
+
+    fun error(id: TaskId, msg: Any) {
+        log.error(id, msg)
+    }
+
+    fun debug(id: TaskId, msg: Any) {
+        log.debug(id, msg)
     }
 
 

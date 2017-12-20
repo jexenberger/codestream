@@ -20,6 +20,7 @@ class CreatePullRequestTaskTest {
         task.src = settings.bitbucketSourceBranch
         task.target = settings.bitbucketTargetBranch
         task.reviewers = arrayOf(settings.bitbucketReviewer)
+        settings.bitbucketBasePath?.let { task.basePath = it }
         val ctx = StreamContext()
         val execute = task.execute(testId(), ctx)
         val localhost = ctx[task.outputVar]

@@ -6,14 +6,15 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("assign", description = "Assigns a Jira issue to a user")
 class AssignIssueTask : BaseJiraTask() {
 
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Issue to assign")
+    @get:NotBlank
     var issue:String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "User to assign to, if not specified it defaults to the user specified in configuration")
     var user:String? = null
 
 

@@ -3,7 +3,7 @@ package io.codestream.module.coremodule
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 
-class SleepTask : Task, TaskBinder {
+class SleepTask : Task {
 
     @TaskProperty
     var duration: Long = 0

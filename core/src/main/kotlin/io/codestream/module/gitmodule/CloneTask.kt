@@ -1,5 +1,6 @@
 package io.codestream.module.gitmodule
 
+import io.codestream.core.TaskDescriptor
 import io.codestream.core.TaskError
 import io.codestream.core.TaskProperty
 import io.codestream.core.done
@@ -7,20 +8,21 @@ import io.codestream.util.git.GitServer
 import io.codestream.util.system
 import javax.validation.constraints.NotBlank
 
-
+@TaskDescriptor("clone", description = "Clone a GIT repository from a GIT server")
 class CloneTask : BaseGitServerTask() {
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Directory in which to clone the repository, default is 'pwd'")
+    @get:NotBlank
     var dir: String = system.pwd
 
-    @TaskProperty
+    @TaskProperty(description = "GIT branch to clone, default is 'master'")
     var branch: String? = "master"
 
-    @TaskProperty
+    @TaskProperty(description = "Option to clone all branches, default is true")
     var cloneAllBranches = true
 
 
-    @TaskProperty
+    @TaskProperty(description = "name of remote to use, default is 'origin'")
+    @get:NotBlank
     var remote = "origin"
 
 

@@ -1,5 +1,6 @@
 package io.codestream.core
 
+import io.codestream.doc.ExecutableDocumentation
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.fail
@@ -15,6 +16,13 @@ interface Module {
 
     val name: String
     val factories: MutableMap<TaskType, Pair<AllowedTypes, Factory<out Executable>>>
+    val description: String
+    val tasks: Set<TaskType>
+        get() = factories.keys
+
+    fun documentation(type: TaskType): ExecutableDocumentation? {
+        return factories[type]?.second?.documentation
+    }
 
     fun <T : Executable> create(type: ExecutableDefinition<T>, ctx: StreamContext): Either<out Executable, TaskError> {
         val factory = factories[type.type] ?: return fail {
@@ -52,6 +60,14 @@ interface Module {
         init()
     }
 
+    infix fun task(task: DefaultTaskClassFactory) {
+        task(task.description.name to task)
+    }
+
+    infix fun groupTask(task: DefaultGroupTaskFactory) {
+        groupTask(task.description.name to task)
+    }
+
     infix fun task(task: Pair<String, Factory<Task>>) {
         val type = typeOf(task.first)
         factories[type] = AllowedTypes.task to task.second
@@ -77,6 +93,12 @@ interface Module {
 
         operator fun get(module: String): Module? {
             return moduleRegistry[module]
+        }
+
+        fun forEach(handler: (Module) -> Unit) {
+            moduleRegistry.forEach { k, v ->
+                handler(v)
+            }
         }
 
         operator fun plusAssign(module: Module) {

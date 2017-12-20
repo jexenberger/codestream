@@ -6,17 +6,19 @@ import io.codestream.util.git.GitRepository
 import io.codestream.util.system
 import javax.validation.constraints.NotBlank
 
-class CommitTask : Task, TaskBinder {
 
-    @TaskProperty
-    @NotBlank
+@TaskDescriptor("commit", description = "Commits a GIT repo")
+class CommitTask : Task {
+
+    @TaskProperty(description = "Path to GIT repo")
+    @get:NotBlank
     var repoPath: String = system.pwd
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Commit message to use")
+    @get:NotBlank
     var message: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Add all existing files not added to GIT control default is 'true'")
     var all: Boolean = true
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {

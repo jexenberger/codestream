@@ -36,10 +36,12 @@ class Stream constructor(val id: String,
     fun run(input: Map<String, Any?> = mapOf(), ctx: StreamContext = StreamContext()): TaskError? {
         ctx += resolveInput(input)
 
+        val type = TaskType("core", "group")
         val defn = ExecutableDefinition<GroupTask>(
-                type = TaskType("core", "group"),
-                id = TaskId(this.group, this.id),
-                binding = emptyBinding()
+                type = type,
+                id = TaskId(this.group, this.id, type),
+                binding = emptyBinding(),
+                lineNumber = 0
         )
         val result = RunGroupTask(defn, this.runnables)
                 .run(ctx)

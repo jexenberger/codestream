@@ -6,7 +6,7 @@ import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Server
 
-abstract class BaseAtlassianTask : Task, TaskBinder {
+abstract class BaseAtlassianTask : Task {
 
     @TaskProperty
     var config: String? = null

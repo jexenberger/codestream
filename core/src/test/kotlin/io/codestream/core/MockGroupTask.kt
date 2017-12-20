@@ -4,7 +4,7 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.ok
 
-class MockGroupTask : GroupTask, TaskBinder {
+class MockGroupTask : GroupTask {
 
     var cnt: Int = 0
 

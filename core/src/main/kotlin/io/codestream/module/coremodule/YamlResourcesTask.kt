@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Pattern
 
-class YamlResourcesTask : Task, TaskBinder {
+class YamlResourcesTask : Task {
 
     @TaskProperty
     @NotEmpty
@@ -33,11 +33,11 @@ class YamlResourcesTask : Task, TaskBinder {
         val registry = DefaultYamlResourceRegistry(file)
         val result = registry.load()
         return result?.let {
-            taskFailed(id, it.message ?: "", it.errors.map { TaskError(id,"ResourceTaskFailed", it) }.toTypedArray())
+            taskFailed(id, it.message ?: "", it.errors.map { TaskError(id, "ResourceTaskFailed", it) }.toTypedArray())
         } ?: populateCtx(ctx, registry)
     }
 
-    fun populateCtx(ctx:StreamContext, registry: DefaultYamlResourceRegistry) : TaskError? {
+    fun populateCtx(ctx: StreamContext, registry: DefaultYamlResourceRegistry): TaskError? {
         if ("variable".equals(scope)) {
             ctx[varName] = registry
         }

@@ -7,15 +7,15 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
-
+@TaskDescriptor("get", description = "Retrieves a Jira issue and sets it in a variable")
 class GetIssueTask : BaseJiraTask(), SetOutput {
 
-    @NotBlank
-    @TaskProperty
+    @get:NotBlank
+    @TaskProperty(description = "Output variable to set, default is '\$jiraIssue'")
     override var outputVar: String = "\$jiraIssue"
 
-    @NotBlank
-    @TaskProperty
+    @get:NotBlank
+    @TaskProperty(description = "Jira issue to use")
     var issue:String = ""
 
     override fun runAgainstServer(id: TaskId, ctx: StreamContext, jira: Server): TaskError? {

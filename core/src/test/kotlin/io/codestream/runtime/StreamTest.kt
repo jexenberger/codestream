@@ -15,7 +15,7 @@ class StreamTest {
     }
 
     fun genId(id: String = UUID.randomUUID().toString()): TaskId {
-        return TaskId("testGroup", "testStream", id)
+        return TaskId("testGroup", "testStream", mockType, id)
     }
 
     /*

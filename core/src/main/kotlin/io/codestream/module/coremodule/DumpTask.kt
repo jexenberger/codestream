@@ -3,15 +3,16 @@ package io.codestream.module.coremodule
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import java.io.File
+import javax.validation.constraints.NotBlank
 
-class DumpTask : Task, TaskBinder {
+class DumpTask : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "Name of file to dump the Stream context to, default is '.\$\$run.yaml'")
+    @get:NotBlank
     var file: String = ".\$\$run.yaml"
 
-    @TaskProperty
+    @TaskProperty(description = "Overwrite if file already exists, default is 'true'")
     var overwrite: Boolean = true
-
 
     var written: Boolean = false
 

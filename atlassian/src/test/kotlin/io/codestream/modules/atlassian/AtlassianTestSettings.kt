@@ -19,7 +19,8 @@ data class AtlassianTestSettings(val jiraUrl: String,
                                  val bitbucketTargetBranch: String,
                                  val bitbucketReviewer: String,
                                  val bitbucketProject: String,
-                                 val bitbucketRepo: String) {
+                                 val bitbucketRepo: String,
+                                 val bitbucketBasePath: String?) {
 
 
     val jiraServer: Server

@@ -6,6 +6,7 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.fail
 import io.codestream.util.log.BufferedStreamLog
+import io.codestream.util.log.RunLog
 import io.codestream.util.ok
 import java.io.File
 import java.util.*
@@ -17,7 +18,8 @@ class StreamApi {
                   name: String,
                   data: StreamRun): Either<StreamRun, TaskError> {
         val id = UUID.randomUUID().toString()
-        val log = BufferedStreamLog(path, group, name, id)
+        val streamLog = BufferedStreamLog(path, group, name, id)
+        val log = RunLog(streamLog, streamLog)
         val runtime = CodestreamRuntime.init(emptyArray())
         val ctx = StreamContext(log = log)
         data.id = id

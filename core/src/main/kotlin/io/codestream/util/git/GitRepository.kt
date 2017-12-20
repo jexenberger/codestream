@@ -111,16 +111,5 @@ class GitRepository(val repo: String,
         addCommand.call()
         return this
     }
-
-    companion object {
-        fun fromExistingRepository(path: String): GitRepository? {
-            val git = Git.open(File(path))
-            val remoteList = git.remoteList().call().map { it.name }
-            println(remoteList)
-            return null
-        }
-    }
-
-
 }
 

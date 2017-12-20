@@ -81,6 +81,14 @@
                 <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>2.9.0</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.9.0</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-coroutines-core</artifactId>

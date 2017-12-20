@@ -5,18 +5,20 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.ssh.SSHSession
 import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("shell", description = "Executes a command against an existing sshSession")
 class ShellTask : Task, SetOutput {
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Name of variable to set from Shell output, default is '\$sshShellOutput'")
+    @get:NotBlank
     override var outputVar: String = "\$sshShellOutput"
 
 
-    @TaskProperty
+    @TaskProperty(description = "Name of variable which holds SSH Session, default is '\$ssh'")
+    @get:NotBlank
     var sessionVar: String = "\$ssh"
 
-    @TaskProperty
-    @NotBlank
+    @TaskProperty(description = "Command to execute on the shell")
+    @get:NotBlank
     var cmd: String = ""
 
 

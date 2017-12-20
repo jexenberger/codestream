@@ -5,10 +5,11 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotBlank
 
-class MkdirTask : Task, TaskBinder {
+@TaskDescriptor("mkdir", description = "Deletes a file or directory")
+class MkdirTask : Task {
 
 
-    @TaskProperty
+    @TaskProperty(description = "directory to create")
     @get:NotBlank
     var dir: String = ""
 

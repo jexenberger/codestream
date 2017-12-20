@@ -1,14 +1,13 @@
 package io.codestream.module.coremodule
 
 import io.codestream.core.GroupTask
-import io.codestream.core.TaskBinder
 import io.codestream.core.TaskError
 import io.codestream.core.TaskId
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.ok
 
-class WhileTask : GroupTask, TaskBinder {
+class WhileTask : GroupTask {
     override fun before(id: TaskId, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
         return ok(GroupTask.BeforeAction.Continue)
     }

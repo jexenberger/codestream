@@ -5,9 +5,10 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.template.TemplateEngine
 import javax.validation.constraints.NotBlank
 
-class SetBasePath : Task, TaskBinder {
+@TaskDescriptor("basepath", description = "Sets the base folder for template (default is 'templates')")
+class SetBasePath : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "New path to use which contains template files")
     @get:NotBlank
     var basePath: String = ""
 

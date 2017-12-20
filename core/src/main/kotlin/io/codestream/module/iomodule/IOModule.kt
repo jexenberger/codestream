@@ -4,13 +4,15 @@ import io.codestream.core.*
 
 class IOModule(override val name: String = "io",
                override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>> = mutableMapOf()) : Module {
+    override val description: String
+        get() = "Module for performing typical IO operations"
 
     init {
         define {
-            task("mkdirs" to taskFromClass(MkdirTask::class))
-            task("read" to taskFromClass(ReadFileTask::class))
-            task("write" to taskFromClass(WriteFileTask::class))
-            task("delete" to taskFromClass(DeleteTask::class))
+            task(taskFromClass(MkdirTask::class))
+            task(taskFromClass(ReadFileTask::class))
+            task(taskFromClass(WriteFileTask::class))
+            task(taskFromClass(DeleteTask::class))
         }
     }
 
