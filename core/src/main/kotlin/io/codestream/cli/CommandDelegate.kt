@@ -39,7 +39,7 @@ fun task(log: Log, runtime: CodestreamRuntime, task: String?, parms: Map<String,
         log.error("Valid task type is a required parameter")
         return
     }
-    displayError(runtime.runTask(TaskType.fromString(task!!), parms.toMap()), log)
+    displayError(runtime.runTask(TaskType.fromString(task!!), parms.toMap(), debug = debug), log)
 }
 
 fun help(log: Log, runtime: CodestreamRuntime, param: String?, parms: Map<String, Any?>, debug: Boolean) {

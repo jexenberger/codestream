@@ -6,6 +6,7 @@ import io.codestream.resourcemodel.Resource
 import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.Log
+import io.codestream.util.system
 import io.codestream.util.transformation.LambdaTransformer
 import io.codestream.util.transformation.TransformerService
 import io.codestream.yaml.YAMLStreamBuilder
@@ -17,6 +18,8 @@ class CodestreamRuntime(modulePaths: Array<String>) {
     var runningStreams = mutableMapOf<String, Stream>()
 
     var log: Log = ConsoleLog()
+
+    var path: String = ""
 
     init {
         CodestreamRuntime.rt = this
@@ -57,7 +60,7 @@ class CodestreamRuntime(modulePaths: Array<String>) {
         return module
                 .createTask(defn, ctx)
                 .map({ executable ->
-                    defn.binding(id, ctx, executable)?.let { it }
+                    RunTask(defn).run(ctx)
                 }, {
                     it
                 })
@@ -65,6 +68,15 @@ class CodestreamRuntime(modulePaths: Array<String>) {
 
 
     companion object {
+
+        var homeFolder: String
+            get() = codestreamPath
+            set(value) {
+                codestreamPath = value
+            }
+
+        private var codestreamPath: String = System.getProperty("cs.installation.folder") ?: System.getenv("CS_HOME") ?: "${system.pwd}/.cs/modules"
+
         private var rt: CodestreamRuntime? = null
 
 

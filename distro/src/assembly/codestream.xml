@@ -1,0 +1,39 @@
+<assembly
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2
+  http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+    <id>dep</id>
+    <formats>
+        <!--<format>tar.gz</format>-->
+        <!--<format>tar.bz2</format>-->
+        <!--<format>zip</format>-->
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <fileMode>0700</fileMode>
+            <includes>
+                <include>modules/atlassian/module.conf</include>
+                <include>bin/cs</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <excludes>
+                <exclude>io.codestream:atlassian</exclude>
+            </excludes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>modules/atlassian</outputDirectory>
+            <includes>
+                <include>io.codestream:atlassian</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>

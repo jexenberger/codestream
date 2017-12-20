@@ -1,0 +1,56 @@
+#!/bin/sh
+
+# Codestream version
+VERSION="1.0-SNAPSHOT"
+
+# Root path of Codestream installation folder
+CS_HOME_DIR=""
+
+#Java executable path
+JAVA=""
+
+#Java properties to pass
+JAVA_PROPS=""
+
+#Executable
+JAR_FILE="distro"
+EXECUTABLE="$JAR_FILE-$VERSION.jar"
+
+# Setup Java path
+if [ -n "$JAVA_HOME" ]
+then
+    JAVA="$JAVA_HOME/bin/java"
+else
+    JAVA="java"
+fi
+
+# Setup codestream home
+if [ -n "$CS_HOME" ]
+then
+    CS_HOME_DIR="$CS_HOME"
+else
+    CS_HOME_DIR="$(cd "$(dirname "$0")"; pwd)"
+    CS_HOME_DIR="${CS_HOME_DIR%/bin}"
+fi
+
+# Set codestream working home
+JAVA_PROPS="-Dcs.installation.folder=$CS_HOME_DIR"
+
+# Set executable JAR path
+EXECUTABLE_PATH="$CS_HOME_DIR/lib/$EXECUTABLE"
+
+# setup arguments
+ARGS=""
+if [ "$#" -eq "0" ]
+then
+    ARGS="--help"
+else
+    shift
+    ARGS="$@"
+fi
+CMD="$JAVA $JAVA_PROPS -jar $EXECUTABLE_PATH $ARGS"
+echo $CMD
+
+# run!
+$CMD
+

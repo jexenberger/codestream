@@ -1,5 +1,6 @@
 package io.codestream.core
 
+import io.codestream.util.log.ConsoleLog
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -24,7 +25,9 @@ class ModuleLoaderTest {
 
     @Test
     fun testLoad() {
-        val loader = ModuleLoader(arrayOf(ModuleLoader.defaultPath, "src/test/resources/modules"))
+        val log = ConsoleLog()
+        log.enableDebug = true
+        val loader = ModuleLoader(arrayOf(ModuleLoader.defaultPath, "src/test/resources/modules"), log)
         val result = loader.load()
         assertEquals(1, result.size)
         val mockModule = Module["mock"]

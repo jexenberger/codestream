@@ -21,8 +21,8 @@ class CommandLineApp(args: ArgParser) {
 
     val command: Command? by args.positional(name = "COMMAND", help = "Can be 'run' to run a stream, 'task' to run a task or 'help' for help pages") {
         Command.valueOf(this)
-    }
-    val commandOption: String? by args.positional(name = "COMMAND_OPTION", help = "Option associated with the command")
+    }.default(null)
+    val commandOption: String? by args.positional(name = "COMMAND_OPTION", help = "Option associated with the command").default(null)
 
 
     //Input parameters passed at run time
@@ -31,12 +31,15 @@ class CommandLineApp(args: ArgParser) {
         Pair(parts[0], parts[1])
     }
 
-    val debug by args.flagging("-d", "--debug", help = "Run with debug output").default(false)
+    val debug by args.flagging("-D", "--debug", help = "Run with debug output").default(false)
 
     //Module Paths
     val modulePaths by args.adding("-M", "--modulepath", help = "Path for loading modules") {
         this
     }.default(listOf(ModuleLoader.defaultPath))
+
+    val homeFolder by args.adding("-X", "--installation", help = "Root path of Codestream installation")
+            .default(CodestreamRuntime.homeFolder)
 
     //Codestream Runtime
     val csRuntime by lazy { CodestreamRuntime.init(modulePaths.toTypedArray()) }
@@ -44,6 +47,7 @@ class CommandLineApp(args: ArgParser) {
 
     fun run() = mainBody("cs") {
         val log = csRuntime.log
+        csRuntime.path = homeFolder.toString()
         log.enableDebug = debug
         debug.whenTrue { log.info("DEBUG ENABLED") }
         val parms = inputParms.toTypedArray().toMap()

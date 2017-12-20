@@ -16,27 +16,32 @@
             <groupId>io.codestream</groupId>
             <artifactId>core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.codestream</groupId>
+            <artifactId>atlassian</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.codestream</groupId>
+            <artifactId>server</artifactId>
+        </dependency>
     </dependencies>
 
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <descriptor>src/assembly/codestream.xml</descriptor>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <id>create-archive</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>
-                                ${project.build.directory}/libs
-                            </outputDirectory>
-                            <excludeArtifactIds>atlassian</excludeArtifactIds>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -48,7 +53,6 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>libs/</classpathPrefix>
                             <mainClass>
                                 io.codestream.cli.Codestream
                             </mainClass>

@@ -9,19 +9,18 @@ import io.codestream.module.utilmodule.UtilModule
 import io.codestream.runtime.CodestreamRuntime
 import io.codestream.util.Either
 import io.codestream.util.fail
+import io.codestream.util.log.ConsoleLog
+import io.codestream.util.log.Log
 import io.codestream.util.ok
-import io.codestream.util.system
 import org.kevoree.kcl.api.FlexyClassLoader
 import org.kevoree.kcl.api.FlexyClassLoaderFactory
 import java.io.File
 import java.nio.file.Paths
 
 
-class ModuleLoader(private val paths: Array<String>) {
+class ModuleLoader(private val paths: Array<String>, val log: Log = ConsoleLog()) {
 
     val moduleScopes: MutableMap<Module, FlexyClassLoader> = mutableMapOf()
-
-    val log = CodestreamRuntime.runtime.log
 
     init {
 
@@ -33,9 +32,9 @@ class ModuleLoader(private val paths: Array<String>) {
                 GitModule(),
                 SSHModule()
         )
-        log.debug("Loading core modules")
+        log.debug("Loading default modules")
         defaultModules.forEach {
-            log.debug("Loading module -> ${it.name}")
+            log.debug("Loading default module -> ${it.name}")
             Module += it
         }
     }
@@ -55,7 +54,7 @@ class ModuleLoader(private val paths: Array<String>) {
                                 Module += it
                             }
                         }, {
-
+                            log.debug("Unable to load module -> ${it}")
                             moduleThatCouldNotBeLoaded.add(it)
                         })
                     }
@@ -66,6 +65,7 @@ class ModuleLoader(private val paths: Array<String>) {
     }
 
     fun loadModulesFromPath(path: String): Either<Array<Module>, ModuleError> {
+        log.debug("Loading modules from path -> $path")
         val modulePath = File(path)
         val moduleScope = FlexyClassLoaderFactory.INSTANCE.create()
         moduleScope.load(modulePath)
@@ -73,17 +73,25 @@ class ModuleLoader(private val paths: Array<String>) {
         val file = pathList.find { it == "modules.conf" }
         return file?.let {
             val modules = mutableListOf<Module>()
+            val failedModules = mutableMapOf<String, String>()
             Paths.get(path, it).toFile().forEachLine { moduleClass ->
-                val module = moduleScope.loadClass(moduleClass).newInstance() as Module
-                modules.add(module)
-                moduleScopes[module] = moduleScope
+                try {
+                    val module = moduleScope.loadClass(moduleClass).newInstance() as Module
+                    modules.add(module)
+                    moduleScopes[module] = moduleScope
+                } catch (e: ClassNotFoundException) {
+                    failedModules[modulePath.name] = e.message!!
+                }
             }
-            ok<Array<Module>, ModuleError>(modules.toTypedArray())
+            if (failedModules.isEmpty())
+                ok<Array<Module>, ModuleError>(modules.toTypedArray())
+            else
+                fail<Array<Module>, ModuleError>(ModuleError("error.loading", "Unable to load modules", failedModules))
         } ?: fail(ModuleError("module.file.doesnt.exist", "module '$path' does not exist"))
     }
 
     companion object {
-        val defaultPath = "${system.homeDir}/.cs/modules"
+        val defaultPath = "${CodestreamRuntime.homeFolder}/modules"
     }
 
 }
