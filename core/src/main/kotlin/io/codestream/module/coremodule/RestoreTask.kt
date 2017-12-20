@@ -7,12 +7,13 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 
+@TaskDescriptor("restore", description = "Restores the values from a yaml file")
 class RestoreTask : Task {
 
-    @TaskProperty()
+    @TaskProperty(description = "File to load which contains dumped context, default is '.\$\$run.yaml'")
     var file: String = ".\$\$run.yaml"
 
-    @TaskProperty()
+    @TaskProperty(description = "Fails the task if the file is not present, default is 'false'")
     var failIfNotPresent: Boolean = false
 
 

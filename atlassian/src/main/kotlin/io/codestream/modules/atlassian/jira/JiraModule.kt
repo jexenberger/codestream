@@ -5,6 +5,8 @@ import io.codestream.core.*
 class JiraModule(
         override val name: String = "jira",
         override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>>) : Module {
+    override val description: String
+        get() = "Provides a set of tasks for interacting with Atlassian Jira"
 
     init {
         define {

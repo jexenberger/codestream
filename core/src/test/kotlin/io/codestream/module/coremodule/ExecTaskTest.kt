@@ -12,7 +12,7 @@ class ExecTaskTest {
         val cmd = if (OS.os().unixVariant) "uname -a" else "dir"
         val exec = ExecTask()
         exec.cmd = cmd
-        exec.varName = "test"
+        exec.outputVar = "test"
         exec.dir = "/"
         val ctx = StreamContext()
         exec.execute(testId(), ctx)

@@ -4,7 +4,9 @@ interface Log {
 
     var enableDebug: Boolean
 
-    fun debug(msg: Any?) = if (enableDebug) log(LogEntry(LogType.DEBUG, msg)) else Unit
+    fun debug(msg: Any?) = if (enableDebug) {
+        log(LogEntry(LogType.DEBUG, msg))
+    } else Unit
     fun log(msg: Any?) = log(LogEntry(LogType.INFO, msg))
     fun info(msg: Any?) = log(LogEntry(LogType.INFO, msg))
     fun error(msg: Any?) = log(LogEntry(LogType.ERROR, msg))

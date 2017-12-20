@@ -4,32 +4,35 @@ import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.exec
 import io.codestream.util.system
+import io.codestream.util.whenTrue
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.validation.constraints.NotBlank
 
-class ExecTask : Task {
+@TaskDescriptor("exec", description = "Runs a command against the OS")
+class ExecTask : Task, SetOutput {
 
-    @TaskProperty
+    @TaskProperty(description = "Command to run")
     @get:NotBlank
     var cmd: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Directory to run the command in, default is 'pwd'")
     var dir: String = system.pwd
 
-    @TaskProperty
-    var varName: String? = null
+    @TaskProperty(description = "Output variable to set from the command output, default is '\$exec'")
+    override var outputVar: String = "\$exec"
 
-    @TaskProperty
+    @TaskProperty(description = "Timeout in seconds, default is 1 hour")
     var timeout: Long = (60 * 60)
 
-    @TaskProperty
+    @TaskProperty(description = "Echo cmd output to Console, default is false")
     var echo: Boolean = false
 
-    @TaskProperty
+    @TaskProperty(description = "Fail the task if the command fails with exist status <> 0, default is 'false'")
     var exitOnFail = false
 
-    @TaskProperty
+    @TaskProperty(description = "Output variable to set the command exit status to, default is '\$exitStatus'")
+    @get:NotBlank
     var exitStatus = "\$exitStatus"
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
@@ -46,7 +49,7 @@ class ExecTask : Task {
             }
         }
         ctx[exitStatus] = result
-        varName?.let { ctx[it] = buffer }
+        outputVar.isNotBlank().whenTrue { ctx[outputVar] = buffer }
         if (result != 0 && exitOnFail) {
             return taskFailed(id, "$cmd returned with exit code ${result}")
         }

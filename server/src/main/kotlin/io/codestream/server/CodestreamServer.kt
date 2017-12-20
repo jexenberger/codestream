@@ -1,14 +1,13 @@
 package io.codestream.server
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.codestream.util.json.json
 import spark.Spark.path
 import spark.Spark.post
 
 
 fun main(args: Array<String>) {
-    val mapper = ObjectMapper().registerKotlinModule()
+    val mapper = json
 
     val path = "workspace"
 

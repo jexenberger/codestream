@@ -17,7 +17,7 @@ tasks:
 
   - task: set
     id: my-funky-executable
-    name: aTestVariable
+    outputVar: aTestVariable
     value: hello world
     varType: string
 

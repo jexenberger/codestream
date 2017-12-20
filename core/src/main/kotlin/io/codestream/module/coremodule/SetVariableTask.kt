@@ -6,22 +6,23 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
-class SetVariableTask : Task {
+@TaskDescriptor("set", description = "Sets a variable in the context")
+class SetVariableTask : Task, SetOutput {
 
 
-    @TaskProperty
-    @get:NotNull
+    @TaskProperty(description = "Value to set")
+    @get:NotBlank
     var value: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Name of the output variable to set")
     @get:NotBlank
-    var name: String = ""
+    override var outputVar: String = ""
 
-    @TaskProperty
+    @TaskProperty(description = "Type of the variable, default is 'string'")
     @get:NotNull
     var varType: String = "string"
 
-    @TaskProperty
+    @TaskProperty(description = "Sets the scope set set the variable in either parent or current context, default is current context")
     @get:NotBlank
     @get:Pattern(regexp = "^(current|parent)")
     var scope: String = "current"
@@ -31,7 +32,7 @@ class SetVariableTask : Task {
         val typeOfVar = Parameter.typeFor(varType)
         val valueToUse = ctx.evalTo<Any?>(value, typeOfVar)
         val workingCtx = if (scope.equals("parent")) ctx.parent?.let { it } ?: ctx else ctx
-        workingCtx[name] = valueToUse
+        workingCtx[outputVar] = valueToUse
         return done()
     }
 }

@@ -7,7 +7,7 @@ import io.codestream.util.git.GitServer
 import javax.validation.constraints.NotBlank
 
 abstract class BaseGitServerTask : BaseGitAuthenticatedTask() {
-    @TaskProperty
+    @TaskProperty(description = "URI of the GIT server")
     @NotBlank
     var uri: String = ""
 

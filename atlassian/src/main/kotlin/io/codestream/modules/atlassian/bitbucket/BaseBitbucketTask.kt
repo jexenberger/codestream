@@ -6,8 +6,8 @@ import io.codestream.util.Server
 
 abstract class BaseBitbucketTask : BaseAtlassianTask() {
 
-    @TaskProperty
-    var basePath = "rest/api/2.0"
+    @TaskProperty(description = "Base API path")
+    var basePath = "rest/api/1.0"
 
     override fun name(): String {
         return "BitBucket"

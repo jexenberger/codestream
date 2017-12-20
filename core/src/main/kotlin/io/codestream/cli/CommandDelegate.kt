@@ -6,13 +6,13 @@ import io.codestream.runtime.CodestreamRuntime
 import io.codestream.util.log.Log
 import java.io.File
 
-fun run(log: Log, runtime: CodestreamRuntime, stream: String?, parms: Map<String, Any?>) {
+fun run(log: Log, runtime: CodestreamRuntime, stream: String?, parms: Map<String, Any?>, debug: Boolean) {
     if (stream.isNullOrBlank()) {
         log.error("Valid stream name is a required parameter")
         return
     }
 
-    val result = runtime.runStream(File(stream), inputParms = parms.toMap(), inputResolver = { _, parm ->
+    val result = runtime.runStream(File(stream), debug = debug, inputParms = parms.toMap(), inputResolver = { _, parm ->
         var done: Boolean
         var input: String?
         val isRequired = parm.required
@@ -34,7 +34,7 @@ private fun displayError(result: TaskError?, log: Log) {
     }
 }
 
-fun task(log: Log, runtime: CodestreamRuntime, task: String?, parms: Map<String, Any?>) {
+fun task(log: Log, runtime: CodestreamRuntime, task: String?, parms: Map<String, Any?>, debug: Boolean) {
     if (task.isNullOrBlank()) {
         log.error("Valid task type is a required parameter")
         return
@@ -42,7 +42,7 @@ fun task(log: Log, runtime: CodestreamRuntime, task: String?, parms: Map<String,
     displayError(runtime.runTask(TaskType.fromString(task!!), parms.toMap()), log)
 }
 
-fun help(log: Log, runtime: CodestreamRuntime, param: String?, parms: Map<String, Any?>) {
+fun help(log: Log, runtime: CodestreamRuntime, param: String?, parms: Map<String, Any?>, debug: Boolean) {
     param?.let {
         if (it.contains("::")) {
             displayTaskHelp(it.trim())

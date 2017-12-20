@@ -35,6 +35,7 @@
                             <outputDirectory>
                                 ${project.build.directory}/libs
                             </outputDirectory>
+                            <excludeArtifactIds>atlassian</excludeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>

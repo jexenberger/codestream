@@ -5,7 +5,7 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotBlank
 
-@TaskDescriptor("mkdir", description = "Deletes a file or directory")
+@TaskDescriptor("mkdirs", description = "Deletes a file or directory")
 class MkdirTask : Task {
 
 

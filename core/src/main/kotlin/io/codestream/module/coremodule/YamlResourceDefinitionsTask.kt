@@ -6,9 +6,10 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotEmpty
 
+@TaskDescriptor("yaml-resource-definitions", description = "Loads a set of Resource definitions from a Yaml configuration")
 class YamlResourceDefinitionsTask : Task {
-    @TaskProperty
-    @NotEmpty
+    @TaskProperty(description = "Yaml file to load")
+    @get:NotEmpty
     var file: String = ""
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {

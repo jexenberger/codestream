@@ -4,33 +4,34 @@ import io.codestream.resourcemodel.Resource
 import io.codestream.runtime.StreamContext
 import javax.validation.constraints.NotNull
 
+@TaskDescriptor("mock", description = "A Mock task for testing")
 class MockTask : Task {
 
 
     var ran: Boolean = false
     var inputVariable: String? = null
 
-    @TaskProperty
+    @TaskProperty(description = "testSet")
     @get:NotNull
     var testSet: String? = null
 
 
-    @TaskProperty
+    @TaskProperty(description = "server")
     var server: Resource? = null
 
-    @TaskProperty
+    @TaskProperty(description = "testTwo")
     var testTwo: Int? = null
 
-    @TaskProperty
+    @TaskProperty(description = "willFail")
     var willFail: Boolean? = null
 
-    @TaskProperty
+    @TaskProperty(description = "throwException")
     var throwException: Boolean? = null
 
-    @TaskProperty
+    @TaskProperty(description = "error")
     var error: Boolean? = null
 
-    @TaskProperty
+    @TaskProperty(description = "array")
     var list: Array<String>? = null
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {

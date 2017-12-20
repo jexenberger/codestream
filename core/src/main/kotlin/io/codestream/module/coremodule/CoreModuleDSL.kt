@@ -24,25 +24,6 @@ fun KtStreamBuilder.foreach(itemsArr: Collection<*>, builder: KtExecutableDefini
             }
 }
 
-fun KtStreamBuilder.runStream(streamPath: String, inputs: Map<String, Any?> = mapOf()): KtExecutableDefinitionBuilder<StreamTask> {
-    return this.task<StreamTask>("core", "stream")
-            .bindWithCtx { ctx ->
-                ctx.evalTo<String>(streamPath)?.let {
-                    path = it
-                }
-                inputParameters = inputs.mapValues {
-                    when (it.value) {
-                        is String -> ctx.evalTo<Any?>(it)
-                        else -> it
-                    }
-                }
-            }
-}
-
-fun KtStreamBuilder.runStream(streamPath: String, inputs: () -> Map<String, Any?>): KtExecutableDefinitionBuilder<StreamTask> {
-    return this.runStream(streamPath, inputs())
-}
-
 fun KtStreamBuilder.sleep(time: Long = 0): KtExecutableDefinitionBuilder<SleepTask> {
     return this.task<SleepTask>("core", "sleep").bind {
         duration = time

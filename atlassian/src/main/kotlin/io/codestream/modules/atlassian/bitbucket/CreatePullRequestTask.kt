@@ -1,5 +1,6 @@
 package io.codestream.modules.atlassian.bitbucket
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.MapBuilder
@@ -43,11 +44,12 @@ class CreatePullRequestTask : BaseBitbucketTask(), SetOutput {
     var repo: String = ""
 
     @TaskProperty(description = "User name of the reviewers who will review the PR")
-    @NotEmpty
+    @get:NotEmpty
     var reviewers: Array<String> = emptyArray()
 
+
     override fun runAgainstServer(id: TaskId, ctx: StreamContext, server: Server): TaskError? {
-        val path = "$basePath/repositories/$project/repos/$repo/pull-requests"
+        val path = "$basePath/projects/$project/repos/$repo/pull-requests"
         val postBody = mapper.writeValueAsString(buildRequest())
         val response = Request(
                 url = server.url,
@@ -60,6 +62,11 @@ class CreatePullRequestTask : BaseBitbucketTask(), SetOutput {
         return when (response.status) {
             201 -> {
                 ctx[outputVar] = response.location?.split("/")?.lastOrNull()
+                done()
+            }
+            409 -> {
+                val data = mapper.readValue<Map<String, Any?>>(response.body)
+                ctx[outputVar] = ((data["errors"] as List<Map<String, Any?>>)[0]["existingPullRequest"] as Map<String, Any?>)["id"]
                 done()
             }
             else -> taskFailed(id, "Task failed returned -> ${response.status}", arrayOf(taskFailed(id, "${response.body}")))

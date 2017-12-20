@@ -10,7 +10,7 @@ class SetVariableTaskTest {
         val ctx = StreamContext()
         ctx["hello"] = "world"
         val setVariable = SetVariableTask()
-        setVariable.name = "test"
+        setVariable.outputVar = "test"
         setVariable.varType = "int"
         setVariable.value = "\${hello}"
         setVariable.execute(testId(), ctx)

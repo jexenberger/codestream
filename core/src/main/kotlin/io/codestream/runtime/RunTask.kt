@@ -27,7 +27,13 @@ class RunTask<T : Task>(override val defn: ExecutableDefinition<T>,
                     .flatMapL { defn.binding(defn.id, ctx, it)?.let { error -> fail<T, TaskError>(error) } ?: ok(it) }
                     .whenR { ctx.error(defn.id, "Failed binding task -> $it defined on line -> ${defn.lineNumber}") }
                     .whenR { state = RunExecutableState.Failed }
-                    .flatMapL { it.execute(defn.id, ctx)?.let { error -> fail<T, TaskError>(error) } ?: ok(it) }
+                    .flatMapL {
+                        ctx.log.debug(defn.id, "Running task")
+                        it.execute(defn.id, ctx)?.let { error ->
+                            fail<T, TaskError>(error)
+                        } ?: ok(it)
+                    }
+                    .whenL { ctx.log(defn.id, "Sucessfully ran task") }
                     .whenR {
                         ctx.error(defn.id, "Failed running task -> $it")
                         ctx.error(defn.id, "SOURCE: -> '${defn.source}' @ line -> '${defn.lineNumber}'")

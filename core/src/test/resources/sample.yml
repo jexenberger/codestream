@@ -17,7 +17,7 @@ tasks:
 
   - task: set
     id: my-funky-executable
-    name: aTestVariable
+    outputVar: aTestVariable
     value: hello world
     varType: string
 
@@ -52,7 +52,7 @@ tasks:
       - task: template::basepath
         basePath: src/test/resources
       - task: set
-        name: hello
+        outputVar: hello
         value: world
       - task: template::render
         template: test
@@ -70,7 +70,7 @@ tasks:
   - task: async
     tasks:
       - task: set
-        name: subCnt
+        outputVar: subCnt
         varType: int
         value: 0
       - task: while
@@ -85,7 +85,7 @@ tasks:
             duration: 1000
 
   - task: set
-    name: cnt
+    outputVar: cnt
     value: 0
     varType: int
 

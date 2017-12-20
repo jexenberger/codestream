@@ -5,6 +5,8 @@ import io.codestream.core.*
 class BitBucketModule(
         override val name: String = "bitbucket",
         override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>>) : Module {
+    override val description: String
+        get() = "Provides tasks for interacting with a LOCAL Atlassian Bitbucket instance with 1.0 api for backward compatibility"
 
     init {
 

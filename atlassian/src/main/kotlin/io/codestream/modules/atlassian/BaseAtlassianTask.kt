@@ -1,19 +1,18 @@
 package io.codestream.modules.atlassian
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Server
+import io.codestream.util.json.json
 
 abstract class BaseAtlassianTask : Task {
 
-    @TaskProperty
+    @TaskProperty(description = "Path to the server configuration")
     var config: String? = null
 
     var server: Server? = null
 
-    protected val mapper = ObjectMapper().registerKotlinModule()
+    protected val mapper = json
 
 
     abstract fun name(): String

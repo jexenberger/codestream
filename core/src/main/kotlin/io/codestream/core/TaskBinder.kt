@@ -28,17 +28,28 @@ interface TaskBinder {
             val taskParameters = extractTaskParameters(task::class)
             val parentError = taskParameterValidation(id, msg = "There was a problem binding '${taskType.fqn}'")
             for ((input, value) in params) {
+                ctx.log.debug(id, "BEGIN ---> Binding '$input' with '$value@${value?.let { it::class.qualifiedName }}'")
                 val type = taskParameters[input] ?: return taskParameterValidation(id, msg = "property '${input}' does not exist on task ${taskType.fqn}")
                 try {
                     val typeHint = type.property.returnType.jvmErasure
+                    ctx.log.debug(id, "Binding to type => '${typeHint}'")
                     val valueToSet = if (type.disableEvaluation)
                         TransformerService.convertWithNull<Any?>(value, typeHint)
                     else {
+                        ctx.log.debug(id, "Evaluating '$value'")
                         ctx.evalTo(value, typeHint)
                     }
+                    if (!type.property.returnType.isMarkedNullable && valueToSet == null) {
+                        return taskParameterValidation(id, msg = "property '${input}' is required and does not allow null values")
+                    }
+                    ctx.log.debug(id, "resolved binding value to -> '$valueToSet' of type '${valueToSet?.let { it::class.qualifiedName }}' to property type ${type.property.returnType}")
                     type.property.setter.call(task, valueToSet)
+                    ctx.log.debug(id, "Property '$input' successfully been bound")
                 } catch (e: RuntimeException) {
+                    ctx.log.error(id, "Unable to bind '$input' to '$value'", e)
                     parentError += taskParameterValidation(id, msg = "property '${input}' failed binding with -> ${e.message}")
+                } finally {
+                    ctx.log.debug(id, "END --->")
                 }
             }
             val result = validator().validate(task)

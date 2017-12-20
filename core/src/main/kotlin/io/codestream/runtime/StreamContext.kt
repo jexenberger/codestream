@@ -7,6 +7,7 @@ import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.Eval
 import io.codestream.util.OS
 import io.codestream.util.YamlFactory
+import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.FileLog
 import io.codestream.util.log.RunLog
 import io.codestream.util.transformation.TransformerService
@@ -19,7 +20,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                          val timeStamp: LocalDateTime = LocalDateTime.now(),
                          var variables: MutableMap<String, Any?> = mutableMapOf<String, Any?>(),
                          var parent: StreamContext? = null,
-                         val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), CodestreamRuntime.defaultLog),
+                         val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), ConsoleLog()),
                          var resources: ResourceRegistry = EmptyResourceRegistry()) : Bindings {
 
 
@@ -75,7 +76,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                 evalScript(script.toString())
             } else {
                 val type = typeHint?.let { hint -> hint } ?: K::class
-                TransformerService.convert(it.toString(), type)
+                TransformerService.convert(it, type)
             }
         }
     }

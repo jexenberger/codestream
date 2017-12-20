@@ -19,6 +19,7 @@ class CodestreamRuntime(modulePaths: Array<String>) {
     var log: Log = ConsoleLog()
 
     init {
+        CodestreamRuntime.rt = this
         ModuleLoader(modulePaths).load()
         TransformerService.addConverter(String::class, Resource::class, LambdaTransformer<String, Resource?> { input ->
             registry?.get(input)
@@ -28,7 +29,9 @@ class CodestreamRuntime(modulePaths: Array<String>) {
     fun runStream(streamFile: File,
                   inputParms: Map<String, Any?>,
                   ctx: StreamContext = StreamContext(),
+                  debug: Boolean = false,
                   inputResolver: (String, Parameter) -> String = { _, _ -> "" }): TaskError? {
+        ctx.log.debug = debug
         val inputs = LinkedHashMap<String, Any?>()
         inputs += inputParms
         val stream = YAMLStreamBuilder(streamFile).build()
@@ -45,7 +48,8 @@ class CodestreamRuntime(modulePaths: Array<String>) {
         }
     }
 
-    fun runTask(task: TaskType, parms: Map<String, Any?>, ctx: StreamContext = StreamContext()): TaskError? {
+    fun runTask(task: TaskType, parms: Map<String, Any?>, ctx: StreamContext = StreamContext(), debug: Boolean = false): TaskError? {
+        ctx.log.debug = debug
         val id = TaskId("_default", "_default", task)
         val module = task.module?.let { it } ?: return invalidModule(id, "${task.namespace} is not a valid module")
         val binding = MapBinding(id, task, parms)

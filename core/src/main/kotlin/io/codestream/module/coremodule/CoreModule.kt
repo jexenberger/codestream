@@ -9,7 +9,7 @@ class CoreModule(override val name: String = "core",
 
     init {
         define {
-            task(taskFromClass(StreamTask::class))
+            task(taskFromClass(RunStreamTask::class))
             task(taskFromClass(EchoTask::class))
             task(taskFromClass(SleepTask::class))
             task(taskFromClass(ExecTask::class))

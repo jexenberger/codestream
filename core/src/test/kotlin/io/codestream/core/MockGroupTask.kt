@@ -4,6 +4,7 @@ import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.ok
 
+@TaskDescriptor("mockgroup", description = "A Mock group task for testing")
 class MockGroupTask : GroupTask {
 
     var cnt: Int = 0

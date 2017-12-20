@@ -7,9 +7,11 @@ class ConsoleLog : Log {
     override var enableDebug: Boolean = false
 
     override fun log(entry: LogEntry) {
-
         when (entry.type) {
-            LogType.DEBUG -> Console.line(entry.entry)
+            LogType.DEBUG -> {
+
+                Console.line(entry.entry)
+            }
             LogType.LOG -> Console.line(entry.entry)
             LogType.INFO -> Console.green(entry.entry)
             LogType.ERROR -> {

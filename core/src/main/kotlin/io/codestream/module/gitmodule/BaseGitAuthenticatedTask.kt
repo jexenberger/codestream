@@ -7,15 +7,15 @@ import io.codestream.util.SSHKey
 import io.codestream.util.UserPassword
 
 abstract class BaseGitAuthenticatedTask : Task {
-    @TaskProperty
+    @TaskProperty(description = "GIT server user")
     var user: String? = null
-    @TaskProperty
+    @TaskProperty(description = "GIT server password")
     var password: String? = null
-    @TaskProperty
+    @TaskProperty(description = "SSH Keyfile path if using SSH key authentication")
     var keyFile: String? = null
-    @TaskProperty
+    @TaskProperty(description = "disable host name checking if server is using SSL")
     var disableHostNameCheck: Boolean = false
-    @TaskProperty
+    @TaskProperty(description = "disable ssl validation if server is using SSL")
     var disableSSLValidation: Boolean = false
 
 

@@ -5,6 +5,7 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("dump", description = "Dumps the content of the context to the specified file")
 class DumpTask : Task {
 
     @TaskProperty(description = "Name of file to dump the Stream context to, default is '.\$\$run.yaml'")
