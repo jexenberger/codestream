@@ -76,7 +76,14 @@ class ModuleLoader(private val paths: Array<String>, val log: Log = ConsoleLog()
             val failedModules = mutableMapOf<String, String>()
             Paths.get(path, it).toFile().forEachLine { moduleClass ->
                 try {
-                    val module = moduleScope.loadClass(moduleClass).newInstance() as Module
+                    val clazz = moduleScope.loadClass(moduleClass)
+                    log.debug("Loaded module class -> ${clazz.name}")
+                    //val constructor = clazz.getConstructor(String::class.java, MutableMap::class.java)
+                    //constructor.newInstance()
+                    //println(constructor.parameters.forEach {
+                    //    println(it.name)
+                    //})
+                    val module = clazz.newInstance() as Module
                     modules.add(module)
                     moduleScopes[module] = moduleScope
                 } catch (e: ClassNotFoundException) {

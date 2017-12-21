@@ -1,10 +1,7 @@
 package io.codestream.runtime
 
 import io.codestream.core.*
-import io.codestream.util.Either
-import io.codestream.util.bind
-import io.codestream.util.fail
-import io.codestream.util.ok
+import io.codestream.util.*
 import java.util.*
 import java.util.concurrent.Future
 
@@ -56,34 +53,38 @@ class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
     }
 
     private fun runGroupTask(task: T, ctx: StreamContext): Either<GroupTask.AfterAction, TaskError> {
-        return defn.binding(defn.id, ctx, task)?.let {
-            fail<GroupTask.AfterAction, TaskError>(it)
-        } ?:
-                if (defn.condition(defn.id, ctx)) {
-                    task.before(defn.id, ctx)
-                            .bind { action ->
-                                if (action == GroupTask.BeforeAction.Continue) {
-                                    val errorList = runLeaves(ctx, task)
-                                    if (errorList.isNotEmpty())
-                                        fail(subTasksFailed(errorList))
-                                    else {
-                                        ok<GroupTask.BeforeAction, TaskError>(action)
-                                    }
-                                } else {
-                                    ok(action)
-                                }
+        val error = defn.binding(defn.id, ctx, task)
+        if (error != null) {
+            fail<GroupTask.AfterAction, TaskError>(error)
+        }
+        val evalCondition = defn.condition(defn.id, ctx)
+        if (!evalCondition) {
+            state = RunExecutableState.Skipped
+            return ok(GroupTask.AfterAction.Skipped)
+        }
+        return task.before(defn.id, ctx)
+                .bind { action ->
+                    when (action) {
+                        GroupTask.BeforeAction.Continue -> {
+                            val errorList = runLeaves(ctx, task)
+                            failWhen(action) {
+                                errorList
+                                        .takeIf { it.isNotEmpty() }
+                                        ?.let { subTasksFailed(it) }
                             }
-                            .bind { action ->
-                                if (action == GroupTask.BeforeAction.Continue) {
-                                    task.after(defn.id, ctx)
-                                } else {
-                                    ok(GroupTask.AfterAction.Return)
-                                }
-                            }
-                } else {
-                    state = RunExecutableState.Skipped
-                    ok(GroupTask.AfterAction.Skipped)
+
+                        }
+                        else -> ok(action)
+                    }
                 }
+                .bind { action ->
+                    if (action == GroupTask.BeforeAction.Continue) {
+                        task.after(defn.id, ctx)
+                    } else {
+                        ok(GroupTask.AfterAction.Return)
+                    }
+                }
+
     }
 
     private fun subTasksFailed(errorList: MutableList<TaskError>) =
@@ -94,14 +95,19 @@ class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
         val futuresList = mutableListOf<Future<TaskError?>>()
         val grpId = UUID.randomUUID().toString()
         try {
-            runnables.forEach { runTask ->
+            for (runTask in runnables) {
                 val taskFuture = TaskQueues.run(grpId, { runTask.run(ctx) })
                 if (groupTask.async) {
                     futuresList += taskFuture
                 } else {
-                    taskFuture.get()?.let { errorList += it }
+                    val taskError = taskFuture.get()
+                    taskError?.let { errorList += it }
+                }
+                if (errorList.isNotEmpty()) {
+                    return errorList
                 }
             }
+
         } finally {
             futuresList.forEach {
                 it.get()?.let { errorList += it }

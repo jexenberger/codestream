@@ -32,7 +32,7 @@ interface TaskBinder {
                 val type = taskParameters[input] ?: return taskParameterValidation(id, msg = "property '${input}' does not exist on task ${taskType.fqn}")
                 try {
                     val typeHint = type.property.returnType.jvmErasure
-                    ctx.log.debug(id, "Binding to type => '${typeHint}'")
+                    ctx.log.debug(id, "Binding to type => '${typeHint.qualifiedName}'")
                     val valueToSet = if (type.disableEvaluation)
                         TransformerService.convertWithNull<Any?>(value, typeHint)
                     else {
@@ -58,5 +58,9 @@ interface TaskBinder {
             }
             return parentError.takeIf { it.errors.isNotEmpty() }
         }
+
+
     }
+
+
 }

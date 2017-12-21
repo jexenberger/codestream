@@ -20,7 +20,9 @@ class SavePropertiesTask : Task {
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
         val propertiesFile = Properties()
-        propertiesFile += properties
+        propertiesFile += ctx.evalTo<Map<String, Any?>?>(properties.mapValues {
+            it.value?.toString()
+        }) ?: emptyMap()
         propertiesFile.store(FileOutputStream(file), comment)
         return done()
     }

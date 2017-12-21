@@ -7,6 +7,7 @@ class CommandLineTest {
 
     @Test
     fun testRunStream() {
+        System.setProperty("cs.installation.folder", "src/test/resources")
         val args = ArgParser(arrayOf("run", "src/test/resources/sample.yml", "-D", "-I", "saying=UBER FUNKY SAYING"))
         val app = CommandLineApp(args)
         app.run()

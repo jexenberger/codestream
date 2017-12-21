@@ -73,7 +73,7 @@ class YAMLStreamBuilder() {
     internal fun defineInput(taskMap: Map<String, Any?>): Parameter {
         val id = taskMap["input"] as String
         val desc = taskMap["prompt"] as String
-        val type = taskMap["type"] as String
+        val type = taskMap["type"] as String? ?: "string"
         val default = taskMap["default"] as String?
         val required = taskMap["required"] as Boolean? ?: true
         val allowedValues = (taskMap["allowedValues"] as String?)?.let { it } ?: ""

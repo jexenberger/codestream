@@ -16,6 +16,8 @@ class TransformerServiceTest {
     @Throws(Exception::class)
     fun testTransform() {
 
+
+        assertEquals(true, TransformerService.convert(true, Boolean::class))
         assertEquals("1", TransformerService.convert(1))
         assertEquals(1.0, TransformerService.convert(1))
         assertEquals(1.0, TransformerService.convert(1))

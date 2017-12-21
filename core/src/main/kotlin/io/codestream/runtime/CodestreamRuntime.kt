@@ -6,24 +6,22 @@ import io.codestream.resourcemodel.Resource
 import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.Log
-import io.codestream.util.system
 import io.codestream.util.transformation.LambdaTransformer
 import io.codestream.util.transformation.TransformerService
 import io.codestream.yaml.YAMLStreamBuilder
 import java.io.File
 
-class CodestreamRuntime(modulePaths: Array<String>) {
+class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRuntime.log) {
 
     var registry: ResourceRegistry? = EmptyResourceRegistry()
     var runningStreams = mutableMapOf<String, Stream>()
 
-    var log: Log = ConsoleLog()
 
     var path: String = ""
 
     init {
         CodestreamRuntime.rt = this
-        ModuleLoader(modulePaths).load()
+        ModuleLoader(modulePaths, log).load()
         TransformerService.addConverter(String::class, Resource::class, LambdaTransformer<String, Resource?> { input ->
             registry?.get(input)
         })
@@ -69,13 +67,15 @@ class CodestreamRuntime(modulePaths: Array<String>) {
 
     companion object {
 
+        val log = ConsoleLog()
+
         var homeFolder: String
             get() = codestreamPath
             set(value) {
                 codestreamPath = value
             }
 
-        private var codestreamPath: String = System.getProperty("cs.installation.folder") ?: System.getenv("CS_HOME") ?: "${system.pwd}/.cs/modules"
+        private var codestreamPath: String = System.getProperty("cs.installation.folder", "")
 
         private var rt: CodestreamRuntime? = null
 
@@ -90,9 +90,9 @@ class CodestreamRuntime(modulePaths: Array<String>) {
             get() = rt?.let { it } ?: throw IllegalStateException("runtime not initialised, call init()")
 
         @Synchronized
-        fun init(modulePaths: Array<String>, force: Boolean = false): CodestreamRuntime {
+        fun init(modulePaths: Array<String>, force: Boolean = false, theLog: Log = CodestreamRuntime.log): CodestreamRuntime {
             if (force || rt == null) {
-                rt = CodestreamRuntime(modulePaths)
+                rt = CodestreamRuntime(modulePaths, theLog)
             }
             return runtime
         }

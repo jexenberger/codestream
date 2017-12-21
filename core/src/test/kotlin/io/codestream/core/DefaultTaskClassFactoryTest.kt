@@ -5,6 +5,7 @@ import io.codestream.util.Either
 import io.codestream.util.error
 import io.codestream.util.ok
 import org.junit.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -15,6 +16,17 @@ class DefaultTaskClassFactoryTest {
     fun testTaskFromClass() {
         val factory = taskFromClass(MockTask::class)
         assertNotNull(factory)
+    }
+
+
+    @Test
+    fun testDocumentation() {
+        val factory = taskFromClass(MockTask::class)
+        val documentation = factory.documentation
+        assertFalse { documentation.params.isEmpty() }
+        documentation.params.forEach {
+            println(it)
+        }
     }
 
     @Test

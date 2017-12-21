@@ -5,6 +5,7 @@ import com.xenomachina.argparser.default
 import com.xenomachina.argparser.mainBody
 import io.codestream.core.ModuleLoader
 import io.codestream.runtime.CodestreamRuntime
+import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.Log
 import io.codestream.util.whenTrue
 
@@ -18,10 +19,12 @@ enum class Command(val description: String, val handler: (Log, CodestreamRuntime
 
 class CommandLineApp(args: ArgParser) {
 
+    val log = ConsoleLog()
 
     val command: Command? by args.positional(name = "COMMAND", help = "Can be 'run' to run a stream, 'task' to run a task or 'help' for help pages") {
         Command.valueOf(this)
     }.default(null)
+
     val commandOption: String? by args.positional(name = "COMMAND_OPTION", help = "Option associated with the command").default(null)
 
 
@@ -36,20 +39,22 @@ class CommandLineApp(args: ArgParser) {
     //Module Paths
     val modulePaths by args.adding("-M", "--modulepath", help = "Path for loading modules") {
         this
-    }.default(listOf(ModuleLoader.defaultPath))
+    }
 
-    val homeFolder by args.adding("-X", "--installation", help = "Root path of Codestream installation")
-            .default(CodestreamRuntime.homeFolder)
+
 
     //Codestream Runtime
-    val csRuntime by lazy { CodestreamRuntime.init(modulePaths.toTypedArray()) }
+    val csRuntime by lazy {
+        val paths = if (modulePaths.isEmpty()) arrayOf(ModuleLoader.defaultPath) else modulePaths.toTypedArray()
+        debug.whenTrue { log.info("DEBUG ENABLED") }
+        log.enableDebug = debug
+        CodestreamRuntime.init(paths, theLog = log)
+    }
 
 
     fun run() = mainBody("cs") {
-        val log = csRuntime.log
-        csRuntime.path = homeFolder.toString()
-        log.enableDebug = debug
-        debug.whenTrue { log.info("DEBUG ENABLED") }
+        log.debug("Set home folder -> ${CodestreamRuntime.homeFolder}")
+        log.debug(modulePaths)
         val parms = inputParms.toTypedArray().toMap()
         command?.handler?.invoke(log, csRuntime, commandOption, parms, debug)
     }

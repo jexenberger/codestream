@@ -34,7 +34,8 @@ class Stream constructor(val id: String,
 
 
     fun run(input: Map<String, Any?> = mapOf(), ctx: StreamContext = StreamContext()): TaskError? {
-        ctx += resolveInput(input)
+        val resolveInput = resolveInput(input)
+        ctx += ctx.evalTo<Map<String, Any?>>(resolveInput) ?: emptyMap()
 
         val type = TaskType("core", "group")
         val defn = ExecutableDefinition<GroupTask>(

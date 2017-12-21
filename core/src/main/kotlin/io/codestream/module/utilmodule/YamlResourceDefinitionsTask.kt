@@ -1,4 +1,4 @@
-package io.codestream.module.coremodule
+package io.codestream.module.utilmodule
 
 import io.codestream.core.*
 import io.codestream.resourcemodel.DefaultYamlResourceDefinitions

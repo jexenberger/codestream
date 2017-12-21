@@ -1,6 +1,7 @@
-package io.codestream.module.coremodule
+package io.codestream.module.utilmodule
 
 import io.codestream.core.Parameter
+import io.codestream.module.coremodule.testId
 import io.codestream.resourcemodel.ResourceDefinition
 import io.codestream.resourcemodel.ResourceDefinitions
 import io.codestream.runtime.StreamContext

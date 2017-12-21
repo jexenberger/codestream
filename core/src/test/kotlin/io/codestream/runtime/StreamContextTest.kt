@@ -5,6 +5,7 @@ import io.codestream.util.YamlFactory
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class StreamContextTest {
 
@@ -89,6 +90,23 @@ class StreamContextTest {
         val newContext = StreamContext.fromMap(map)
         assertEquals("hello123", newContext["qwerty"])
 
+    }
+
+    @Test
+    fun testPreProcess() {
+        val ctx = StreamContext()
+        ctx["qwerty"] = "2"
+        val map = mapOf(
+                "test" to "#{qwerty}",
+                "1" to 1
+        )
+        assertNull(ctx.evalTo(null))
+        assertNotNull(ctx.evalTo(arrayOf("1", "#{qwerty}", "3")))
+        assertNotNull(ctx.evalTo(listOf("1", "#{qwerty}", "3")))
+        val result = ctx.evalTo<Any?>(map) as Map<Any, Any?>
+        assertNotNull(result)
+        assertEquals(1, result["1"])
+        assertEquals("2", result["test"])
     }
 
     @Test

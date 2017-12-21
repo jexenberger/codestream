@@ -1,5 +1,6 @@
-package io.codestream.module.coremodule
+package io.codestream.module.utilmodule
 
+import io.codestream.module.coremodule.testId
 import io.codestream.resourcemodel.ResourceDefinitions
 import io.codestream.runtime.StreamContext
 import org.junit.Test

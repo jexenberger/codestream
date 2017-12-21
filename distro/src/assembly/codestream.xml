@@ -17,7 +17,7 @@
             <outputDirectory>/</outputDirectory>
             <fileMode>0700</fileMode>
             <includes>
-                <include>modules/atlassian/module.conf</include>
+                <include>modules/atlassian/modules.conf</include>
                 <include>bin/cs</include>
             </includes>
         </fileSet>

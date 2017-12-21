@@ -7,7 +7,6 @@ import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.Eval
 import io.codestream.util.OS
 import io.codestream.util.YamlFactory
-import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.FileLog
 import io.codestream.util.log.RunLog
 import io.codestream.util.transformation.TransformerService
@@ -20,7 +19,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                          val timeStamp: LocalDateTime = LocalDateTime.now(),
                          var variables: MutableMap<String, Any?> = mutableMapOf<String, Any?>(),
                          var parent: StreamContext? = null,
-                         val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), ConsoleLog()),
+                         val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), CodestreamRuntime.log),
                          var resources: ResourceRegistry = EmptyResourceRegistry()) : Bindings {
 
 
@@ -72,14 +71,31 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
 
     inline fun <reified K> evalTo(script: Any?, typeHint: KClass<*>? = null): K? {
         return script?.let {
-            return if (Eval.isScriptString(it.toString())) {
-                evalScript(script.toString())
-            } else {
-                val type = typeHint?.let { hint -> hint } ?: K::class
-                TransformerService.convert(it, type)
+            val value: K? = processEval<K>(it, typeHint)
+            if (value == null) {
+                return value
             }
+            return when (value) {
+                is Collection<*> -> value.map { v -> processEval<Any?>(v!!, typeHint) }
+                is Array<*> -> value.map { v -> processEval<Any?>(v!!, typeHint) }
+                is Map<*, *> -> value.mapValues {
+                    it.value?.let { v -> processEval<Any?>(v, typeHint) }
+                }
+                else -> value
+            } as K?
         }
     }
+
+    inline fun <reified K> processEval(it: Any, typeHint: KClass<*>?): K? {
+        val value: K? = if (Eval.isScriptString(it.toString())) {
+            evalScript<K>(it.toString())
+        } else {
+            val type = typeHint?.let { hint -> hint } ?: K::class
+            TransformerService.convert(it, type)
+        }
+        return value
+    }
+
 
     inline fun <reified K> evalScript(script: String): K? {
         return Eval.eval<K?>(Eval.extractScriptString(script), this)

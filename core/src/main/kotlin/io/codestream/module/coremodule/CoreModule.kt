@@ -17,8 +17,6 @@ class CoreModule(override val name: String = "core",
             task(taskFromClass(ExecTask::class))
             task(taskFromClass(SetVariableTask::class))
             task(taskFromClass(ScriptTask::class))
-            task(taskFromClass(YamlResourcesTask::class))
-            task(taskFromClass(YamlResourceDefinitionsTask::class))
 
             groupTask(groupFromClass(WhileTask::class))
             groupTask(groupFromClass(GroupingTask::class))

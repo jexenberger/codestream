@@ -105,10 +105,13 @@ object TransformerService {
     }
 
 
-    @SuppressWarnings("UNC")
+    @SuppressWarnings("UNCHECKED_CAST")
     inline fun <reified K> convert(instance: Any, typeHint: KClass<*>? = null): K {
         val type = typeHint?.let { it } ?: K::class
-        @Suppress("UNCHECKED_CAST")
+        if (type.isInstance(instance)) {
+            return instance as K
+        }
+        @SuppressWarnings("UNCHECKED_CAST")
         val transfomer = findWideningTransformer(instance::class, type) as TypeTransformer<Any, K>?
         return transfomer?.transform(instance) ?: throw SystemException("unable to convert from ${instance::class.qualifiedName} to ${K::class.qualifiedName}")
     }

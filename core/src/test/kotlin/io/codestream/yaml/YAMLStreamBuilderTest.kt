@@ -47,7 +47,7 @@ class YAMLStreamBuilderTest {
         //assertEquals(3, stream.module.size)
         assertEquals(1, stream.parameters.size)
         Module += CoreModule()
-        val result = stream.run(mapOf(Pair("saying", "VERY COOL")))
+        val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")))
         assertNull(result, result?.toString())
     }
 }

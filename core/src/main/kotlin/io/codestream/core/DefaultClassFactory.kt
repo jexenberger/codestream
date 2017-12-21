@@ -26,7 +26,8 @@ open class DefaultClassFactory<T : Executable>(val executableType: KClass<out T>
 
             val parameters = TaskBinder.extractTaskParameters(executableType)
             val parmDoc: Array<ParameterDocumentation> = parameters.map { (k, v) ->
-                ParameterDocumentation(k, v.defn.description, v.typeHint.toString())
+                val typeToUser = v.property.returnType.classifier as KClass<*>
+                ParameterDocumentation(k, v.defn.description, Parameter.stringType(typeToUser) ?: "string")
             }.toTypedArray()
             return ExecutableDocumentation(
                     description.name,

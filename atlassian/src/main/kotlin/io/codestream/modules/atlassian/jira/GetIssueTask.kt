@@ -7,7 +7,7 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
-@TaskDescriptor("get", description = "Retrieves a Jira issue and sets it in a variable")
+@TaskDescriptor("get-issue", description = "Retrieves a Jira issue and sets it in a variable")
 class GetIssueTask : BaseJiraTask(), SetOutput {
 
     @get:NotBlank

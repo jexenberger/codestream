@@ -45,7 +45,6 @@ if [ "$#" -eq "0" ]
 then
     ARGS="--help"
 else
-    shift
     ARGS="$@"
 fi
 CMD="$JAVA $JAVA_PROPS -jar $EXECUTABLE_PATH $ARGS"

@@ -5,6 +5,9 @@ fun <K> ok(): Either<Unit, K> = Either.left(Unit)
 fun <T, K> ok(value: () -> T): Either<T, K> = Either.left(value())
 fun <T, K> fail(value: K): Either<T, K> = Either.right(value)
 fun <T, K> fail(value: () -> K): Either<T, K> = Either.right(value())
+fun <T, K> failWhen(l: T, r: () -> K?): Either<T, K> {
+    return r()?.let { fail<T, K>(it) } ?: ok(l)
+}
 
 @Suppress("UNCHECKED_CAST")
 sealed class Either<L, R> {
