@@ -48,7 +48,7 @@ else
     ARGS="$@"
 fi
 CMD="$JAVA $JAVA_PROPS -jar $EXECUTABLE_PATH $ARGS"
-echo $CMD
+#echo $CMD
 
 # run!
 $CMD

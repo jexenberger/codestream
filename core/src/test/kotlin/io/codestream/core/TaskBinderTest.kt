@@ -22,6 +22,7 @@ class TaskBinderTest {
                 "testTwo" to "1"
         )
         val (ctx, defn) = createTaskContext<MockTask>(bindingParams = map)
+        ctx.log.debug = true
         val task = MockTask()
         val validation = TaskBinder.bind(defn.id, defn.type, task, ctx, map)
         assertNull(validation, validation.toString())

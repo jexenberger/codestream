@@ -7,6 +7,7 @@ import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.Eval
 import io.codestream.util.OS
 import io.codestream.util.YamlFactory
+import io.codestream.util.coerce
 import io.codestream.util.log.FileLog
 import io.codestream.util.log.RunLog
 import io.codestream.util.transformation.TransformerService
@@ -69,17 +70,26 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
         }
     }
 
+    @SuppressWarnings("IMPLICIT_CAST_TO_ANY")
     inline fun <reified K> evalTo(script: Any?, typeHint: KClass<*>? = null): K? {
+        val type = typeHint?.let { it } ?: K::class
         return script?.let {
-            val value: K? = processEval<K>(it, typeHint)
-            if (value == null) {
-                return value
-            }
+            val value: K = processEval<K>(it, typeHint) ?: return null
             return when (value) {
-                is Collection<*> -> value.map { v -> processEval<Any?>(v!!, typeHint) }
-                is Array<*> -> value.map { v -> processEval<Any?>(v!!, typeHint) }
-                is Map<*, *> -> value.mapValues {
-                    it.value?.let { v -> processEval<Any?>(v, typeHint) }
+                is Collection<*> -> value.mapNotNull { v ->
+                    v?.let { entry -> processEval<Any?>(entry, entry::class) }
+                }
+                is Array<*> -> {
+                    var elementType: KClass<*>? = null
+                    coerce<K>(value.mapNotNull { v ->
+                        v?.let { entry ->
+                            elementType = entry::class
+                            processEval<Any?>(entry, entry::class)
+                        }
+                    }.toTypedArray(), elementType?.let { it } ?: Any::class)
+                }
+                is Map<*, *> -> value.mapValues { v ->
+                    v.value?.let { entry -> processEval<Any?>(entry, entry::class) }
                 }
                 else -> value
             } as K?
