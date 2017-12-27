@@ -3,6 +3,7 @@ package io.codestream.resourcemodel
 import io.codestream.util.ok
 import org.junit.Test
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class DefaultYamlResourceDefinitionsTest {
 
@@ -13,6 +14,8 @@ class DefaultYamlResourceDefinitionsTest {
         assertNotNull(ResourceDefinitions["server"])
         val registry = DefaultYamlResourceRegistry("src/test/resources/resourcemodel/resources.yaml")
         val registryLoadResult = registry.load()
-        assertNotNull(registry["server1"], registryLoadResult?.errors?.joinToString())
+        assertNull(registryLoadResult)
+        assertNotNull(registry["server1"])
+        assertNotNull(registry["server2"])
     }
 }

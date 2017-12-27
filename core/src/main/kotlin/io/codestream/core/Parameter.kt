@@ -10,8 +10,8 @@ import kotlin.reflect.KClass
 data class Parameter(val required: Boolean,
                      val name: String,
                      val desc: String,
-                     private val type: KClass<*>,
-                     private val defaultValue: Any? = null,
+                     val type: KClass<*>,
+                     val defaultValue: Any? = null,
                      val values: Array<*> = emptyArray<Any>()) {
 
 

@@ -11,6 +11,7 @@ class UtilModule(override val name: String = "util",
     init {
         define {
             task(taskFromClass(SavePropertiesTask::class))
+            task(taskFromClass(LoadPropertiesTask::class))
             task(taskFromClass(YamlResourcesTask::class))
             task(taskFromClass(YamlResourceDefinitionsTask::class))
         }

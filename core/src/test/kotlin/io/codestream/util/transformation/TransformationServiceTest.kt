@@ -3,6 +3,7 @@ package io.codestream.util.transformation
 import org.junit.Assert
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertEquals
 
 
@@ -51,6 +52,9 @@ class TransformerServiceTest {
 
         var testCS: Collection<String> = TransformerService.convert("1, 2, 3")
         assertArrayEquals(arrayOf("1", "2", "3"), testCS.toTypedArray())
+
+        assertEquals(File("/tmp"), TransformerService.convert("/tmp"))
+        assertEquals("/tmp", TransformerService.convert(File("/tmp")))
     }
 
     @Test

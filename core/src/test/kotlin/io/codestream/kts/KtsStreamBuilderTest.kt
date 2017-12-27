@@ -5,6 +5,7 @@ import io.codestream.module.coremodule.foreach
 import io.codestream.module.coremodule.sleep
 import org.junit.Test
 import java.io.File
+import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 
@@ -43,7 +44,7 @@ class KtsStreamBuilderTest {
         val factory = ScriptEngineManager()
         val engine = factory.getEngineByName("kotlin")
         val newContext = SimpleScriptContext()
-        //val engineScope = newContext.getBindings(ScriptContext.ENGINE_SCOPE)
+        val engineScope = newContext.getBindings(ScriptContext.ENGINE_SCOPE)
         engine.eval(File("src/test/resources/sample.kt").reader(), newContext)
     }
 }

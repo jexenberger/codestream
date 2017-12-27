@@ -1,9 +1,6 @@
 package io.codestream.module.gitmodule
 
-import io.codestream.core.TaskDescriptor
-import io.codestream.core.TaskError
-import io.codestream.core.TaskProperty
-import io.codestream.core.done
+import io.codestream.core.*
 import io.codestream.util.Credentials
 import io.codestream.util.git.GitRepository
 import io.codestream.util.system
@@ -33,7 +30,7 @@ class PushTask : BaseGitAuthenticatedTask() {
     @get:NotBlank
     var branch = "master"
 
-    override fun doWithCredentials(credentials: Credentials?): TaskError? {
+    override fun doWithCredentials(id: TaskId, credentials: Credentials?): TaskError? {
         val repository = GitRepository(repoPath, remote, credentials)
         repository.push(branch, remote, credentials, force, pushTags)
         return done()

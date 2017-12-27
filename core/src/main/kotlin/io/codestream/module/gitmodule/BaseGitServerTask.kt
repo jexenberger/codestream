@@ -1,6 +1,7 @@
 package io.codestream.module.gitmodule
 
 import io.codestream.core.TaskError
+import io.codestream.core.TaskId
 import io.codestream.core.TaskProperty
 import io.codestream.util.Credentials
 import io.codestream.util.git.GitServer
@@ -11,11 +12,11 @@ abstract class BaseGitServerTask : BaseGitAuthenticatedTask() {
     @NotBlank
     var uri: String = ""
 
-    override fun doWithCredentials(credentials: Credentials?): TaskError? {
+    override fun doWithCredentials(id: TaskId, credentials: Credentials?): TaskError? {
         val server = GitServer(uri, credentials, disableHostNameCheck, disableSSLValidation)
-        return doOnServer(server)
+        return doOnServer(id, server)
     }
 
-    abstract fun doOnServer(server:GitServer) : TaskError?
+    abstract fun doOnServer(id: TaskId, server: GitServer): TaskError?
 
 }

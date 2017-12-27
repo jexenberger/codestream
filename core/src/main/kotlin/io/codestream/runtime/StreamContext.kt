@@ -117,7 +117,8 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                 timeStamp = LocalDateTime.now(),
                 variables = mutableMapOf(),
                 parent = this,
-                log = this.log
+                log = this.log,
+                resources = this.resources
         )
     }
 

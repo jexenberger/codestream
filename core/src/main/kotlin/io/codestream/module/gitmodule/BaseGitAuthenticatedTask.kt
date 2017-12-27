@@ -26,9 +26,13 @@ abstract class BaseGitAuthenticatedTask : Task {
         val credentials: Credentials? = user?.let { user ->
             password?.let { pwd -> UserPassword(user, pwd) } ?: SSHKey(user, keyFile!!)
         }
-        return doWithCredentials(credentials)
+        try {
+            return doWithCredentials(id, credentials)
+        } catch (e: Exception) {
+            return taskFailed(id, "Task failed with -> ${e.message}")
+        }
     }
 
-    abstract fun doWithCredentials(credentials: Credentials?): TaskError?
+    abstract fun doWithCredentials(id: TaskId, credentials: Credentials?): TaskError?
 
 }

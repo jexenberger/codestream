@@ -1,14 +1,17 @@
 package io.codestream.modules.atlassian
 
 import io.codestream.core.*
+import io.codestream.modules.atlassian.jira.JiraServer
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Server
 import io.codestream.util.json.json
+import javax.validation.constraints.NotBlank
 
 abstract class BaseAtlassianTask : Task {
 
     @TaskProperty(description = "Path to the server configuration")
-    var config: String? = null
+    @get:NotBlank
+    var config: String = JiraServer.defaultPath
 
     var server: Server? = null
 
@@ -18,7 +21,7 @@ abstract class BaseAtlassianTask : Task {
     abstract fun name(): String
 
     override final fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        val jira = server?.let { it } ?: loadServer(config) ?: return invalidParameter(id, "No ${name()} config found")
+        val jira = server?.let { it } ?: loadServer(config) ?: return invalidParameter(id, "No ${name()} config found @ $config")
         return runAgainstServer(id, ctx, jira)
     }
 

@@ -11,8 +11,7 @@ class SetVariableTask : Task, SetOutput {
 
 
     @TaskProperty(description = "Value to set")
-    @get:NotBlank
-    var value: String = ""
+    var value: Any? = null
 
     @TaskProperty(description = "Name of the output variable to set")
     @get:NotBlank

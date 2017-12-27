@@ -16,10 +16,12 @@ fun run(log: Log, runtime: CodestreamRuntime, stream: String?, parms: Map<String
         var done: Boolean
         var input: String?
         val isRequired = parm.required
-        val prompt = "${parm.desc} ${if (isRequired) "(required)" else ""} :"
+        val default = parm.defaultValue
+        val prompt = "${parm.desc} ${if (isRequired) "(required)" else ""}  ${if (default != null) "(press enter to default to '$default')" else ""} :"
         do {
             print(prompt)
-            input = readLine()?.trim()
+            input = readLine()?.trim() ?: default?.toString()
+            input = if (input.isNullOrEmpty() && default != null) default.toString() else input
             done = !(isRequired && input.isNullOrEmpty())
         } while (!done)
         input!!

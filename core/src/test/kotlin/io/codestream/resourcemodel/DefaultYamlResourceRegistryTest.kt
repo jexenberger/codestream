@@ -77,6 +77,17 @@ class DefaultYamlResourceRegistryTest {
     }
 
     @Test
+    fun testFindByType() {
+        val defaultYamlResourceRegistry = DefaultYamlResourceRegistry("src/test/resources/resourcemodel/resources.yaml")
+        defaultYamlResourceRegistry.load()
+        val types = defaultYamlResourceRegistry.findByType("server")
+        assertFalse { types.isEmpty() }
+        types.forEach {
+            assertTrue { it.type == "server" }
+        }
+    }
+
+    @Test
     fun testFindNegative() {
         val defaultYamlResourceRegistry = DefaultYamlResourceRegistry("src/test/resources/resourcemodel/resources.yaml")
         defaultYamlResourceRegistry.load()

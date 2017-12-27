@@ -10,11 +10,13 @@ class GitModule(override val name: String = "git",
     init {
         define {
             task(taskFromClass(CloneTask::class))
+            task(taskFromClass(CheckoutTask::class))
             task(taskFromClass(FetchTask::class))
             task(taskFromClass(CommitTask::class))
             task(taskFromClass(PushTask::class))
             task(taskFromClass(BranchTask::class))
             task(taskFromClass(CommitIDTask::class))
+            task(taskFromClass(PullTask::class))
         }
     }
 

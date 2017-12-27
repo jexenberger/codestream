@@ -1,6 +1,7 @@
 package io.codestream.util.transformation
 
 import io.codestream.core.SystemException
+import java.io.File
 import java.math.BigDecimal
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSuperclassOf
@@ -11,6 +12,8 @@ object TransformerService {
     internal val CONVERSION_REGISTRY: MutableMap<Pair<KClass<*>, KClass<*>>, TypeTransformer<*, *>> = mutableMapOf()
 
     init {
+        addConverter(String::class, File::class, LambdaTransformer<String, File> { File(it) })
+        addConverter(File::class, String::class, LambdaTransformer<File, String> { it.absolutePath })
         addConverter(String::class, Long::class, LambdaTransformer<String, Long> { it.toLong() })
         addConverter(String::class, Any::class, LambdaTransformer<String, Any> { it })
         addConverter(String::class, Int::class, LambdaTransformer<String, Int> { it.toInt() })

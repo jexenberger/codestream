@@ -4,8 +4,13 @@ import io.codestream.core.*
 import io.codestream.resourcemodel.EmptyResourceRegistry
 import io.codestream.resourcemodel.Resource
 import io.codestream.resourcemodel.ResourceRegistry
+import io.codestream.util.Eval
+import io.codestream.util.crypto.DESede
+import io.codestream.util.crypto.Secret
+import io.codestream.util.crypto.SimpleKeyStore
 import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.Log
+import io.codestream.util.system
 import io.codestream.util.transformation.LambdaTransformer
 import io.codestream.util.transformation.TransformerService
 import io.codestream.yaml.YAMLStreamBuilder
@@ -21,10 +26,23 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
 
     init {
         CodestreamRuntime.rt = this
+
+        val store = SimpleKeyStore(CodestreamRuntime.keyPath)
+        store.load("key")?.let {
+            store.store("key", DESede.generateKey())
+        }
         ModuleLoader(modulePaths, log).load()
         TransformerService.addConverter(String::class, Resource::class, LambdaTransformer<String, Resource?> { input ->
             registry?.get(input)
         })
+        TransformerService.addConverter(String::class, Secret::class, LambdaTransformer<String, Secret> { input ->
+            Secret(input)
+        })
+        TransformerService.addConverter(Secret::class, String::class, LambdaTransformer<Secret, String> { input ->
+            input.cipherTextBase64
+        })
+        //fluff nashorn
+        Eval.eval<Boolean>("1==1")
     }
 
     fun runStream(streamFile: File,
@@ -68,6 +86,10 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
     companion object {
 
         val log = ConsoleLog()
+
+        val configPath = "${system.homeDir}/.cs"
+
+        val keyPath = "$configPath/key"
 
         var homeFolder: String
             get() = codestreamPath

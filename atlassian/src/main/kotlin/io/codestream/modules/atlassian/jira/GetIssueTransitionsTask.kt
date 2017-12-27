@@ -7,7 +7,7 @@ import io.codestream.util.Server
 import io.codestream.util.rest.Request
 import javax.validation.constraints.NotBlank
 
-@TaskDescriptor("issue-transitions", description = "gets the issues for a transition and sets them in a Map of Transition ID to Transition Name")
+@TaskDescriptor("issue-transitions", description = "Gets the transitions for an issue and sets them in a Map of Transition ID to Transition Name")
 class GetIssueTransitionsTask : BaseJiraTask(), SetOutput {
 
     @get:NotBlank
@@ -15,7 +15,7 @@ class GetIssueTransitionsTask : BaseJiraTask(), SetOutput {
     override var outputVar: String = "\$transitions"
 
     @get:NotBlank
-    @TaskProperty(description = "Jira issur to get transitions from ")
+    @TaskProperty(description = "Jira issue id ")
     var issue:String = ""
 
 

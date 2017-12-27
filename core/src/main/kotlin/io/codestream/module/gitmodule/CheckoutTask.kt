@@ -6,23 +6,19 @@ import io.codestream.util.git.GitRepository
 import javax.validation.constraints.NotBlank
 
 @TaskDescriptor("checkout", description = "Create a new branch on an existing GIT repo")
-class CheckoutTask : Task {
+class CheckoutTask : BaseGitTask() {
 
-    @TaskProperty(description = "Path to GIT repo on local filesystem")
-    @get:NotBlank
-    var repoPath = ""
 
     @TaskProperty(description = "Name of branch to checkout")
     @get:NotBlank
     var branch = ""
 
-    @TaskProperty(description = "Name of remote, default is 'origin'")
-    @NotBlank
-    var remote = "origin"
-
-    override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        val repo = GitRepository(repoPath, remote)
+    override fun doWithRepo(repo: GitRepository, id: TaskId, ctx: StreamContext): TaskError? {
+        if (repo.branch.equals(branch)) {
+            return done()
+        }
         repo.checkout(branch)
         return done()
     }
+
 }

@@ -1,9 +1,6 @@
 package io.codestream.module.gitmodule
 
-import io.codestream.core.TaskDescriptor
-import io.codestream.core.TaskError
-import io.codestream.core.TaskProperty
-import io.codestream.core.done
+import io.codestream.core.*
 import io.codestream.util.git.GitServer
 import io.codestream.util.system
 import javax.validation.constraints.NotBlank
@@ -22,11 +19,10 @@ class CloneTask : BaseGitServerTask() {
 
 
     @TaskProperty(description = "name of remote to use, default is 'origin'")
-    @get:NotBlank
-    var remote = "origin"
+    var remote: String? = "origin"
 
 
-    override fun doOnServer(server: GitServer): TaskError? {
+    override fun doOnServer(id: TaskId, server: GitServer): TaskError? {
         server.clone(dir, branch, remote, cloneAllBranches)
         return done()
     }

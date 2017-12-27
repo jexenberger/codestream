@@ -31,6 +31,11 @@ class GitRepositoryTest {
     }
 
     @Test
+    fun testPull() {
+        assertTrue(repository.pull())
+    }
+
+    @Test
     fun testCheckout() {
         val branch = UUID.randomUUID().toString()
         repository.branch(branch)

@@ -1,10 +1,19 @@
 package io.codestream.resourcemodel
 
-data class Resource(val id: String, val defn: ResourceDefinition, val attributes: Map<String, Any?>) {
+import io.codestream.util.Entry
 
-    operator fun get(attrName: String): Any? {
-        return attributes[attrName]
-    }
+data class Resource(val id: String, val type: String, val defn: ResourceDefinition, val attributes: Map<String, Any?>) : AbstractMap<String, Any?>() {
 
-
+    override val entries: Set<Map.Entry<String, Any?>>
+        get() {
+            val mutableMap = mutableMapOf<String, Any?>(
+                    "id" to id,
+                    "type" to type,
+                    "defn" to defn
+            )
+            mutableMap.putAll(attributes)
+            return mutableMap
+                    .map { (k, v) -> Entry(k, v) }
+                    .toSet()
+        }
 }

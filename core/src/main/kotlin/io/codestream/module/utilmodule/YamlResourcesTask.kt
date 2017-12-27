@@ -33,25 +33,32 @@ class YamlResourcesTask : Task, SetOutput {
         if ("variable".equals(scope) && outputVar.isBlank()) {
             return invalidParameter(id, "scope is 'variable' but no variable name defined")
         }
-        val registry = DefaultYamlResourceRegistry(file)
-        val result = registry.load()
-        return result?.let {
-            taskFailed(id, it.message ?: "", it.errors.map { TaskError(id, "ResourceTaskFailed", it) }.toTypedArray())
-        } ?: populateCtx(ctx, registry)
+        return try {
+            val registry = DefaultYamlResourceRegistry(file)
+            val result = registry.load()
+            result?.let {
+                taskFailed(id, it.message ?: "", it.errors.map { TaskError(id, "ResourceTaskFailed", it) }.toTypedArray())
+            } ?: populateCtx(id, ctx, registry)
+        } catch (e: Exception) {
+            ctx.log.error(id, e.message, e)
+            return taskFailed(id, "Task failed -> ${e.message}")
+        }
     }
 
-    fun populateCtx(ctx: StreamContext, registry: DefaultYamlResourceRegistry): TaskError? {
+    fun populateCtx(id: TaskId, ctx: StreamContext, registry: DefaultYamlResourceRegistry): TaskError? {
         if ("variable".equals(scope)) {
+            ctx.log.debug(id, "setting registry to variable -> $outputVar")
             ctx[outputVar] = registry
         }
         if ("context".equals(scope) || "global".equals(scope)) {
+            ctx.log.debug(id, "setting registry on context")
             ctx.resources = registry
         }
         if ("global".equals(scope)) {
+            ctx.log.debug(id, "setting global registry")
             CodestreamRuntime.resourceRegistry = registry
         }
         return done()
     }
-
 
 }

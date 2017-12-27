@@ -8,7 +8,7 @@ import org.eclipse.jgit.transport.RefSpec
 import java.io.File
 
 class GitRepository(val repo: String,
-                    private val remote: String,
+                    private val remote: String? = "origin",
                     private val credentials: Credentials? = null) {
 
     private val repoFile = File(repo, ".git")
@@ -47,6 +47,12 @@ class GitRepository(val repo: String,
         get() = git.repository.findRef("HEAD").objectId.name
 
 
+    fun branchExists(brn: String): Boolean {
+        val gitBranch = allBranches
+                .find { brn.equals(it.shortName) }
+        return gitBranch?.let { true } ?: false
+    }
+
     fun commit(message: String, all: Boolean = true): GitRepository {
         git.commit()
                 .setAll(all)
@@ -55,7 +61,10 @@ class GitRepository(val repo: String,
         return this
     }
 
-    fun fetch(remote: String = this.remote, credentials: Credentials? = this.credentials): GitRepository {
+    fun fetch(remote: String? = this.remote, credentials: Credentials? = this.credentials): GitRepository {
+        if (remote == null) {
+            throw IllegalStateException("No remote defined")
+        }
         val fetchCommand = git.fetch()
         credentials?.let { GitServer.setup(it, fetchCommand, true, true) }
         fetchCommand
@@ -82,11 +91,31 @@ class GitRepository(val repo: String,
         return GitBranch(name)
     }
 
+
+    fun pull(branch: String = this.branch,
+             remote: String? = this.remote,
+             credentials: Credentials? = this.credentials): Boolean {
+        if (remote == null) {
+            throw IllegalStateException("No remote defined")
+        }
+        val pullCommand = git.pull()
+        credentials?.let { GitServer.setup(it, pullCommand, true, true) }
+        val pullResult = pullCommand
+                .setRemote(remote)
+                .setRemoteBranchName(branch)
+                .call()
+        return pullResult.isSuccessful
+    }
+
     fun push(branch: String,
-             remote: String = this.remote,
+             remote: String? = this.remote,
              credentials: Credentials? = this.credentials,
              force: Boolean = false,
              pushTags: Boolean = false): GitRepository {
+        if (remote == null) {
+            throw IllegalStateException("No remote defined")
+        }
+
         val pushCommand = git.push()
         credentials?.let { GitServer.setup(it, pushCommand, true, true) }
         if (pushTags) {

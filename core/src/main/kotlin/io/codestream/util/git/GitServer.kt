@@ -33,22 +33,21 @@ data class GitServer(val uri: String, val credentials: Credentials?, val disable
         }
 
 
-    fun clone(dir: String, branch: String? = null, remoteName: String = "origin", cloneAllBranches: Boolean = true): GitRepository {
+    fun clone(dir: String, branch: String? = null, remoteName: String? = "origin", cloneAllBranches: Boolean = true): GitRepository {
 
-        val cloneCommand = Git
-                .cloneRepository()
-                .setURI(uri)
+        val cloneCommand = Git.cloneRepository()
+        setup(credentials, cloneCommand, disableHostNameCheck, disableSSL)
         //doing this logic since not the cloneCommand parameter doesn't seem to work
         if (cloneAllBranches) {
             cloneCommand.setBranchesToClone(branches.map { it.shortName })
         }
         branch?.let { cloneCommand.setBranch(it) }
-        setup(credentials, cloneCommand, disableHostNameCheck, disableSSL)
+        remoteName?.let { cloneCommand.setRemote(it) }
         cloneCommand
+                .setURI(uri)
                 .setDirectory(File(dir))
                 .setCloneAllBranches(cloneAllBranches)
                 .setCloneSubmodules(cloneAllBranches)
-                .setRemote(remoteName)
                 .setBare(false)
                 .call()
         return GitRepository(dir, remoteName, credentials)

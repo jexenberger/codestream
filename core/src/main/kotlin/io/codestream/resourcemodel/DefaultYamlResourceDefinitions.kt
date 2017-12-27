@@ -1,13 +1,15 @@
 package io.codestream.resourcemodel
 
 import io.codestream.core.Parameter
+import io.codestream.runtime.CodestreamRuntime
 import io.codestream.util.Either
 import io.codestream.util.YamlFactory
+import io.codestream.util.log.Log
 import java.io.File
 import java.io.FileInputStream
 
 @Suppress("UNCHECKED_CAST")
-class DefaultYamlResourceDefinitions(val definitionsFile: String) {
+class DefaultYamlResourceDefinitions(val definitionsFile: String, log: Log = CodestreamRuntime.runtime.log) {
 
     fun load(): Either<Unit, ResourceError> {
         return Either.onException {

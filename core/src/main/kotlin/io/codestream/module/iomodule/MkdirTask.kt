@@ -15,7 +15,11 @@ class MkdirTask : Task {
 
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        val result = File(dir).mkdirs()
+        val targetDir = File(dir)
+        if (targetDir.exists() && targetDir.isDirectory) {
+            return done()
+        }
+        val result = targetDir.mkdirs()
         return if (result) done() else taskFailed(id, "Unable to create directory -> $dir")
     }
 }

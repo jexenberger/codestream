@@ -2,20 +2,19 @@ package io.codestream.util
 
 import io.codestream.runtime.StreamContext
 import javax.script.ScriptContext
-import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 
 
 object Eval {
 
-    val factory: ScriptEngineManager = ScriptEngineManager()
-    val SCRIPT_ENGINE = "nashorn"
+    private val factory = ScriptEngineManager()
+    private val SCRIPT_ENGINE = "nashorn"
+    private val engine = factory.getEngineByName(SCRIPT_ENGINE)
 
 
     fun <K> eval(script: String, variables: Map<String, Any?> = mapOf()): K {
         val newContext = SimpleScriptContext()
-        val engine: ScriptEngine = factory.getEngineByName(SCRIPT_ENGINE)
         val engineScope = newContext.getBindings(ScriptContext.ENGINE_SCOPE)
         variables.forEach({ key: String, value: Any? -> engineScope.put(key, value) })
         @Suppress("UNCHECKED_CAST")
@@ -24,7 +23,6 @@ object Eval {
 
     fun <K> eval(script: String, variables: StreamContext): K {
         val newContext = SimpleScriptContext()
-        val engine: ScriptEngine = factory.getEngineByName(SCRIPT_ENGINE)
         newContext.setBindings(variables, ScriptContext.ENGINE_SCOPE)
         @Suppress("UNCHECKED_CAST")
         return engine.eval(script, newContext) as K
