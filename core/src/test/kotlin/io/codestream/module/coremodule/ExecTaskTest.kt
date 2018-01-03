@@ -9,11 +9,12 @@ class ExecTaskTest {
 
     @Test
     fun testExecute() {
-        val cmd = if (OS.os().unixVariant) "uname -a" else "dir"
+        val cmd = if (OS.os().unixVariant) "ls" else "dir"
         val exec = ExecTask()
         exec.cmd = cmd
         exec.outputVar = "test"
         exec.dir = "/"
+        exec.echo = true
         val ctx = StreamContext()
         exec.execute(testId(), ctx)
         assertNotNull(ctx["test"])

@@ -9,7 +9,7 @@ import javax.script.SimpleScriptContext
 object Eval {
 
     private val factory = ScriptEngineManager()
-    private val SCRIPT_ENGINE = "nashorn"
+    private val SCRIPT_ENGINE = "groovy"
     private val engine = factory.getEngineByName(SCRIPT_ENGINE)
 
 

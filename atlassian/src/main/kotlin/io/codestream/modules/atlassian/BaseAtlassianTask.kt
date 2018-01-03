@@ -11,7 +11,7 @@ abstract class BaseAtlassianTask : Task {
 
     @TaskProperty(description = "Path to the server configuration")
     @get:NotBlank
-    var config: String = JiraServer.defaultPath
+    open var config: String = JiraServer.defaultPath
 
     var server: Server? = null
 

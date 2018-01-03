@@ -50,6 +50,9 @@ fun displayTaskHelp(task: String) {
                 it.params.forEach { parm ->
                     Console.line("  ${parm.name.padEnd(25)}  ${parm.description}")
                     Console.line("  ${"".padEnd(25)}  Type:    ${parm.type}")
+                    parm.default?.let {
+                        Console.line("  ${"".padEnd(25)}  Default: ${it}")
+                    }
                     Console.newLine()
                 }
                 Console.newLine()

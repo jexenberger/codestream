@@ -50,4 +50,17 @@ class YAMLStreamBuilderTest {
         val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")))
         assertNull(result, result?.toString())
     }
+
+    @Test
+    fun testBuild2() {
+        CodestreamRuntime.init(emptyArray(), force = true)
+        val builder = YAMLStreamBuilder(File("src/test/resources/sample.yml"))
+        val stream = builder.build()
+        assertNotNull(stream)
+        //assertEquals(3, stream.module.size)
+        assertEquals(1, stream.parameters.size)
+        Module += CoreModule()
+        val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")))
+        assertNull(result, result?.toString())
+    }
 }

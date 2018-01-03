@@ -5,6 +5,7 @@ import io.codestream.runtime.StreamContext
 import java.io.IOException
 import javax.validation.constraints.NotBlank
 
+@TaskDescriptor("copyfile", description = "Copies a file")
 class CopyFileTask : Task {
 
     @TaskProperty(description = "Source file path")

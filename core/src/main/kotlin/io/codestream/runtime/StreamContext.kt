@@ -3,6 +3,7 @@ package io.codestream.runtime
 import io.codestream.core.Module
 import io.codestream.core.TaskId
 import io.codestream.resourcemodel.EmptyResourceRegistry
+import io.codestream.resourcemodel.Resource
 import io.codestream.resourcemodel.ResourceRegistry
 import io.codestream.util.Eval
 import io.codestream.util.OS
@@ -40,7 +41,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
         get() = parent?.let { 1 + it.depthCnt } ?: 0
 
     fun asMap(): Map<String, Any?> {
-        val contextVar = mapOf(Pair("id", id), Pair("timeStamp", timeStamp))
+        val contextVar = mapOf<String, Any>(Pair("id", id), Pair("timeStamp", timeStamp))
         val varMap = (mapOf<String, Any?>() + variables).filterKeys { !fixedKeys().contains(it) }
         return parent?.let { mapOf(Pair("this", varMap), Pair("parent", it.asMap())) + contextVar }
                 ?: mapOf(Pair("this", varMap)) + contextVar
@@ -87,6 +88,10 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
                             processEval<Any?>(entry, entry::class)
                         }
                     }.toTypedArray(), elementType?.let { it } ?: Any::class)
+                }
+            //to short circuit Map as it is also a resource
+                is Resource -> {
+                    value
                 }
                 is Map<*, *> -> value.mapValues { v ->
                     v.value?.let { entry -> processEval<Any?>(entry, entry::class) }

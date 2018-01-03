@@ -49,7 +49,9 @@ class ExecTask : Task, SetOutput {
             }
         }
         ctx[exitStatus] = result
-        outputVar.isNotBlank().whenTrue { ctx[outputVar] = buffer }
+        outputVar.isNotBlank().whenTrue {
+            ctx[outputVar] = buffer
+        }
         if (result != 0 && exitOnFail) {
             return taskFailed(id, "$cmd returned with exit code ${result}")
         }

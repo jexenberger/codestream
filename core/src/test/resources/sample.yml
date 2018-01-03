@@ -47,6 +47,15 @@ tasks:
       - task: io::delete
         src: target/hello_world
 
+  - task: async
+    tasks:
+      - task: echo
+        value: hello 1
+      - task: echo
+        value: hello 2
+      - task: echo
+        value: hello 3
+
   - task: group
     tasks:
       - task: template::basepath
@@ -67,7 +76,7 @@ tasks:
       - task: echo
         value: ${'TEMPLATE -> ' + myCoolTemplateResult}
 
-  - task: async
+  - task: group
     tasks:
       - task: set
         outputVar: subCnt

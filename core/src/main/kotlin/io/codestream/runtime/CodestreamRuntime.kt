@@ -25,6 +25,8 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
     var path: String = ""
 
     init {
+        //init in background
+        val nashornFluffer = TaskQueues.taskQueue.submit { Eval.eval<Boolean>("1==1") }
         CodestreamRuntime.rt = this
 
         val store = SimpleKeyStore(CodestreamRuntime.keyPath)
@@ -41,8 +43,7 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
         TransformerService.addConverter(Secret::class, String::class, LambdaTransformer<Secret, String> { input ->
             input.cipherTextBase64
         })
-        //fluff nashorn
-        Eval.eval<Boolean>("1==1")
+        nashornFluffer.get()
     }
 
     fun runStream(streamFile: File,

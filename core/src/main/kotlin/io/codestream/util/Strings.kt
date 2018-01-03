@@ -27,20 +27,13 @@ fun String.exec(dir: File = File(System.getProperty("user.dir")),
 fun String.exec(dir: File = File(System.getProperty("user.dir")),
                 timeout: Long = 60,
                 timeUnit: TimeUnit = TimeUnit.MINUTES,
-                handler:(String)-> Unit): Int {
-    val parts = this.split(" ")
-    val process = ProcessBuilder(parts)
-            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-            .redirectError(ProcessBuilder.Redirect.INHERIT)
-            .directory(dir)
-            .start()
-    process.inputStream.bufferedReader().forEachLine { handler(it) }
-    val completed = process.waitFor(timeout, timeUnit)
-    if (!completed) {
-        return -1
-    }
-    val result = process.exitValue()
-    return result
+                handler: (String) -> Unit): Int {
+    val parts = this.split(" ").map { it.trim() }
+    return system.exec(parts.toTypedArray(),
+            dir = dir,
+            timeout = timeout,
+            timeUnit = timeUnit,
+            handler = handler)
 }
 
 

@@ -89,6 +89,15 @@
             </dependency>
 
 
+            <!-- groovy JSR233 -->
+            <!-- https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-jsr223 -->
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-jsr223</artifactId>
+                <version>2.4.13</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-coroutines-core</artifactId>
@@ -145,11 +154,6 @@
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-reflect</artifactId>
-                <version>${kotlin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-script-util</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>

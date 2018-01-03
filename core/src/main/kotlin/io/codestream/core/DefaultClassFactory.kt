@@ -23,11 +23,25 @@ open class DefaultClassFactory<T : Executable>(val executableType: KClass<out T>
 
     override val documentation: ExecutableDocumentation
         get() {
-
+            val instance = newInstance() ?: throw IllegalStateException("Unable to create instance of '$executableType', not default constructor")
             val parameters = TaskBinder.extractTaskParameters(executableType)
             val parmDoc: Array<ParameterDocumentation> = parameters.map { (k, v) ->
                 val typeToUser = v.property.returnType.classifier as KClass<*>
-                ParameterDocumentation(k, v.defn.description, Parameter.stringType(typeToUser) ?: "string")
+                val default = v.property.getter.call(instance).takeIf {
+                    when (it) {
+                        is String -> it.isNotBlank()
+                        is Array<*> -> it.isNotEmpty()
+                        is Collection<*> -> it.isNotEmpty()
+                        is Map<*, *> -> it.isNotEmpty()
+                        else -> true
+                    }
+                }
+                ParameterDocumentation(
+                        k,
+                        v.defn.description,
+                        Parameter.stringType(typeToUser) ?: "string",
+                        default?.toString()
+                )
             }.toTypedArray()
             return ExecutableDocumentation(
                     description.name,
@@ -37,8 +51,10 @@ open class DefaultClassFactory<T : Executable>(val executableType: KClass<out T>
         }
 
     override fun create(defn: ExecutableDefinition<T>, ctx: StreamContext, module: Module): Either<T, TaskError> {
-        val task = executableType.primaryConstructor?.call() ?: return fail(TaskError(defn.id, "UnableToCreateTask", "${defn.type.fqn} does not have a primary constructor"))
+        val task = newInstance() ?: return fail(TaskError(defn.id, "UnableToCreateTask", "${defn.type.fqn} does not have a primary constructor"))
         return ok(task)
     }
+
+    private fun newInstance() = executableType.primaryConstructor?.call()
 
 }

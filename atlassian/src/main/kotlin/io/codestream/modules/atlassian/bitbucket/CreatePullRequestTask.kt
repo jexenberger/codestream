@@ -66,8 +66,13 @@ class CreatePullRequestTask : BaseBitbucketTask(), SetOutput {
             }
             409 -> {
                 val data = mapper.readValue<Map<String, Any?>>(response.body)
-                ctx[outputVar] = ((data["errors"] as List<Map<String, Any?>>)[0]["existingPullRequest"] as Map<String, Any?>)["id"]
-                done()
+                val prId: Any? = data["errors"]?.let {
+                    (it as List<Map<String, Any?>>)[0]["existingPullRequest"]?.let { (it as Map<String, Any?>)["id"] }
+                }
+                prId?.let {
+                    ctx[outputVar] = it.toString()
+                    done()
+                } ?: taskFailed(id, "Task failed returned -> ${response.status}", arrayOf(taskFailed(id, "${response.body}")))
             }
             else -> taskFailed(id, "Task failed returned -> ${response.status}", arrayOf(taskFailed(id, "${response.body}")))
         }

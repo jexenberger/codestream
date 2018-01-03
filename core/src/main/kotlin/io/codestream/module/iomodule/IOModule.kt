@@ -9,6 +9,7 @@ class IOModule(override val name: String = "io",
 
     init {
         define {
+            task(taskFromClass(CopyFileTask::class))
             task(taskFromClass(MkdirTask::class))
             task(taskFromClass(ReadFileTask::class))
             task(taskFromClass(WriteFileTask::class))
@@ -16,4 +17,7 @@ class IOModule(override val name: String = "io",
         }
     }
 
+    override fun functionObject(): Any? {
+        return IOFunctions()
+    }
 }
