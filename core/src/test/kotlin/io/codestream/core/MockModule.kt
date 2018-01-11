@@ -1,5 +1,8 @@
 package io.codestream.core
 
+import io.codestream.runtime.classimpl.groupFromClass
+import io.codestream.runtime.classimpl.taskFromClass
+
 class MockModule(override val name: String = "mock",
                  override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>> = mutableMapOf()) : Module {
     override val description: String

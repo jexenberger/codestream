@@ -1,5 +1,6 @@
-package io.codestream.core
+package io.codestream.runtime.classimpl
 
+import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.Either
 import io.codestream.util.error
@@ -35,7 +36,7 @@ class DefaultTaskClassFactoryTest {
         assertNotNull(factory)
         val type = TaskType("mock", "mock")
         val id = TaskId("test", "test", type)
-        val binding = MapBinding(id, type, params = mapOf(
+        val binding = factory.getBinding(mapOf(
                 "testSet" to "hello",
                 "list" to "hello, world",
                 //"willFail" to "yes",
@@ -44,7 +45,7 @@ class DefaultTaskClassFactoryTest {
         val defn = ExecutableDefinition(
                 type,
                 id,
-                binding.toBinding(),
+                binding,
                 defaultCondition())
 
         val ctx = StreamContext()

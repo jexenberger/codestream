@@ -13,7 +13,6 @@ import io.codestream.util.log.Log
 import io.codestream.util.system
 import io.codestream.util.transformation.LambdaTransformer
 import io.codestream.util.transformation.TransformerService
-import io.codestream.yaml.YAMLStreamBuilder
 import java.io.File
 
 class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRuntime.log) {
@@ -72,8 +71,7 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
         ctx.log.debug = debug
         val id = TaskId("_default", "_default", task)
         val module = task.module?.let { it } ?: return invalidModule(id, "${task.namespace} is not a valid module")
-        val binding = MapBinding(id, task, parms)
-        val defn = ExecutableDefinition<Task>(task, id, binding.toBinding(), defaultCondition())
+        val defn = ExecutableDefinition<Task>(task, id, module.binding<Task>(task, parms)!!, defaultCondition())
         return module
                 .createTask(defn, ctx)
                 .map({ executable ->

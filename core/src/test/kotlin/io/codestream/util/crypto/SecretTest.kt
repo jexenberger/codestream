@@ -40,12 +40,4 @@ class SecretTest {
         val secret = Secret("hello world", file)
         assertEquals(encrypt, secret.cipherTextBase64)
     }
-
-    @Test
-    fun testCreateFromCipherText() {
-        val handler = DESede()
-        val encrypt = Base64.getEncoder().encode(handler.encrypt("hello world".toByteArray(), key))
-        val secret = Secret(encrypt, file)
-        assertEquals("hello world", secret.value)
-    }
 }

@@ -1,9 +1,6 @@
 package io.codestream.runtime
 
-import io.codestream.core.ExecutableDefinition
-import io.codestream.core.Parameter
-import io.codestream.core.TaskId
-import io.codestream.core.TaskType
+import io.codestream.core.*
 import io.codestream.module.coremodule.EchoTask
 import org.junit.Test
 import kotlin.test.assertNotNull
@@ -21,7 +18,7 @@ class StreamBuilderTest {
             task(ExecutableDefinition<EchoTask>(
                     type = type,
                     id = TaskId("group", "test", type),
-                    params = mapOf("value" to "\${input}")
+                    binding = emptyBinding()
             ))
         }.stream
         assertNotNull(stream)

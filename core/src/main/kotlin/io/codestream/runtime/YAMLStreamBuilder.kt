@@ -1,8 +1,6 @@
-package io.codestream.yaml
+package io.codestream.runtime
 
 import io.codestream.core.*
-import io.codestream.runtime.Stream
-import io.codestream.runtime.StreamBuilder
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.events.ScalarEvent
 import java.io.File
@@ -81,7 +79,9 @@ class YAMLStreamBuilder() {
     }
 
     internal fun defineTask(group: String, stream: String, builder: StreamBuilder, taskMap: Map<String, Any?>) {
-        val type = TaskType.fromString(required(taskMap["task"], "task", null))
+        val task = taskMap["task"]
+        val type = TaskType.fromString(required(task, "task", null))
+
         //this id line logic works because the map returned is a linked HashMap so the tasks occur in order
         //this means we can assign line numbers in order of appearance
         val (idCnt, taskLine) = ids.next()
@@ -92,11 +92,12 @@ class YAMLStreamBuilder() {
         val parms = taskMap
                 .filterKeys { !arrayOf("id", "task", "type", "tasks", "condition").contains(it) }
                 .filterValues { it != null }
+        val binding = type.module?.binding<Executable>(type, parms) ?: throw IllegalArgumentException("$task does not exist either module or task does not exist")
 
         val defn = ExecutableDefinition(type = type,
                 id = taskId,
                 condition = condition?.let { scriptCondition(it) } ?: defaultCondition(),
-                binding = MapBinding(taskId, type, parms).toBinding(),
+                binding = binding,
                 lineNumber = taskLine,
                 source = source
         )

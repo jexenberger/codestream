@@ -1,12 +1,12 @@
-package io.codestream.core
+package io.codestream.runtime
 
+import io.codestream.core.Module
 import io.codestream.module.coremodule.CoreModule
 import io.codestream.module.gitmodule.GitModule
 import io.codestream.module.iomodule.IOModule
 import io.codestream.module.sshmodule.SSHModule
 import io.codestream.module.templatemodule.TemplateModule
 import io.codestream.module.utilmodule.UtilModule
-import io.codestream.runtime.CodestreamRuntime
 import io.codestream.util.Either
 import io.codestream.util.fail
 import io.codestream.util.log.ConsoleLog

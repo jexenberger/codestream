@@ -3,8 +3,8 @@ package io.codestream.cli
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import com.xenomachina.argparser.mainBody
-import io.codestream.core.ModuleLoader
 import io.codestream.runtime.CodestreamRuntime
+import io.codestream.runtime.ModuleLoader
 import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.Log
 import io.codestream.util.whenTrue

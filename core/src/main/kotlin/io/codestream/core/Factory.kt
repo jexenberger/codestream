@@ -8,5 +8,7 @@ interface Factory<T : Executable> {
     val documentation: ExecutableDocumentation
         get() = ExecutableDocumentation("name", "description")
 
+    fun getBinding(parms: Map<String, Any?>): Binding<T>
+
     fun create(defn: ExecutableDefinition<T>, ctx: StreamContext, module: Module): Either<T, TaskError>
 }

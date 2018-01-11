@@ -1,5 +1,8 @@
-package io.codestream.core
+package io.codestream.runtime.classimpl
 
+import io.codestream.core.MockModule
+import io.codestream.core.MockTask
+import io.codestream.core.defaultCondition
 import io.codestream.module.coremodule.createTaskContext
 import io.codestream.resourcemodel.DefaultYamlResourceDefinitions
 import io.codestream.resourcemodel.DefaultYamlResourceRegistry
@@ -24,7 +27,7 @@ class TaskBinderTest {
         val (ctx, defn) = createTaskContext<MockTask>(bindingParams = map)
         ctx.log.debug = true
         val task = MockTask()
-        val validation = TaskBinder.bind(defn.id, defn.type, task, ctx, map)
+        val validation = TaskBinder.bind(defn.id, task, ctx, map)
         assertNull(validation, validation.toString())
         Assert.assertArrayEquals(arrayOf("hello", "world"), task.list)
         assertEquals(1, task.testTwo)
@@ -38,7 +41,7 @@ class TaskBinderTest {
         assertNotNull(factory)
         val (ctx, defn) = createTaskContext<MockTask>(MockModule(), "mockTask", condition = defaultCondition())
         val task = MockTask()
-        val validation = TaskBinder.bind(defn.id, defn.type, task, ctx, mapOf())
+        val validation = TaskBinder.bind(defn.id, task, ctx, mapOf())
         assertNotNull(validation, validation?.toString())
     }
 
@@ -58,7 +61,7 @@ class TaskBinderTest {
         CodestreamRuntime.resourceRegistry = registry
         ctx.resources = registry
         val task = MockTask()
-        TaskBinder.bind(defn.id, defn.type, task, ctx, params)
+        TaskBinder.bind(defn.id, task, ctx, params)
         assertNotNull(task.server)
 
     }

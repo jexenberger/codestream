@@ -1,5 +1,6 @@
-package io.codestream.core
+package io.codestream.runtime.classimpl
 
+import io.codestream.core.GroupTask
 import kotlin.reflect.KClass
 
 fun groupFromClass(groupTaskClass: KClass<out GroupTask>): DefaultGroupTaskFactory {

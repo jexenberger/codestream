@@ -1,5 +1,6 @@
-package io.codestream.core
+package io.codestream.runtime.classimpl
 
+import io.codestream.core.*
 import io.codestream.doc.ExecutableDocumentation
 import io.codestream.doc.ParameterDocumentation
 import io.codestream.runtime.StreamContext
@@ -12,12 +13,19 @@ import kotlin.reflect.full.primaryConstructor
 
 open class DefaultClassFactory<T : Executable>(val executableType: KClass<out T>) : Factory<T> {
 
+
     lateinit var description: TaskDescriptor
 
     init {
         executableType.findAnnotation<TaskDescriptor>()?.let {
             description = it
         } ?: throw IllegalStateException("No ${TaskDescriptor::class.qualifiedName} annotation on ${executableType}")
+    }
+
+    override fun getBinding(parms: Map<String, Any?>): Binding<T> {
+        return { id: TaskId, ctx: StreamContext, instance: T ->
+            TaskBinder.bind(id, instance, ctx, parms)
+        }
     }
 
 

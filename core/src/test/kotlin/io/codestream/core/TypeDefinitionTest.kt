@@ -21,7 +21,7 @@ class TypeDefinitionTest {
     @Test
     fun testInvalidModuleMsg() {
         val id = genId("2")
-        val binding = MapBinding(id, mockType, mapOf(Pair("willFail", "true"))).toBinding()
+        val binding = emptyBinding<MockTask>()
         val task = ExecutableDefinition<MockTask>(mockType, id, binding, defaultCondition(), 100)
         val invalidModuleMsg = task.invalidModuleMsg()
         assertTrue(invalidModuleMsg.contains("100"))

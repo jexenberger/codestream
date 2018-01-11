@@ -2,6 +2,7 @@ package io.codestream.module.coremodule
 
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
+import io.codestream.runtime.classimpl.TaskBinder
 
 
 fun testId(module: String = "test", name: String = "test"): TaskId {
@@ -15,7 +16,9 @@ fun <T : Executable> createTaskContext(coreModule: Module = MockModule(),
     val ctx = StreamContext()
     val taskType = coreModule.typeOf(task)
     val id = testId()
-    val mapping = MapBinding(id, taskType, bindingParams).toBinding()
-    val defn = ExecutableDefinition<T>(taskType, id, mapping, condition)
+    val binder = { id: TaskId, ctx: StreamContext, instance: T ->
+        TaskBinder.bind(id, instance, ctx, bindingParams)
+    }
+    val defn = ExecutableDefinition<T>(taskType, id, binder, condition)
     return Pair(ctx, defn)
 }

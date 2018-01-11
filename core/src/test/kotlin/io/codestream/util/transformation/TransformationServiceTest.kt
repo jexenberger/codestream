@@ -4,6 +4,7 @@ import org.junit.Assert
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 import java.io.File
+import java.lang.management.MemoryType
 import kotlin.test.assertEquals
 
 
@@ -55,6 +56,7 @@ class TransformerServiceTest {
 
         assertEquals(File("/tmp"), TransformerService.convert("/tmp"))
         assertEquals("/tmp", TransformerService.convert(File("/tmp")))
+        assertEquals(MemoryType.HEAP, TransformerService.convert(MemoryType.HEAP.name))
     }
 
     @Test

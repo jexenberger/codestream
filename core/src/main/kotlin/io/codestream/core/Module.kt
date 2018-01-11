@@ -2,6 +2,8 @@ package io.codestream.core
 
 import io.codestream.doc.ExecutableDocumentation
 import io.codestream.runtime.StreamContext
+import io.codestream.runtime.classimpl.DefaultGroupTaskFactory
+import io.codestream.runtime.classimpl.DefaultTaskClassFactory
 import io.codestream.util.Either
 import io.codestream.util.fail
 import io.codestream.util.ok
@@ -22,6 +24,11 @@ interface Module {
 
     fun documentation(type: TaskType): ExecutableDocumentation? {
         return factories[type]?.second?.documentation
+    }
+
+    fun <T : Executable> binding(type: TaskType, parms: Map<String, Any?>): Binding<T>? {
+        @Suppress("UNCHECKED_CAST")
+        return factories[type]?.second?.getBinding(parms) as Binding<T>
     }
 
     fun <T : Executable> create(type: ExecutableDefinition<T>, ctx: StreamContext): Either<out Executable, TaskError> {

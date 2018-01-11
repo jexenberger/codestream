@@ -111,6 +111,13 @@ object TransformerService {
     @SuppressWarnings("UNCHECKED_CAST")
     inline fun <reified K> convert(instance: Any, typeHint: KClass<*>? = null): K {
         val type = typeHint?.let { it } ?: K::class
+        //special case with enum as we always need the absolute concrete type
+        if (instance is String && type.java.isEnum) {
+            @Suppress("UPPER_BOUND_VIOLATED", "UNCHECKED_CAST")
+            return (java.lang.Enum.valueOf<Any>(type.java as Class<Any>, instance) as K)
+        }
+
+
         if (type.isInstance(instance)) {
             return instance as K
         }

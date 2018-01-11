@@ -2,9 +2,11 @@ package io.codestream.core
 
 import io.codestream.resourcemodel.Resource
 import io.codestream.util.Either
+import io.codestream.util.crypto.Secret
 import io.codestream.util.fail
 import io.codestream.util.ok
 import io.codestream.util.transformation.TransformerService
+import java.io.File
 import kotlin.reflect.KClass
 
 data class Parameter(val required: Boolean,
@@ -72,7 +74,11 @@ data class Parameter(val required: Boolean,
                 "boolean" to Boolean::class,
                 "float" to Float::class,
                 "resource" to Resource::class,
+                "secret" to Secret::class,
+                "file" to File::class,
+                "enum" to Enum::class,
                 "[resource]" to Array<Resource>::class,
+                "[file]" to Array<File>::class,
                 "[string]" to Array<String>::class,
                 "[int]" to Array<Int>::class,
                 "[float]" to Array<Float>::class,
@@ -102,9 +108,7 @@ data class Parameter(val required: Boolean,
         private fun resolveType(stringType: String)
                 = typeFor(stringType) ?: throw IllegalStateException("${stringType} is not supported, supported types are '$typeNames'")
 
-        private fun resolveDefaultString(defaultString: String?): Any? {
-            return defaultString?.let { TransformerService.convert(it) }
-        }
+        private fun resolveDefaultString(defaultString: String?) = defaultString?.let { TransformerService.convert<Any?>(it) }
 
 
         private fun isArrayType(arrayType: String) = arrayType.startsWith("[") && arrayType.endsWith("]")

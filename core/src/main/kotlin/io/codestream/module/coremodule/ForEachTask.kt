@@ -14,7 +14,7 @@ class ForEachTask : GroupTask {
     var items: Collection<*> = emptyList<Any>()
 
 
-    @TaskProperty(description = "Variable name of the current value being iterator over, default is '\$var'")
+    @TaskProperty(description = "Variable name of the current cipherText being iterator over, default is '\$var'")
     @get:NotBlank
     var currentValue: String = "\$var"
 

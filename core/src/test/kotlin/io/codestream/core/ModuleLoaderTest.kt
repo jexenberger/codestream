@@ -1,5 +1,6 @@
 package io.codestream.core
 
+import io.codestream.runtime.ModuleLoader
 import io.codestream.util.log.ConsoleLog
 import org.junit.Test
 import kotlin.test.assertNotNull

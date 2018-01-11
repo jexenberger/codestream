@@ -1,6 +1,10 @@
 package io.codestream.modules.atlassian.bitbucket
 
-import io.codestream.core.*
+import io.codestream.core.Executable
+import io.codestream.core.Factory
+import io.codestream.core.Module
+import io.codestream.core.TaskType
+import io.codestream.runtime.classimpl.taskFromClass
 
 class BitBucketModule(
         override val name: String = "bitbucket",

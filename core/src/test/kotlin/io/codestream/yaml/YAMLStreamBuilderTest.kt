@@ -3,6 +3,7 @@ package io.codestream.yaml
 import io.codestream.core.Module
 import io.codestream.module.coremodule.CoreModule
 import io.codestream.runtime.CodestreamRuntime
+import io.codestream.runtime.YAMLStreamBuilder
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals

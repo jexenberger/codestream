@@ -66,7 +66,7 @@ class StreamTest {
         assertEquals(3, ranTasks.size)
         assertEquals(1, stream.unrunTasks.size)
         for (task in stream.ranTasks) {
-            assertTrue((task.value as MockTask).ran)
+            assertTrue((task.cipherText as MockTask).ran)
         }
         assertFalse((stream.unrunTasks[task3.id] as MockTask).ran)
     }*/

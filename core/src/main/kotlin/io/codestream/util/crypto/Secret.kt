@@ -3,18 +3,21 @@ package io.codestream.util.crypto
 import io.codestream.util.system
 import java.util.*
 
-data class Secret(val value: String, var keyFile: String = "${system.homeDir}/.cs/key", private val cipherHandler: CipherHandler = DESede()) {
+data class Secret(val cipherText: ByteArray, var keyFile: String = "${system.homeDir}/.cs/key", private val cipherHandler: CipherHandler = DESede()) {
 
 
-    constructor(cipherText: ByteArray,
+    constructor(value: String,
                 keyFile: String = "${system.homeDir}/.cs/key",
                 cipherHandler: CipherHandler = DESede()) :
-            this(Secret.decryptBase64(cipherText, keyFile, cipherHandler),
+            this(Secret.encrypt(value, keyFile, cipherHandler),
                     keyFile,
                     cipherHandler)
 
     val cipherTextBase64: String
-        get() = Base64.getEncoder().encodeToString(encrypt(value, keyFile, cipherHandler))
+        get() = Base64.getEncoder().encodeToString(cipherText)
+
+    val value: String
+        get() = decrypt(cipherText, keyFile, cipherHandler)
 
 
     override fun toString(): String {

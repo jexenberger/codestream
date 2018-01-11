@@ -1,6 +1,11 @@
 package io.codestream.module.coremodule
 
-import io.codestream.core.*
+import io.codestream.core.Executable
+import io.codestream.core.Factory
+import io.codestream.core.Module
+import io.codestream.core.TaskType
+import io.codestream.runtime.classimpl.groupFromClass
+import io.codestream.runtime.classimpl.taskFromClass
 
 class CoreModule(override val name: String = "core",
                  override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>> = mutableMapOf()) : Module {

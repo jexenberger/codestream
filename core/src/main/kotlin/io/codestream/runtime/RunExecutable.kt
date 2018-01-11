@@ -2,7 +2,6 @@ package io.codestream.runtime
 
 import io.codestream.core.Executable
 import io.codestream.core.ExecutableDefinition
-import io.codestream.core.RunExecutableState
 import io.codestream.core.TaskError
 
 

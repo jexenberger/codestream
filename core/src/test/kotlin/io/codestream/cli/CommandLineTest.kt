@@ -26,7 +26,7 @@ class CommandLineTest {
 
     @Test
     fun testRunTask() {
-        val args = ArgParser(arrayOf("task", "core::echo", "-D", "-I", "value=HELLO TASK IS EXECUTED"))
+        val args = ArgParser(arrayOf("task", "core::echo", "-D", "-I", "cipherText=HELLO TASK IS EXECUTED"))
         val app = CommandLineApp(args)
         app.run()
     }

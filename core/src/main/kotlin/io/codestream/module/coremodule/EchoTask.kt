@@ -3,13 +3,13 @@ package io.codestream.module.coremodule
 import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 
-@TaskDescriptor("echo", description = "Echos a value to the console")
+@TaskDescriptor("echo", description = "Echos a cipherText to the console")
 class EchoTask : Task {
 
     @TaskProperty(description = "Value to display")
     var value: Any? = "<EMPTY>"
 
-    @TaskProperty(description = "Indent value with spaces to display under banner, default is 'true'")
+    @TaskProperty(description = "Indent cipherText with spaces to display under banner, default is 'true'")
     var indent: Boolean = true
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
