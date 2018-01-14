@@ -25,7 +25,8 @@ class SetStatusTask : BaseJiraTask() {
                 url = jira.url,
                 path = "rest/api/2/issue/$issue/transitions",
                 validateHostName = false,
-                validateSSL = false)
+                validateSSL = false,
+                contentType = "application/json")
                 .basicAuth(jira.user, jira.pwd)
                 .body(mapper.writeValueAsString(transition))
                 .post()

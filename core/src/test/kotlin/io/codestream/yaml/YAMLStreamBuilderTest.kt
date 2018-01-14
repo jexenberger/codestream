@@ -3,8 +3,10 @@ package io.codestream.yaml
 import io.codestream.core.Module
 import io.codestream.module.coremodule.CoreModule
 import io.codestream.runtime.CodestreamRuntime
+import io.codestream.runtime.StreamContext
 import io.codestream.runtime.YAMLStreamBuilder
 import org.junit.Test
+import org.yaml.snakeyaml.Yaml
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -31,6 +33,12 @@ class YAMLStreamBuilderTest {
         val builder = YAMLStreamBuilder(text)
         assertNotNull(builder.yaml)
         assertNotNull(builder.data)
+    }
+
+    @Test
+    fun testLayout() {
+        val yaml = Yaml().load(File("src/test/resources/test_layout.yaml").reader()) as Map<String, Any>
+        println(yaml["tasks"])
     }
 
     @Test
@@ -61,7 +69,9 @@ class YAMLStreamBuilderTest {
         //assertEquals(3, stream.module.size)
         assertEquals(1, stream.parameters.size)
         Module += CoreModule()
-        val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")))
+        val ctx = StreamContext()
+        ctx.log.debug = true
+        val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")), ctx)
         assertNull(result, result?.toString())
     }
 }

@@ -5,6 +5,9 @@ import io.codestream.doc.ExecutableDocumentation
 import io.codestream.doc.ParameterDocumentation
 import java.io.File
 
+
+val allowableFileExtensions = listOf("yaml", "yml", "csy")
+
 class StreamModule(val path: String,
                    override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>> = mutableMapOf()) : Module {
 
@@ -13,7 +16,8 @@ class StreamModule(val path: String,
     override fun documentation(type: TaskType): ExecutableDocumentation? {
         return factories[type]?.let {
 
-            val factory = it as StreamTaskFactory
+            val (_, rootFactory) = it
+            val factory = rootFactory as StreamTaskFactory
             val stream = factory.stream
             val desc = stream.desc
             val parms = stream.parameters.mapValues {
@@ -40,7 +44,7 @@ class StreamModule(val path: String,
         name = file.name
         define {
             val streamsAsTasks = file.list { dir, name ->
-                name.endsWith("yaml") || name.endsWith("yml") || name.endsWith("csy")
+                allowableFileExtensions.filter { name.endsWith(".$it") }.isNotEmpty()
             }
 
             if (streamsAsTasks.isEmpty()) {

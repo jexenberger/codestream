@@ -25,7 +25,7 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
 
     init {
         //init in background
-        val nashornFluffer = TaskQueues.taskQueue.submit { Eval.eval<Boolean>("1==1") }
+        val nashornFluffer = TaskQueues.taskQueue.submit { Eval.eval<Boolean>("1==1", scriptEngine = Eval.defaultEngine) }
         CodestreamRuntime.rt = this
 
         val store = SimpleKeyStore(CodestreamRuntime.keyPath)

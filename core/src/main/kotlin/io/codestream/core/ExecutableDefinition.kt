@@ -19,7 +19,8 @@ data class ExecutableDefinition<in T : Executable>(val type: TaskType,
                                                    val condition: Conditional = defaultCondition(),
                                                    val lineNumber: Long = 0,
                                                    val source: String? = null,
-                                                   val internalId: Int = nextId()) {
+                                                   val internalId: Int = nextId(),
+                                                   val scoped: Boolean = false) {
 
 
     val module: Module

@@ -19,8 +19,8 @@ class RunStreamTask : Task {
     @TaskProperty(description = "path of a file which contains a stream definition, if set, name will be ignored")
     var path: String = ""
 
-    @TaskProperty(description = "Runs the stream in it's own isolated context, default is 'true'")
-    var isolated: Boolean = true
+    @TaskProperty(description = "Runs the stream in it's own isolated context, default is 'false'")
+    var isolated: Boolean = false
 
     @TaskProperty(description = "Format of the stream file, currently only 'yaml' is supported which is the default")
     @get:NotBlank
@@ -39,7 +39,7 @@ class RunStreamTask : Task {
         if (!type.equals("yaml")) {
             return invalidParameter(id, "${type} is not supported yet")
         }
-        val runCtx = if (isolated) StreamContext() else ctx
+        val runCtx = if (isolated) StreamContext(log = ctx.log) else ctx
         return CodestreamRuntime.runtime.runStream(
                 ctx = runCtx,
                 streamFile = file,

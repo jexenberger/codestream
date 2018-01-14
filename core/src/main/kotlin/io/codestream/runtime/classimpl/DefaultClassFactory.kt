@@ -24,7 +24,9 @@ open class DefaultClassFactory<T : Executable>(val executableType: KClass<out T>
 
     override fun getBinding(parms: Map<String, Any?>): Binding<T> {
         return { id: TaskId, ctx: StreamContext, instance: T ->
-            TaskBinder.bind(id, instance, ctx, parms)
+            val binding = TaskBinder.bind(id, instance, ctx, parms)
+            binding?.let { ctx.debug(id, it.toString()) }
+            binding
         }
     }
 

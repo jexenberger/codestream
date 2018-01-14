@@ -27,7 +27,7 @@ data class Parameter(val required: Boolean,
                     name,
                     desc,
                     resolveType(stringType),
-                    resolveDefaultString(defaultString),
+                    resolveDefaultString(defaultString, resolveType(stringType)),
                     resolveAllowedValues(stringType, allowedValuesList))
 
 
@@ -108,7 +108,7 @@ data class Parameter(val required: Boolean,
         private fun resolveType(stringType: String)
                 = typeFor(stringType) ?: throw IllegalStateException("${stringType} is not supported, supported types are '$typeNames'")
 
-        private fun resolveDefaultString(defaultString: String?) = defaultString?.let { TransformerService.convert<Any?>(it) }
+        private fun resolveDefaultString(defaultString: String?, type: KClass<*>) = defaultString?.let { TransformerService.convert<Any?>(it, type) }
 
 
         private fun isArrayType(arrayType: String) = arrayType.startsWith("[") && arrayType.endsWith("]")

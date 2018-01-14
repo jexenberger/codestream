@@ -1,0 +1,16 @@
+stream: test-new
+inputs:
+  - hello:
+      type: string
+      prompt: Enter a value for hello
+
+tasks:
+  - echo:
+      value: ${string}
+  - foreach:
+      items: 1, 2, 3
+      tasks:
+        - echo:
+            value: ${$currentValue}
+        - echo:
+            value: Hello world

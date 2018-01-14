@@ -1,0 +1,24 @@
+stream: simple1
+desc: A simple task which echos an input value and then returns it in variable 'res'
+inputs:
+
+  - simple:
+      prompt: The value to echo to the screen
+      type: string
+      required: true
+      default: Hello world
+
+  - simple2:
+      prompt: A random test thingy
+      type: int
+      required: false
+      default: 999
+
+tasks:
+  - echo:
+      value: ${simple}
+  - echo:
+      value: ${simple2}
+  - set:
+      outputVar: res
+      value: ${simple}

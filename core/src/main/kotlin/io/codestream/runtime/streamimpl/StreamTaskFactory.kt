@@ -6,13 +6,15 @@ import io.codestream.runtime.StreamContext
 import io.codestream.runtime.YAMLStreamBuilder
 import io.codestream.util.Either
 import io.codestream.util.ok
+import java.io.File
 
 class StreamTaskFactory(streamFile: String) : Factory<StreamTask> {
 
     val stream: Stream
 
     init {
-        stream = YAMLStreamBuilder(streamFile).build()
+        stream = YAMLStreamBuilder(File(streamFile), false).build()
+        stream.echo = false
     }
 
 

@@ -10,9 +10,6 @@ class StreamTask(val stream: Stream) : Task {
 
     private var params: Map<String, Any?> = emptyMap()
 
-    init {
-
-    }
 
 
     fun bind(parms: Map<String, Any?>) {
@@ -21,6 +18,8 @@ class StreamTask(val stream: Stream) : Task {
 
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        return stream.run(params, ctx)
+        //we don't need to process inputs or track so we run this stream inline and not via runtime
+        val input = params.mapValues { ctx.evalTo<Any?>(it.value) }
+        return stream.run(input, ctx)
     }
 }

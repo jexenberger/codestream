@@ -4,12 +4,12 @@ import io.codestream.runtime.StreamContext
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class ScriptTaskTest {
+class JavaScriptTaskTest {
 
     @Test
     fun testExec() {
         val ctx = StreamContext()
-        val task = ScriptTask()
+        val task = JavaScriptTask()
         task.script = "'hello' + ' ' + 'world'"
         task.outputVar = "hello_var"
         task.execute(testId(), ctx)

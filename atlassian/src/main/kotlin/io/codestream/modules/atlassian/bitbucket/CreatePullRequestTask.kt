@@ -55,7 +55,8 @@ class CreatePullRequestTask : BaseBitbucketTask(), SetOutput {
                 url = server.url,
                 path = path,
                 validateSSL = false,
-                validateHostName = false)
+                validateHostName = false,
+                contentType = "application/json")
                 .basicAuth(server.user, server.pwd)
                 .body(postBody)
                 .post()

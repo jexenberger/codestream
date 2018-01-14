@@ -67,6 +67,9 @@ object TransformerService {
         addConverter(String::class, Array<BigDecimal>::class, LambdaTransformer<String, Array<BigDecimal>> {
             it.split(",").map { BigDecimal(it.trim()) }.toTypedArray()
         })
+        addConverter(String::class, Array<File>::class, LambdaTransformer<String, Array<File>> {
+            it.split(",").map { File(it.trim()) }.toTypedArray()
+        })
         addConverter(Map::class, Map::class, LambdaTransformer<Map<String, Any?>, Map<String, Any?>> {
             it
         })

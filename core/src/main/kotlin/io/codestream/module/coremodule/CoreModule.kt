@@ -21,7 +21,8 @@ class CoreModule(override val name: String = "core",
             task(taskFromClass(ExecTask::class))
             task(taskFromClass(ExecTask::class))
             task(taskFromClass(SetVariableTask::class))
-            task(taskFromClass(ScriptTask::class))
+            task(taskFromClass(JavaScriptTask::class))
+            task(taskFromClass(GroovyScriptTask::class))
 
             groupTask(groupFromClass(WhileTask::class))
             groupTask(groupFromClass(GroupingTask::class))

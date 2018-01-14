@@ -4,17 +4,16 @@ import io.codestream.core.*
 import io.codestream.util.fail
 import io.codestream.util.ok
 import io.codestream.util.timeTaken
+import io.codestream.util.whenTrue
 
 class RunTask<T : Task>(override val defn: ExecutableDefinition<T>,
                         override val id: Int = RunExecutable.nextId(),
-                        override var state: RunExecutableState = RunExecutableState.Pending) : RunExecutable<T> {
+                        override var state: RunExecutableState = RunExecutableState.Pending,
+                        override val echo: Boolean = true,
+                        override var parent: RunExecutable<*>? = null) : RunExecutable<T> {
 
     override fun run(ctx: StreamContext): TaskError? {
-        var buffer = ""
-        (0..ctx.depthCnt).forEach {
-            buffer += "  "
-        }
-        ctx.echo("$buffer[${defn.type}]")
+        echo.whenTrue { ctx.echo(defn.type.fqn.padStart(this.depthCnt)) }
         state = RunExecutableState.Running
         try {
             val task = defn.module.createTask(defn, ctx)

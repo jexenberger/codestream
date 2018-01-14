@@ -1,9 +1,6 @@
 package io.codestream.runtime.classimpl
 
-import io.codestream.core.TaskError
-import io.codestream.core.TaskId
-import io.codestream.core.TaskProperty
-import io.codestream.core.taskParameterValidation
+import io.codestream.core.*
 import io.codestream.runtime.StreamContext
 import io.codestream.util.transformation.TransformerService
 import io.codestream.util.validator
@@ -30,7 +27,8 @@ interface TaskBinder {
 
         fun bind(id: TaskId, task: Any, ctx: StreamContext, params: Map<String, Any?>): TaskError? {
             val taskParameters = extractTaskParameters(task::class)
-            val parentError = taskParameterValidation(id, msg = "There was a problem binding '${id.type.fqn}'")
+            val errors = mutableListOf<TaskError>()
+
             for ((input, value) in params) {
                 ctx.log.debug(id, "BEGIN ---> Binding '$input' with '$value@${value?.let { it::class.qualifiedName }}'")
                 val type = taskParameters[input] ?: return taskParameterValidation(id, msg = "property '$input' does not exist on task ${id.type.fqn}")
@@ -51,16 +49,21 @@ interface TaskBinder {
                     ctx.log.debug(id, "Property '$input' successfully been bound")
                 } catch (e: RuntimeException) {
                     ctx.log.error(id, "Unable to bind '$input' to '$value'", e)
-                    parentError += taskParameterValidation(id, msg = "property '${input}' failed binding with -> ${e.message}")
+                    errors += taskParameterValidation(id, msg = "property '${input}' failed binding with -> ${e.message}")
                 } finally {
                     ctx.log.debug(id, "END --->")
                 }
             }
             val result = validator().validate(task)
             for (error in result) {
-                parentError += taskParameterValidation(id, msg = "${error.propertyPath} ${error.message}")
+                errors += taskParameterValidation(id, msg = "${error.propertyPath} ${error.message}")
             }
-            return parentError.takeIf { it.errors.isNotEmpty() }
+            if (errors.size > 0) {
+                val parentError = taskParameterValidation(id, msg = "There was a problem binding '${id.type.fqn}'")
+                errors.forEach { parentError += it }
+                return parentError
+            }
+            return done()
         }
 
 

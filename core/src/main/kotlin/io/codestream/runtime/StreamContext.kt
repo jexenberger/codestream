@@ -15,6 +15,7 @@ import io.codestream.util.transformation.TransformerService
 import java.time.LocalDateTime
 import java.util.*
 import javax.script.Bindings
+import javax.script.ScriptEngine
 import kotlin.reflect.KClass
 
 data class StreamContext(val id: String = UUID.randomUUID().toString(),
@@ -75,7 +76,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     inline fun <reified K> evalTo(script: Any?, typeHint: KClass<*>? = null): K? {
         val type = typeHint?.let { it } ?: K::class
         return script?.let {
-            val value: K = processEval<K>(it, typeHint) ?: return null
+            val value: K = processEval<K>(it, type) ?: return null
             return when (value) {
                 is Collection<*> -> value.mapNotNull { v ->
                     v?.let { entry -> processEval<Any?>(entry, entry::class) }
@@ -112,8 +113,8 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     }
 
 
-    inline fun <reified K> evalScript(script: String): K? {
-        return Eval.eval<K?>(Eval.extractScriptString(script), this)
+    inline fun <reified K> evalScript(script: String, engine: ScriptEngine = Eval.defaultEngine): K? {
+        return Eval.eval<K?>(Eval.extractScriptString(script), this, engine)
     }
 
     fun subContext(): StreamContext {

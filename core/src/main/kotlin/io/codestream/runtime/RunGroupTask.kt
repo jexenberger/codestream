@@ -9,15 +9,22 @@ import java.util.concurrent.Future
 class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
                                   val runnables: Array<RunExecutable<*>>,
                                   override val id: Int = RunExecutable.nextId(),
-                                  override var state: RunExecutableState = RunExecutableState.Pending) : RunExecutable<T> {
+                                  override var state: RunExecutableState = RunExecutableState.Pending,
+                                  override val echo: Boolean = true,
+                                  override var parent: RunExecutable<*>? = null
+) : RunExecutable<T> {
+
+    init {
+        runnables.forEach { it.parent = this }
+    }
+
 
     override fun run(ctx: StreamContext): TaskError? {
-        var buffer = ""
-        (0..ctx.depthCnt).forEach {
-            buffer += "  "
+        if (runnables.isEmpty()) {
+            return groupTaskWithNoChildTasks(defn.id, defn.type)
         }
-        ctx.echo("$buffer[${defn.type}] ~")
-        val currentCtx = ctx
+        echo.whenTrue { ctx.echo(defn.type.fqn.padStart(this.depthCnt)) }
+        val currentCtx = if (defn.scoped) ctx.subContext() else ctx
         state = RunExecutableState.Running
         val (task, theError) = defn.module.createGroupTask(defn, currentCtx)
         if (theError != null) {
@@ -46,11 +53,7 @@ class RunGroupTask<T : GroupTask>(override val defn: ExecutableDefinition<T>,
             state = RunExecutableState.ThrewException
             task!!.onError(defn.id, currentCtx, e)
             return taskFailedWithException(defn.id, "${e::class.qualifiedName.toString()} -> ${e.message ?: "<NO MESSAGE>"}")
-        } finally {
-            //println empty line break
-            ctx.echo("${buffer}~")
         }
-
     }
 
     private fun runGroupTask(task: T, ctx: StreamContext): Either<GroupTask.AfterAction, TaskError> {

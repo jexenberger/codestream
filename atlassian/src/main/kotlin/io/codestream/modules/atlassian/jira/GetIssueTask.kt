@@ -23,7 +23,8 @@ class GetIssueTask : BaseJiraTask(), SetOutput {
                 url = jira.url,
                 path = "rest/api/2/issue/$issue",
                 validateHostName = false,
-                validateSSL = false)
+                validateSSL = false,
+                contentType = "application/json")
                 .basicAuth(jira.user, jira.pwd)
                 .get()
         if (get.status != 200) {

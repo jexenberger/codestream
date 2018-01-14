@@ -15,7 +15,13 @@ class RequestTest {
 
     @Test
     fun testHeader() {
-        val request = Request("https://api.iextrading.com", path = "1.0/stock/aapl/batch", validateHostName = false, validateSSL = false)
+        val request = Request(
+                url = "https://api.iextrading.com",
+                path = "1.0/stock/aapl/batch",
+                validateHostName = false,
+                validateSSL = false,
+                contentType = "application/json"
+        )
         settings.setProxy(request)
         request.headers(
                 "test1" to "1",
@@ -25,7 +31,13 @@ class RequestTest {
 
     @Test
     fun testGet() {
-        val request = Request("https://api.iextrading.com", path = "1.0/stock/aapl/batch", validateHostName = false, validateSSL = false)
+        val request = Request(
+                url = "https://api.iextrading.com",
+                path = "1.0/stock/aapl/batch",
+                validateHostName = false,
+                validateSSL = false,
+                contentType = "application/json"
+        )
         settings.setProxy(request)
         try {
             val result = request
@@ -43,7 +55,12 @@ class RequestTest {
 
     @Test
     fun testPost() {
-        val request = Request("https://api.iextrading.com", path = "1.0/stock/aapl/batch", validateHostName = false, validateSSL = false)
+        val request = Request(
+                url = "https://api.iextrading.com",
+                path = "1.0/stock/aapl/batch",
+                contentType = "application/json",
+                validateHostName = false,
+                validateSSL = false)
         settings.setProxy(request)
         request.parms(
                 "types" to "quote,news,chart",

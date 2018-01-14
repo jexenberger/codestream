@@ -8,6 +8,7 @@ fun invalidParameter(id: TaskId, msg: String) = TaskError(id, "InvalidTaskParame
 fun taskFailed(id: TaskId, msg: String, errors: Array<TaskError> = emptyArray()) = TaskError(id, "TaskFailed", msg, errors)
 fun taskFailedWithException(id: TaskId, msg: String, errors: Array<TaskError> = emptyArray()) = TaskError(id, "TaskFailedWithException", msg, errors)
 fun isGroupTask(id: TaskId, type: TaskType) = TaskError(id, "IsGroupTask", "${type.fqn} is a group task")
+fun groupTaskWithNoChildTasks(id: TaskId, type: TaskType) = TaskError(id, "GroupTasksWithNoChildLeaves", "${type.fqn} is a group task but has no child tasks")
 
 
 

@@ -1,130 +1,122 @@
 group: reason
 stream: echo-saying
+desc: A test stream
 inputs:
 
-  - input: saying
-    prompt: Enter saying
-    type: string
-    required: true
+  - saying:
+      prompt: Enter saying
+      type: string
+      required: true
 
 tasks:
 
-  - task: stream
-    id: run-a-stream
-    path: src/test/resources/nested.yml
-    inputParameters:
-      saying: hello world nested stream
+  - stream:
+      id: run-a-stream
+      path: src/test/resources/nested.yml
+      inputParameters:
+        saying: hello world nested stream
 
-  - task: set
-    id: my-funky-executable
-    outputVar: aTestVariable
-    value: hello world
-    varType: string
+  - set:
+      id: my-funky-executable
+      outputVar: aTestVariable
+      value: hello world
+      varType: string
 
-  - task: foreach
-    items: hello, world, from, us
-    currentValue: test
-    tasks:
-      - task: echo
-        value: ${'VALUE -> ' + test}
+  - foreach:
+      items: hello, world, from, us
+      currentValue: test
+      tasks:
+        - echo:
+            value: ${'VALUE -> ' + test}
 
 
-  - task: group
-    id: run-some-random-io
-    tasks:
-      - task: io::mkdirs
-        dir: target/hello_world
-      - task: io::write
-        file: target/hello_world/written.output
-        content: ${aTestVariable}
-      - task: sleep
-        duration: 1000
-      - task: io::read
-        src: target/hello_world/written.output
-        outputVar: fileContent
-      - task: echo
-        value: ${fileContent}
-      - task: io::delete
-        src: target/hello_world
-
-  - task: async
-    tasks:
-      - task: echo
-        value: hello 1
-      - task: echo
-        value: hello 2
-      - task: echo
-        value: hello 3
-
-  - task: group
-    tasks:
-      - task: template::basepath
-        basePath: src/test/resources
-      - task: set
-        outputVar: hello
-        value: world
-      - task: template::render
-        template: test
-        outputVar: myCoolTemplateResult
-      - task: io::mkdirs
-        dir: target/hello_world
-      - task: template::renderfile
-        template: test
-        target: target/hello_world/myfile.out
-      - task: io::delete
-        src: target/hello_world
-      - task: echo
-        value: ${'TEMPLATE -> ' + myCoolTemplateResult}
-
-  - task: group
-    tasks:
-      - task: set
-        outputVar: subCnt
-        varType: int
-        value: 0
-      - task: while
-        condition: subCnt < 5
-        tasks:
-          - task: js
-            script: subCnt + 1
-            outputVar: subCnt
-          - task: echo
-            value: ${'ASYNC ->' + subCnt}
-          - task: sleep
+  - group:
+      id: run-some-random-io
+      tasks:
+        - io::mkdirs:
+            dir: target/hello_world
+        - io::write:
+            file: target/hello_world/written.output
+            content: ${aTestVariable}
+        - sleep:
             duration: 1000
+        - io::read:
+            src: target/hello_world/written.output
+            outputVar: fileContent
+        - echo:
+            value: ${fileContent}
+        - io::delete:
+            src: target/hello_world
 
-  - task: set
-    outputVar: cnt
-    value: 0
-    varType: int
+  - async:
+      tasks:
+        - echo:
+            value: hello 1
+        - echo:
+            value: hello 2
+        - echo:
+            value: hello 3
 
-  - task: while
-    condition: cnt < 5
-    tasks:
-      - task: js
-        script: cnt + 1
-        outputVar: cnt
-      - task: echo
-        value: ${'cnt => ' + cnt}
+  - group:
+      tasks:
+        - template::basepath:
+            basePath: src/test/resources
+        - set:
+            outputVar: hello
+            value: world
+        - template::render:
+            template: test
+            outputVar: myCoolTemplateResult
+        - io::mkdirs:
+            dir: target/hello_world
+        - template::renderfile:
+            template: test
+            target: target/hello_world/myfile.out
+        - io::delete:
+            src: target/hello_world
+        - echo:
+            value: ${'TEMPLATE -> ' + myCoolTemplateResult}
 
-  - task: echo
-    value: ${saying + ' ' + aTestVariable}
+  - group:
+      tasks:
+        - set:
+            outputVar: subCnt
+            varType: int
+            value: 0
+        - while:
+            condition: subCnt < 5
+            tasks:
+              - js:
+                  script: subCnt + 1
+                  outputVar: subCnt
+              - echo:
+                  value: ${'ASYNC ->' + subCnt}
+              - sleep:
+                  duration: 1000
 
-  - task: group
-    id: randomly-echo-a-bunch-of-stuff
-    tasks:
-      - task: echo
-        value: ${saying + ' ' + aTestVariable}
-      - task: echo
-        value: ${saying + ' ' + aTestVariable}
-      - task: echo
-        value: ${saying + ' ' + aTestVariable}
-      - task: echo
-        value: ${saying + ' ' + aTestVariable}
-      - task: echo
-        value: ${saying + ' ' + aTestVariable}
-      - task: echo
-        value: ${saying + ' ' + aTestVariable}
+  - set:
+      outputVar: cnt
+      value: 0
+      varType: int
 
+  - while:
+      condition: cnt < 5
+      tasks:
+        - js:
+            script: cnt + 1
+            outputVar: cnt
+        - echo:
+            value: ${'cnt => ' + cnt}
+
+  - echo:
+      value: ${saying + ' ' + aTestVariable}
+
+  - group:
+      id: randomly-echo-a-bunch-of-stuff
+      tasks:
+        - echo:
+            value: ${saying + ' ' + aTestVariable}
+        - echo:
+            value: ${saying + ' ' + aTestVariable}
 
 

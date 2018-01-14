@@ -4,29 +4,31 @@ import io.codestream.core.*
 import io.codestream.util.events.Event
 import io.codestream.util.events.Events
 
-class Stream constructor(val id: String,
-                         val group: String,
-                         val desc: String,
-                         internal val runnables: Array<RunExecutable<*>>,
-                         private val onError: ExecutableDefinition<*>? = null,
-                         val parameters: Map<String, Parameter> = mapOf(),
-                         val echo: Boolean = false) {
+class Stream(val id: String,
+             val group: String,
+             val desc: String,
+             internal val runnables: Array<RunExecutable<*>>,
+             private val onError: ExecutableDefinition<*>? = null,
+             val parameters: Map<String, Parameter> = mapOf(),
+             var echo: Boolean = false,
+             private val before: ExecutableDefinition<*>? = null,
+             private val after: ExecutableDefinition<*>? = null) {
 
 
     fun resolveInput(input: Map<String, Any?>): Map<String, Any?> {
-        return input.mapValues {
-            val parameter = parameters[it.key]
-            parameter ?: throw InputError(it.key, "UnknownInputParameter", "'${it.key}' is not defined as an input parameter")
-            if (parameter.required && it.value == null) {
-                throw InputError(it.key, "RequiredInputParameter", "'${it.key}' is a required parameter")
+        return parameters.mapValues {
+            val parameter = input[it.key]
+            if (parameter == null && it.value.required && it.value.defaultValue != null) {
+                throw InputError(it.key, "RequiredInputParameter", "'${it.key}' is not defined as an input parameter")
             }
 
-            val convertedValue = when (it.value) {
-                is String -> parameter.fromString(it.value?.toString())
+            val convertedValue = when (parameter) {
+                null -> it.value.defaultValue
+                is String -> it.value.fromString(parameter)
                 else -> it.value
             }
-            if (convertedValue != null && !parameter.isIn(convertedValue)) {
-                throw InputError(it.key, "NotAllowedInputParameter", "'${it.key}' must one of '${parameter.values}'")
+            if (convertedValue != null && !it.value.isIn(convertedValue)) {
+                throw InputError(it.key, "NotAllowedInputParameter", "'${it.key}' must one of '${it.value.values}'")
             }
             convertedValue
         }
@@ -44,14 +46,14 @@ class Stream constructor(val id: String,
                 binding = emptyBinding(),
                 lineNumber = 0
         )
-        val result = RunGroupTask(defn, this.runnables)
-                .run(ctx)
-                ?.let {
-                    onError?.let {
-                        RunTask(it).run(ctx)
-                    }
-                    it
-                }
+        before?.let { RunTask(it).run(ctx) }
+        val result = RunGroupTask(defn, this.runnables, echo = this.echo).run(ctx)?.let {
+            onError?.let {
+                RunTask(it).run(ctx)
+            }
+            it
+        }
+        result ?: after?.let { RunTask(it).run(ctx) }
         Events.fire(Event(id = "StreamCompleted", ctx = ctx))
         return result
     }

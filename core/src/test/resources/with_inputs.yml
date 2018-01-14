@@ -1,10 +1,10 @@
 stream: with_inputs
 inputs:
-  - input: hello
-    type: string
-    prompt: Enter stuffs
-    default: world
-    required: true
+  - hello:
+      type: string
+      prompt: Enter stuffs
+      default: world
+      required: true
 
 tasks:
   - task: echo
