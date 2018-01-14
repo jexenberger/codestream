@@ -1,7 +1,6 @@
-
 description = ''
 dependencies {
-  compile project(':core')
-  testCompile project(':core')
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit', version:'1.2.0'
+    compile project(':core')
+    testCompile project(path: ':core', configuration: 'testOutput')
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit', version: '1.2.0'
 }
