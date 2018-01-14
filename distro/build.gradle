@@ -1,0 +1,7 @@
+
+description = ''
+dependencies {
+  compile project(':core')
+  compile project(':atlassian')
+  compile project(':server')
+}

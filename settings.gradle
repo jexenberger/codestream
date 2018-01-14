@@ -1,0 +1,10 @@
+rootProject.name = 'codestream'
+include ':core'
+include ':distro'
+include ':server'
+include ':atlassian'
+
+project(':core').projectDir = "$rootDir/core" as File
+project(':distro').projectDir = "$rootDir/distro" as File
+project(':server').projectDir = "$rootDir/server" as File
+project(':atlassian').projectDir = "$rootDir/atlassian" as File
