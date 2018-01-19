@@ -1,66 +1,36 @@
 package io.codestream
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.codestream.util.UserPassword
-import io.codestream.util.YamlFactory
 import io.codestream.util.git.GitRepository
 import io.codestream.util.git.GitServer
-import io.codestream.util.rest.Request
 import io.codestream.util.system
 import java.io.File
 
-data class TestSettings(
-        val sshHost: String,
-        val sshPassword: String,
-        val sshUser: String,
-        val sshPrivateKey: String,
-        val sshKnownHosts: String,
-        val sshScpFile: String,
-        val gitUrl: String,
-        val gitBranch: String,
-        val gitUser: String,
-        val gitPassword: String,
-        val gitWorkingDir: String,
-        val gitKeyFile: String,
-        val gitSSHURL: String,
-        val gitAlternateBranch: String,
-        val proxyServer: String?,
-        val proxyPort: Int?,
-        val proxyUser: String?,
-        val proxyPassword: String?
-) {
-    companion object {
-        private val defaultTestPath = "${system.homeDir}/.cstest/test.yaml"
+class TestSettings {
 
-        fun get(): TestSettings {
-            val file = File(defaultTestPath)
-            if (!file.exists()) {
-                throw RuntimeException("You need to create a test settings file @ $defaultTestPath")
-            }
-            return YamlFactory.mapper().readValue(file)
-        }
-    }
+    val repoName = "TestGitRepository"
+    val server = GitServer(
+            uri = "https://localhost:8080/git/$repoName",
+            credentials = UserPassword("pass", "word"),
+            disableHostNameCheck = true,
+            disableSSL = true)
+
+    val dir = File("${system.tempDir}/git_repos")
+    val repoPath = File(dir, repoName)
 
 
     fun clone() {
         deleteExistingGitDir()
-        val server = GitServer(gitUrl, UserPassword(gitUser, gitPassword), true, disableSSL = true)
-        server.clone(gitWorkingDir)
+        server.clone(repoPath.absolutePath)
     }
 
     fun deleteExistingGitDir() {
-        val workingDir = File(gitWorkingDir)
+        val workingDir = dir
         if (workingDir.exists()) {
             workingDir.deleteRecursively()
         }
     }
 
-    fun setProxy(request: Request) {
-        if (proxyServer != null) {
-            request.proxy(proxyServer, proxyPort?.let { it } ?: 8080, proxyUser, proxyPassword)
-        }
-    }
-
-    fun getRepo(remoteName: String = "origin") = GitRepository(gitWorkingDir, remoteName, UserPassword(gitUser, gitPassword))
+    fun getRepo(remoteName: String = "origin") = GitRepository(repoPath.absolutePath, remoteName, UserPassword("pass", "word"))
 
 }

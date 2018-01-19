@@ -11,9 +11,9 @@ class DESedeTest {
     fun testEncrypt() {
         val key = DESede.generateKey()
         val aes = DESede()
-        val encrypt = aes.encrypt("hello world".toByteArray(), key)
+        val encrypt = aes.encrypt("hello world".toByteArray(), key.encoded)
         assertNotNull(encrypt)
-        val decrypt = aes.decrypt(encrypt, key)
+        val decrypt = aes.decrypt(encrypt, key.encoded)
         assertEquals("hello world", String(decrypt))
 
     }

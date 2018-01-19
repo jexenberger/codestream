@@ -20,6 +20,8 @@ import java.net.URL
 
 data class GitServer(val uri: String, val credentials: Credentials?, val disableHostNameCheck: Boolean = false, val disableSSL: Boolean = false) {
 
+    val baseName get() = uri.substring(uri.lastIndexOf('/'))
+
     val branches: Set<GitBranch>
         get() {
             val remoteRepository = Git.lsRemoteRepository()
@@ -33,7 +35,7 @@ data class GitServer(val uri: String, val credentials: Credentials?, val disable
         }
 
 
-    fun clone(dir: String, branch: String? = null, remoteName: String? = "origin", cloneAllBranches: Boolean = true): GitRepository {
+    fun clone(dir: String = baseName, branch: String? = null, remoteName: String? = "origin", cloneAllBranches: Boolean = true): GitRepository {
 
         val cloneCommand = Git.cloneRepository()
         setup(credentials, cloneCommand, disableHostNameCheck, disableSSL)
@@ -43,9 +45,10 @@ data class GitServer(val uri: String, val credentials: Credentials?, val disable
         }
         branch?.let { cloneCommand.setBranch(it) }
         remoteName?.let { cloneCommand.setRemote(it) }
+        val path = dir?.let {  File(it) }
         cloneCommand
                 .setURI(uri)
-                .setDirectory(File(dir))
+                .setDirectory(path)
                 .setCloneAllBranches(cloneAllBranches)
                 .setCloneSubmodules(cloneAllBranches)
                 .setBare(false)

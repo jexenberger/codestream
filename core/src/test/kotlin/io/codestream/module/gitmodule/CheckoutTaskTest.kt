@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class CheckoutTaskTest {
 
-    private val settings:TestSettings = TestSettings.get()
+    private val settings:TestSettings = TestSettings()
 
     @Before
     fun setUp() {
@@ -20,8 +20,8 @@ class CheckoutTaskTest {
     fun testExecute() {
         val ctx = StreamContext()
         val cloneTask = CheckoutTask()
-        cloneTask.repoPath = settings.gitWorkingDir
-        cloneTask.branch = settings.gitBranch
+        cloneTask.repoPath = settings.repoPath
+        cloneTask.branch = "master"
         val result = cloneTask.execute(testId(), ctx)
         assertNull(result)
     }

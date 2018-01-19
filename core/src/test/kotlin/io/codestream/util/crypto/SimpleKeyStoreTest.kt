@@ -11,7 +11,7 @@ class SimpleKeyStoreTest {
     @Test
     fun testStore() {
         val crypto = DESede()
-        val result = crypto.encrypt("hello world".toByteArray(), DESede.generateKey())
+        val result = crypto.encrypt("hello world".toByteArray(), DESede.generateKey().encoded)
         val file = createTempFile("crypto", "test").absolutePath
         val ks = SimpleKeyStore(file)
         ks.store("test-key", result)

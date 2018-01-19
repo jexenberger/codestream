@@ -30,7 +30,7 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
 
         val store = SimpleKeyStore(CodestreamRuntime.keyPath)
         store.load("key")?.let {
-            store.store("key", DESede.generateKey())
+            store.store("key", DESede.generateKey().encoded)
         }
         ModuleLoader(modulePaths, log).load()
         TransformerService.addConverter(String::class, Resource::class, LambdaTransformer<String, Resource?> { input ->

@@ -1,6 +1,9 @@
 package io.codestream.util.git
 
 import io.codestream.TestSettings
+import io.codestream.util.git.mockserver.MockGitServer
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 import java.util.*
@@ -9,17 +12,29 @@ import kotlin.test.assertTrue
 
 class GitRepositoryTest {
 
-    private val settings: TestSettings = TestSettings.get()
-    private val repository: GitRepository
+    private val settings: TestSettings = TestSettings()
+    private var repository: GitRepository? = null
 
     init {
+
+    }
+
+    @Before
+    fun setUp() {
+        settings.deleteExistingGitDir()
+        MockGitServer.start()
         settings.clone()
         repository = settings.getRepo("origin")
     }
 
+    @After
+    fun tearDown() {
+        MockGitServer.stop()
+    }
+
     @Test
     fun testBranch() {
-        val branch = repository.branch
+        val branch = repository?.branch
         assertNotNull(branch)
         println(branch)
     }
@@ -27,37 +42,38 @@ class GitRepositoryTest {
 
     @Test
     fun testFetch() {
-        repository.fetch()
+        repository?.fetch()
     }
 
     @Test
     fun testPull() {
-        assertTrue(repository.pull())
+        assertTrue(repository!!.pull())
     }
 
     @Test
     fun testCheckout() {
         val branch = UUID.randomUUID().toString()
-        repository.branch(branch)
-        repository.checkout(branch)
-        repository.checkout(settings.gitBranch)
+        val oldBranch = repository?.branch
+        repository?.branch(branch)
+        repository?.checkout(branch)
+        repository?.checkout(oldBranch!!)
     }
 
     @Test
     fun testLocalBranches() {
-        val localBranches = repository.localBranches
-        assertTrue { localBranches.filter { it.shortName == settings.gitBranch }.size == 1 }
+        val localBranches = repository?.localBranches
+        assertTrue { localBranches?.filter { it.shortName == "master" }?.size == 1 }
     }
 
     @Test
     fun testRemotes() {
-        val remotes = repository.remotes
-        assertTrue { remotes.isNotEmpty() }
+        val remotes = repository?.remotes
+        assertTrue { remotes?.isNotEmpty() ?: false}
     }
 
     @Test
     fun testCommitId() {
-        val id = repository.commitID
+        val id = repository?.commitID
         assertNotNull(id)
         println(id)
     }
@@ -65,12 +81,10 @@ class GitRepositoryTest {
     @Test
     fun testPush() {
         val brn = UUID.randomUUID().toString()
-        repository.branch(brn)
-        repository.checkout(brn)
-        val path = "${settings.gitWorkingDir}/$brn"
+        repository?.branch(brn)
+        repository?.checkout(brn)
+        val path = "${settings.repoPath.absolutePath}/$brn"
         File(path).appendText("hello")
-        repository.add(brn)
-                .commit("Testing $brn")
-                .push(branch = brn, force = true)
+        repository?.add(brn)?.commit("Testing $brn")?.push(branch = brn, force = true)
     }
 }

@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class CommitTaskTest {
 
-    private val settings:TestSettings = TestSettings.get()
+    private val settings:TestSettings = TestSettings()
 
     @Before
     fun setUp() {
@@ -22,7 +22,7 @@ class CommitTaskTest {
         val cloneTask = CommitTask()
 
 
-        cloneTask.repoPath = settings.gitWorkingDir
+        cloneTask.repoPath = settings.repoPath
         cloneTask.message = "a commit"
 
         val result = cloneTask.execute(testId(), ctx)

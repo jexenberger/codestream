@@ -12,14 +12,14 @@ class SecretTest {
     private val key = DESede.generateKey()
 
     init {
-        simpleKeyStore.store("key", key)
+        simpleKeyStore.store("key", key.encoded)
     }
 
 
     @Test
     fun testDecrypt() {
         val handler = DESede()
-        val encrypt = handler.encrypt("hello world".toByteArray(), key)
+        val encrypt = handler.encrypt("hello world".toByteArray(), key.encoded)
         val decrypt = Secret.decrypt(encrypt, file, handler)
         assertEquals("hello world", decrypt)
 
@@ -28,7 +28,7 @@ class SecretTest {
     @Test
     fun testEncrypt() {
         val handler = DESede()
-        val encrypt = handler.encrypt("hello world".toByteArray(), key)
+        val encrypt = handler.encrypt("hello world".toByteArray(), key.encoded)
         val check = Secret.encrypt("hello world", file, handler)
         assertEquals(String(encrypt), String(check))
     }
@@ -36,7 +36,7 @@ class SecretTest {
     @Test
     fun testCipherTextBase64() {
         val handler = DESede()
-        val encrypt = String(Base64.getEncoder().encode(handler.encrypt("hello world".toByteArray(), key)))
+        val encrypt = String(Base64.getEncoder().encode(handler.encrypt("hello world".toByteArray(), key.encoded)))
         val secret = Secret("hello world", file)
         assertEquals(encrypt, secret.cipherTextBase64)
     }
