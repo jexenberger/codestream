@@ -16,7 +16,7 @@ class GitServerTest {
 
 
     private val repoName = "TestGitRepository"
-    private val settings: TestSettings = TestSettings.get()
+    private val settings: TestSettings = TestSettings
     private val server = GitServer(
             uri = "https://localhost:8080/git/$repoName",
             credentials = UserPassword("pass", "word"),
@@ -39,6 +39,7 @@ class GitServerTest {
 
     @Before
     fun setUp() {
+        dir.deleteRecursively()
         MockGitServer.start()
     }
 

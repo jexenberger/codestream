@@ -7,7 +7,7 @@ import kotlin.test.assertNotNull
 
 class GitFunctionsTest {
 
-    private val settings: TestSettings = TestSettings.get()
+    private val settings: TestSettings = TestSettings
 
     @Before
     fun setUp() {

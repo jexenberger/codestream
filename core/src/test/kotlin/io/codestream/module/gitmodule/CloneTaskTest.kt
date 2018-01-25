@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class CloneTaskTest {
 
-    private val settings:TestSettings = TestSettings.get()
+    private val settings:TestSettings = TestSettings
 
 
     @Before
@@ -33,21 +33,4 @@ class CloneTaskTest {
         assertNull(result)
     }
 
-    @Test
-    fun testExecuteSSH() {
-        val cloneTask = CloneTask()
-        val ctx = StreamContext()
-
-        cloneTask.uri = settings.gitSSHURL
-        cloneTask.dir = settings.gitWorkingDir
-        cloneTask.user = settings.gitUser
-        cloneTask.password = settings.gitPassword
-        cloneTask.keyFile = settings.gitKeyFile
-        cloneTask.disableHostNameCheck = true
-        cloneTask.disableSSLValidation = true
-        val result = cloneTask.execute(testId(), ctx)
-        assertNull(result)
-
-
-    }
 }

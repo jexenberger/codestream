@@ -7,7 +7,6 @@ import java.io.IOException
 class RequestTest {
 
 
-    val settings: TestSettings = TestSettings.get()
 
 
 
@@ -22,7 +21,6 @@ class RequestTest {
                 validateSSL = false,
                 contentType = "application/json"
         )
-        settings.setProxy(request)
         request.headers(
                 "test1" to "1",
                 "test2" to "2"
@@ -38,7 +36,6 @@ class RequestTest {
                 validateSSL = false,
                 contentType = "application/json"
         )
-        settings.setProxy(request)
         try {
             val result = request
                     .parm("types", "quote,news,chart")
@@ -61,7 +58,6 @@ class RequestTest {
                 contentType = "application/json",
                 validateHostName = false,
                 validateSSL = false)
-        settings.setProxy(request)
         request.parms(
                 "types" to "quote,news,chart",
                 "range" to "1m",

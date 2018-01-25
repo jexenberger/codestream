@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class FetchTaskTest {
 
-    private val settings: TestSettings = TestSettings.get()
+    private val settings: TestSettings = TestSettings
 
     @Before
     fun setUp() {

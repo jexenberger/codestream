@@ -13,12 +13,11 @@ import kotlin.test.assertNull
 class BranchTaskTest {
 
 
-    val settings = TestSettings()
+    val settings = TestSettings
 
     @Before
     fun setUp() {
         MockGitServer.start()
-        TestSettings().clone()
     }
 
     @After

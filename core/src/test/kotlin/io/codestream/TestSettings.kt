@@ -6,16 +6,23 @@ import io.codestream.util.git.GitServer
 import io.codestream.util.system
 import java.io.File
 
-class TestSettings {
 
+object TestSettings {
+
+    val gitPassword = "word"
+
+    val gitUser = "pass"
     val repoName = "TestGitRepository"
+    val gitUrl = "https://localhost:8080/git/$repoName"
     val server = GitServer(
-            uri = "https://localhost:8080/git/$repoName",
-            credentials = UserPassword("pass", "word"),
+            uri = gitUrl,
+            credentials = UserPassword(gitUser, gitPassword),
             disableHostNameCheck = true,
             disableSSL = true)
 
     val dir = File("${system.tempDir}/git_repos")
+    val gitWorkingDir = dir.absolutePath
+    val gitBranch = "master"
     val repoPath = File(dir, repoName)
 
 
@@ -31,6 +38,12 @@ class TestSettings {
         }
     }
 
-    fun getRepo(remoteName: String = "origin") = GitRepository(repoPath.absolutePath, remoteName, UserPassword("pass", "word"))
+    fun getRepo(remoteName: String = "origin") = GitRepository(repoPath.absolutePath, remoteName, UserPassword(gitUser, gitPassword))
+    val sshUser: String = "test"
+    val sshHost: String = "localhost"
+    val sshPassword: String = "test!"
+    val sshPrivateKey: String = ""
+    val sshKnownHosts: String = ""
+    val sshScpFile: String = ""
 
 }

@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 
 class GitRepositoryTest {
 
-    private val settings: TestSettings = TestSettings()
+    private val settings: TestSettings = TestSettings
     private var repository: GitRepository? = null
 
     init {

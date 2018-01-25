@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class CheckoutTaskTest {
 
-    private val settings:TestSettings = TestSettings()
+    private val settings:TestSettings = TestSettings
 
     @Before
     fun setUp() {

@@ -12,7 +12,7 @@ import kotlin.test.assertNull
 
 class PushTaskTest {
 
-    private val settings: TestSettings = TestSettings.get()
+    private val settings: TestSettings = TestSettings
     private lateinit var repository: GitRepository
 
     @Before

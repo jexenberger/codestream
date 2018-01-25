@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 
 class SSHSessionBuilderTest {
 
-    val settings: TestSettings = TestSettings.get()
+    val settings: TestSettings = TestSettings
 
     @Test
     fun testWithPassword() {
