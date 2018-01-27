@@ -166,7 +166,12 @@ class Request(val uri: String,
             }
             Response(responseCode, responseMessage, result, responseHeaders)
         } catch (e: IOException) {
-            Response(responseCode, responseMessage, conn.errorStream.bufferedReader().readText(), responseHeaders)
+            val errorText = try {
+                conn.errorStream.bufferedReader().readText()
+            } catch (e: IllegalStateException) {
+                "<unknown>"
+            }
+            Response(responseCode, responseMessage, errorText, responseHeaders)
         }
     }
 

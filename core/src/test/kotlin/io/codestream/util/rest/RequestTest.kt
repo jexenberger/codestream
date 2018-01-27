@@ -1,16 +1,27 @@
 package io.codestream.util.rest
 
-import io.codestream.TestSettings
+import io.fabric8.mockwebserver.DefaultMockServer
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import java.io.IOException
+
 
 class RequestTest {
 
 
+    var server: DefaultMockServer? = null
 
+    @Before
+    fun setUp() {
+        server = DefaultMockServer()
+        server?.start(4444)
+    }
 
-
-
+    @After
+    fun tearDown() {
+        server?.shutdown()
+    }
 
     @Test
     fun testHeader() {
@@ -29,16 +40,17 @@ class RequestTest {
 
     @Test
     fun testGet() {
+
+        server?.expect()?.get()?.withPath("/test/test")?.andReturn(200, "admin")?.once()
         val request = Request(
-                url = "https://api.iextrading.com",
-                path = "1.0/stock/aapl/batch",
+                url = "http://localhost:4444",
+                path = "test/test",
                 validateHostName = false,
                 validateSSL = false,
                 contentType = "application/json"
         )
         try {
             val result = request
-                    .parm("types", "quote,news,chart")
                     .parm("range", "1m")
                     .parm("last", "10")
                     .get()
@@ -52,9 +64,13 @@ class RequestTest {
 
     @Test
     fun testPost() {
+
+        server?.expect()?.post()?.withPath("/test/test")?.andReturn(200, "admin")?.once()
+
+
         val request = Request(
-                url = "https://api.iextrading.com",
-                path = "1.0/stock/aapl/batch",
+                url = "http://localhost:4444",
+                path = "test/test",
                 contentType = "application/json",
                 validateHostName = false,
                 validateSSL = false)

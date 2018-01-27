@@ -2,14 +2,26 @@ package io.codestream.modules.atlassian.bitbucket
 
 import io.codestream.module.coremodule.testId
 import io.codestream.modules.atlassian.AtlassianTestSettings
+import io.codestream.modules.atlassian.BaseMockHttpServer
 import io.codestream.runtime.StreamContext
+import io.fabric8.mockwebserver.utils.ResponseProvider
+import io.fabric8.mockwebserver.utils.ResponseProviders
+import okhttp3.Headers
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class CreatePullRequestTaskTest {
+class CreatePullRequestTaskTest : BaseMockHttpServer() {
 
     @Test
     fun testExecute() {
+
+        val headers = Headers.of(mutableMapOf("Location " to "test/test/test"))
+        val provider: ResponseProvider<Any> = ResponseProviders.of(201, { req -> "hello" })
+        provider.headers = headers
+
+        server?.expect()?.post()?.withPath("/bitbucket/projects/proj01/repos/repo01/pull-requests")?.andReply(provider)?.once()
+
         val task = CreatePullRequestTask()
         val settings = AtlassianTestSettings.get()
         task.server = settings.bitbucketServer
@@ -26,14 +38,6 @@ class CreatePullRequestTaskTest {
         val localhost = ctx[task.outputVar]
         println(localhost)
         assertNotNull(localhost, execute?.toString())
-
-        //Allow Bitbucket to catch up
-        Thread.sleep(3000)
-        val decline = DeclinePullRequestTask()
-        decline.server = settings.bitbucketServer
-        decline.repo = settings.bitbucketRepo
-        decline.project = settings.bitbucketProject
-        decline.id = localhost.toString()
-        decline.execute(testId(), ctx)
+        assertEquals("test", localhost)
     }
 }

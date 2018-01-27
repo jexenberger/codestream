@@ -1,26 +1,22 @@
 package io.codestream.modules.atlassian
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.codestream.util.Server
-import io.codestream.util.YamlFactory
-import io.codestream.util.system
-import java.io.File
 
-data class AtlassianTestSettings(val jiraUrl: String,
-                                 val jiraUser: String,
-                                 val jiraPassword: String,
-                                 val jiraTestIssue: String,
-                                 val jiraTestStatus: String,
-                                 val jiraAssignmentUser: String,
-                                 val bitbucketUrl: String,
-                                 val bitbucketUser: String,
-                                 val bitbucketPassword: String,
-                                 val bitbucketSourceBranch: String,
-                                 val bitbucketTargetBranch: String,
-                                 val bitbucketReviewer: String,
-                                 val bitbucketProject: String,
-                                 val bitbucketRepo: String,
-                                 val bitbucketBasePath: String?) {
+data class AtlassianTestSettings(val jiraUrl: String = "http://localhost:4444",
+                                 val jiraUser: String = "test",
+                                 val jiraPassword: String = "pwd",
+                                 val jiraTestIssue: String = "COS-123",
+                                 val jiraTestStatus: String = "status",
+                                 val jiraAssignmentUser: String = "adrian",
+                                 val bitbucketUrl: String = "http://localhost:4444",
+                                 val bitbucketUser: String = "bb_test",
+                                 val bitbucketPassword: String = "bb_pwd",
+                                 val bitbucketSourceBranch: String = "brn",
+                                 val bitbucketTargetBranch: String = "target",
+                                 val bitbucketReviewer: String = "qwerty",
+                                 val bitbucketProject: String = "proj01",
+                                 val bitbucketRepo: String = "repo01",
+                                 val bitbucketBasePath: String? = "bitbucket") {
 
 
     val jiraServer: Server
@@ -31,16 +27,7 @@ data class AtlassianTestSettings(val jiraUrl: String,
 
 
     companion object {
-
-        val defaultTestPath = "${system.homeDir}/.cstest/modules/atlassian/test.yaml"
-
-        fun get(): AtlassianTestSettings {
-            val file = File(defaultTestPath)
-            if (!file.exists()) {
-                throw RuntimeException("You need to create a test settings file @ $defaultTestPath")
-            }
-            return YamlFactory.mapper().readValue(file)
-        }
+        fun get() = AtlassianTestSettings()
     }
 
 
