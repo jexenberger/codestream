@@ -17,6 +17,7 @@ class IOModule(override val name: String = "io",
             task(taskFromClass(MkdirTask::class))
             task(taskFromClass(ReadFileTask::class))
             task(taskFromClass(WriteFileTask::class))
+            task(taskFromClass(AppendFileTask::class))
             task(taskFromClass(DeleteTask::class))
         }
     }

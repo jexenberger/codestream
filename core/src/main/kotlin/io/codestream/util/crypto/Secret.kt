@@ -1,23 +1,22 @@
 package io.codestream.util.crypto
 
-import io.codestream.util.system
+import io.codestream.runtime.runtime
 import java.util.*
 
-data class Secret(val cipherText: ByteArray, var keyFile: String = "${system.homeDir}/.cs/key", private val cipherHandler: CipherHandler = DESede()) {
+data class Secret(val cipherText: ByteArray, val key: ByteArray = runtime.systemKey.encoded, private val cipherHandler: CipherHandler = DESede()) {
 
 
-    constructor(value: String,
-                keyFile: String = "${system.homeDir}/.cs/key",
-                cipherHandler: CipherHandler = DESede()) :
-            this(Secret.encrypt(value, keyFile, cipherHandler),
-                    keyFile,
-                    cipherHandler)
+    constructor(plainText: String,
+                key: ByteArray = runtime.systemKey.encoded,
+                cipherHandler: CipherHandler = DESede())
+            : this(cipherHandler.encrypt(plainText.toByteArray(), key), key, cipherHandler)
+
 
     val cipherTextBase64: String
         get() = Base64.getEncoder().encodeToString(cipherText)
 
     val value: String
-        get() = decrypt(cipherText, keyFile, cipherHandler)
+        get() = String(decrypt(value = cipherText, keyFile = key, handler = cipherHandler))
 
 
     override fun toString(): String {
@@ -26,24 +25,14 @@ data class Secret(val cipherText: ByteArray, var keyFile: String = "${system.hom
 
     companion object {
 
-        fun decryptBase64(value: ByteArray, keyFile: String, handler: CipherHandler): String {
+        fun decryptBase64(value: ByteArray, keyFile: ByteArray, handler: CipherHandler): String {
             val decoded = Base64.getDecoder().decode(value)
-            return decrypt(decoded, keyFile, handler)
+            return String(decrypt(decoded, keyFile, handler))
         }
 
-        fun encrypt(value: String, keyFile: String, handler: CipherHandler): ByteArray {
-            val store = SimpleKeyStore(file = keyFile)
-            return store.load("key")?.let {
-                handler.encrypt(value.toByteArray(), it)
-            } ?: throw IllegalArgumentException("unable to retrieve key, please configure")
-        }
+        fun encrypt(value: ByteArray, keyFile: ByteArray, handler: CipherHandler) = handler.encrypt(value, keyFile)
 
-        fun decrypt(value: ByteArray, keyFile: String, handler: CipherHandler): String {
-            val store = SimpleKeyStore(file = keyFile)
-            return store.load("key")?.let {
-                String(handler.decrypt(value, it))
-            } ?: throw IllegalArgumentException("unable to retrieve key, please configure")
-        }
+        fun decrypt(value: ByteArray, keyFile: ByteArray, handler: CipherHandler) = handler.decrypt(value, keyFile)
     }
 
 }

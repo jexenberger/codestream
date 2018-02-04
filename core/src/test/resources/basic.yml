@@ -1,0 +1,28 @@
+stream: aStream
+desc: A really cool stream with relatively basic structure for test
+group: testGroup
+inputs:
+
+  - saying:
+      prompt: Enter saying
+      type: string
+      required: true
+
+  - environment:
+      prompt: Enter the environment you want to install Hazelcast onto
+      allowedValues: uat, pre-prod, prod
+      default: uat
+      required: true
+
+tasks:
+  - set:
+      id: 1
+      condition: 1==1
+      value: hello
+      outputVar: world
+
+  - group:
+      tasks:
+        - set:
+            value: ${world}
+            outputVar: hello

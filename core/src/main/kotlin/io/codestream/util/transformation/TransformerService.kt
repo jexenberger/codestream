@@ -43,6 +43,9 @@ object TransformerService {
         addConverter(String::class, Array<Any>::class, LambdaTransformer<String, Array<Any>> {
             it.split(",").map { it.trim() }.toTypedArray()
         })
+        addConverter(Array<String>::class, Collection::class, LambdaTransformer<Array<String>, Collection<String>> {
+            it.toList()
+        })
         addConverter(String::class, Array<Boolean>::class, LambdaTransformer<String, Array<Boolean>> {
             it.split(",").map { Transformations.toBoolean(it.trim()) }.toTypedArray()
         })

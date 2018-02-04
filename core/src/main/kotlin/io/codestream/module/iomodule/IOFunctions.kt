@@ -18,6 +18,10 @@ class IOFunctions {
         return File(src).readText()
     }
 
+    fun append(src: String, text: String) {
+        File(src).appendText(text)
+    }
+
     fun copy(src: String, target: String, overwrite: Boolean): Boolean {
         val srcP = Paths.get(src)
         val targetP = Paths.get(target)
@@ -108,7 +112,7 @@ class BufferFileVisitor(val pathMatcher: PathMatcher) : SimpleFileVisitor<Path>(
         get() = internalFileList
 
     override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult {
-        //can happen but continue, list find would on standard unix
+        //can happen but continue, list findByAttributes would on standard unix
         return FileVisitResult.CONTINUE
     }
 

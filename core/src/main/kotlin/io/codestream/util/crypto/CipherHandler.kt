@@ -4,6 +4,10 @@ import java.security.Key
 
 interface CipherHandler {
 
+    val algorithm: String
+
+    fun generateKey(): Key
+
     fun encrypt(plainText: ByteArray, key: ByteArray): ByteArray
     fun encrypt(plainText: ByteArray, secretKey: Key): ByteArray
 

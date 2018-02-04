@@ -4,34 +4,37 @@ import io.codestream.core.*
 import io.codestream.resourcemodel.EmptyResourceRegistry
 import io.codestream.resourcemodel.Resource
 import io.codestream.resourcemodel.ResourceRegistry
-import io.codestream.util.Eval
+import io.codestream.util.crypto.CipherHandler
 import io.codestream.util.crypto.DESede
 import io.codestream.util.crypto.Secret
-import io.codestream.util.crypto.SimpleKeyStore
 import io.codestream.util.log.ConsoleLog
 import io.codestream.util.log.Log
 import io.codestream.util.system
 import io.codestream.util.transformation.LambdaTransformer
 import io.codestream.util.transformation.TransformerService
+import org.codehaus.groovy.runtime.GStringImpl
 import java.io.File
+import java.security.Key
+import javax.crypto.spec.SecretKeySpec
+
+val runtime: CodestreamRuntime = CodestreamRuntime.runtime
 
 class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRuntime.log) {
 
+
     var registry: ResourceRegistry? = EmptyResourceRegistry()
     var runningStreams = mutableMapOf<String, Stream>()
+    val cipherHandler: CipherHandler = DESede()
+    val systemKeyPath = "${CodestreamRuntime.configPath}/key"
+    val systemKey = initKey()
 
 
     var path: String = ""
 
     init {
-        //init in background
-        val nashornFluffer = TaskQueues.taskQueue.submit { Eval.eval<Boolean>("1==1", scriptEngine = Eval.defaultEngine) }
         CodestreamRuntime.rt = this
 
-        val store = SimpleKeyStore(CodestreamRuntime.keyPath)
-        store.load("key")?.let {
-            store.store("key", DESede.generateKey().encoded)
-        }
+
         ModuleLoader(modulePaths, log).load()
         TransformerService.addConverter(String::class, Resource::class, LambdaTransformer<String, Resource?> { input ->
             registry?.get(input)
@@ -40,9 +43,25 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
             Secret(input)
         })
         TransformerService.addConverter(Secret::class, String::class, LambdaTransformer<Secret, String> { input ->
-            input.cipherTextBase64
+            input.value
         })
-        nashornFluffer.get()
+        TransformerService.addConverter(Secret::class, String::class, LambdaTransformer<Secret, String> { input ->
+            input.value
+        })
+        TransformerService.addConverter(GStringImpl::class, String::class, LambdaTransformer<GStringImpl, String> { input ->
+            input.toString()
+        })
+    }
+
+    private fun initKey(): Key {
+        val path = File(systemKeyPath)
+        return if (path.exists()) {
+            SecretKeySpec(path.readBytes(), cipherHandler.algorithm)
+        } else {
+            val key = cipherHandler.generateKey()
+            path.writeBytes(key.encoded)
+            key
+        }
     }
 
     fun runStream(streamFile: File,
@@ -53,7 +72,7 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
         ctx.log.debug = debug
         val inputs = LinkedHashMap<String, Any?>()
         inputs += inputParms
-        val stream = YAMLStreamBuilder(streamFile).build()
+        val stream = YAMLStreamBuilder(streamFile, log = ctx.log.displayLog).build()
         stream.parameters.forEach { t, u ->
             if (!inputs.containsKey(t)) {
                 inputs += Pair(t, inputResolver(t, u))
@@ -88,7 +107,6 @@ class CodestreamRuntime(modulePaths: Array<String>, val log: Log = CodestreamRun
 
         val configPath = "${system.homeDir}/.cs"
 
-        val keyPath = "$configPath/key"
 
         var homeFolder: String
             get() = codestreamPath

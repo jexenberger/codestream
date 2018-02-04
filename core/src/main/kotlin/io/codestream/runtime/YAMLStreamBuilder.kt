@@ -1,6 +1,8 @@
 package io.codestream.runtime
 
 import io.codestream.core.*
+import io.codestream.util.log.ConsoleLog
+import io.codestream.util.log.Log
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.events.Event
 import org.yaml.snakeyaml.events.MappingStartEvent
@@ -11,7 +13,7 @@ import java.io.Reader
 import java.io.StringReader
 
 
-class YAMLStreamBuilder(val echo: Boolean = true) {
+class YAMLStreamBuilder(val echo: Boolean = true, val log: Log = ConsoleLog()) {
 
     var data: Map<String, Any?> = mapOf()
     var yaml: String = ""
@@ -22,21 +24,21 @@ class YAMLStreamBuilder(val echo: Boolean = true) {
     private var defaultGroup = "_default"
 
 
-    constructor(yaml: String, echo: Boolean = false) : this(echo) {
+    constructor(yaml: String, echo: Boolean = false, log: Log = ConsoleLog()) : this(echo, log) {
         this.yaml = yaml
         trackLines(StringReader(yaml))
         @Suppress("UNCHECKED_CAST")
         this.data = Yaml().load(this.yaml) as Map<String, Any?>
     }
 
-    constructor(streamFile: File, echo: Boolean = false) : this(echo) {
+    constructor(streamFile: File, echo: Boolean = false, log: Log = ConsoleLog()) : this(echo, log) {
         if (!streamFile.exists()) {
             throw IllegalArgumentException("${streamFile.name} does not exist")
         }
         if (streamFile.isDirectory) {
             throw IllegalArgumentException("${streamFile.name} is a directory")
         }
-        this.defaultGroup = streamFile.parentFile.name
+        this.defaultGroup = if (streamFile.absoluteFile.parentFile != null) streamFile.absoluteFile.parentFile.name else "_default"
         this.source = streamFile.absolutePath
         trackLines(streamFile.reader())
         @Suppress("UNCHECKED_CAST")
@@ -86,6 +88,7 @@ class YAMLStreamBuilder(val echo: Boolean = true) {
 
     internal fun defineInput(taskMap: Map<String, Any?>): Parameter {
         val idKey = taskMap.keys.iterator().next()
+        log.debug("Defining $idKey")
         @Suppress("UNCHECKED_CAST")
         val inputMap = taskMap[idKey] as Map<String, Any?>
         val id = idKey
@@ -103,6 +106,7 @@ class YAMLStreamBuilder(val echo: Boolean = true) {
         val parmMap = taskMap[idKey] as Map<String, Any?>
         val task = idKey
         val type = TaskType.fromString(required(task, "task", null))
+        log.debug("Defining ${type}")
 
         //this id line logic works because the map returned is a linked HashMap so the tasks occur in order
         //this means we can assign line numbers in order of appearance
@@ -115,7 +119,8 @@ class YAMLStreamBuilder(val echo: Boolean = true) {
         val parms = parmMap
                 .filterKeys { !arrayOf("id", "task", "type", "tasks", "condition", "scoped").contains(it) }
                 .filterValues { it != null }
-        val binding = type.module?.binding<Executable>(type, parms) ?: throw IllegalArgumentException("$task does not exist either module or task does not exist")
+        val binding = type.module?.binding<Executable>(type, parms)
+                ?: throw IllegalArgumentException("$task does not exist either module or task does not exist")
 
         val defn = ExecutableDefinition(type = type,
                 id = taskId,

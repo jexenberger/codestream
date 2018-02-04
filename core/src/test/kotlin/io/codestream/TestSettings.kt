@@ -13,7 +13,7 @@ object TestSettings {
 
     val gitUser = "pass"
     val repoName = "TestGitRepository"
-    val gitUrl = "https://localhost:8080/git/$repoName"
+    val gitUrl = "https://localhost:54321/git/$repoName"
     val server = GitServer(
             uri = gitUrl,
             credentials = UserPassword(gitUser, gitPassword),
@@ -42,8 +42,8 @@ object TestSettings {
     val sshUser: String = "test"
     val sshHost: String = "localhost"
     val sshPassword: String = "test!"
-    val sshPrivateKey: String = ""
-    val sshKnownHosts: String = ""
+    val sshPrivateKey: String = "${system.homeDir}/.ssh/id_rsa"
+    val sshKnownHosts: String = "${system.homeDir}/.ssh/known_hosts"
     val sshScpFile: String = ""
 
 }

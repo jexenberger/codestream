@@ -4,6 +4,7 @@ import io.codestream.core.*
 import io.codestream.util.Credentials
 import io.codestream.util.git.GitRepository
 import io.codestream.util.system
+import java.io.File
 import javax.validation.constraints.NotBlank
 
 @TaskDescriptor("fetch", description = "performs a fetch on an upstream repo")
@@ -12,7 +13,7 @@ class FetchTask : BaseGitAuthenticatedTask() {
 
     @TaskProperty(description = "Path to GIT repo")
     @get:NotBlank
-    var repoPath: String = system.pwd
+    var repoPath: File = File(system.pwd)
 
     @TaskProperty(description = "remote repo to checkout of, default is 'origin'")
     @get:NotBlank
@@ -20,7 +21,7 @@ class FetchTask : BaseGitAuthenticatedTask() {
 
 
     override fun doWithCredentials(id: TaskId, credentials: Credentials?): TaskError? {
-        val repository = GitRepository(repoPath, remote, credentials)
+        val repository = GitRepository(repoPath.absolutePath, remote, credentials)
         repository.fetch(remote)
         return done()
     }

@@ -6,22 +6,17 @@ import kotlin.test.assertEquals
 
 class SecretTest {
 
-    private val file = createTempFile("crypto", "test").absolutePath
-    private val simpleKeyStore = SimpleKeyStore(file)
 
     private val key = DESede.generateKey()
 
-    init {
-        simpleKeyStore.store("key", key.encoded)
-    }
 
 
     @Test
     fun testDecrypt() {
         val handler = DESede()
         val encrypt = handler.encrypt("hello world".toByteArray(), key.encoded)
-        val decrypt = Secret.decrypt(encrypt, file, handler)
-        assertEquals("hello world", decrypt)
+        val decrypt = Secret.decrypt(encrypt, key.encoded, handler)
+        assertEquals("hello world", String(decrypt))
 
     }
 
@@ -29,15 +24,15 @@ class SecretTest {
     fun testEncrypt() {
         val handler = DESede()
         val encrypt = handler.encrypt("hello world".toByteArray(), key.encoded)
-        val check = Secret.encrypt("hello world", file, handler)
+        val check = Secret.encrypt("hello world".toByteArray(), key.encoded, handler)
         assertEquals(String(encrypt), String(check))
     }
 
     @Test
     fun testCipherTextBase64() {
         val handler = DESede()
-        val encrypt = String(Base64.getEncoder().encode(handler.encrypt("hello world".toByteArray(), key.encoded)))
-        val secret = Secret("hello world", file)
+        val encrypt = Base64.getEncoder().encodeToString(handler.encrypt("hello world".toByteArray(), key.encoded))
+        val secret = Secret("hello world", key.encoded)
         assertEquals(encrypt, secret.cipherTextBase64)
     }
 }

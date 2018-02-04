@@ -8,11 +8,9 @@ class SetVariableTaskTest {
     @Test
     fun testExecute() {
         val ctx = StreamContext()
-        ctx["hello"] = "world"
         val setVariable = SetVariableTask()
         setVariable.outputVar = "test"
-        setVariable.varType = "int"
-        setVariable.value = "\${hello}"
+        setVariable.value = "world"
         setVariable.execute(testId(), ctx)
         assertEquals("world", ctx["test"])
     }

@@ -1,4 +1,4 @@
-group: reason
+group: test-group
 stream: echo-saying
 desc: A test stream
 inputs:
@@ -6,6 +6,12 @@ inputs:
   - saying:
       prompt: Enter saying
       type: string
+      required: true
+
+  - environment:
+      prompt: Enter the environment you want to install Hazelcast onto
+      allowedValues: uat, pre-prod, prod
+      default: uat
       required: true
 
 tasks:
@@ -86,7 +92,7 @@ tasks:
         - while:
             condition: subCnt < 5
             tasks:
-              - js:
+              - script:
                   script: subCnt + 1
                   outputVar: subCnt
               - echo:
@@ -102,7 +108,7 @@ tasks:
   - while:
       condition: cnt < 5
       tasks:
-        - js:
+        - script:
             script: cnt + 1
             outputVar: cnt
         - echo:

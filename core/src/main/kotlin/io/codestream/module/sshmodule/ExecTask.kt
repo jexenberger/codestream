@@ -18,14 +18,13 @@ class ExecTask : BaseSSHHandler(), Task {
 
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        doInSession {
+        return doInSession(id) {
             var buffer = ""
             it.exec(cmd) { line ->
-                buffer += line
+                buffer += line + "\n"
             }
             ctx[outputVar] = buffer
             done()
         }
-        return done()
     }
 }

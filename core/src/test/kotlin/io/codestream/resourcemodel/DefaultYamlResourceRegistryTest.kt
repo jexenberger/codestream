@@ -63,13 +63,13 @@ class DefaultYamlResourceRegistryTest {
     fun testFind() {
         val defaultYamlResourceRegistry = DefaultYamlResourceRegistry("src/test/resources/resourcemodel/resources.yaml")
         defaultYamlResourceRegistry.load()
-        var result = defaultYamlResourceRegistry.find("cores" to 2)
+        var result = defaultYamlResourceRegistry.findByAttributes("cores" to 2)
         assertEquals(1, result.size)
 
-        result = defaultYamlResourceRegistry.find("hostname" to "server01")
+        result = defaultYamlResourceRegistry.findByAttributes("hostname" to "server01")
         assertEquals(1, result.size)
 
-        result = defaultYamlResourceRegistry.find(
+        result = defaultYamlResourceRegistry.findByAttributes(
                 "hostname" to "server02",
                 "cores" to 2
         )
@@ -92,15 +92,15 @@ class DefaultYamlResourceRegistryTest {
         val defaultYamlResourceRegistry = DefaultYamlResourceRegistry("src/test/resources/resourcemodel/resources.yaml")
         defaultYamlResourceRegistry.load()
         //doesnt match
-        var result = defaultYamlResourceRegistry.find("cores" to 3)
+        var result = defaultYamlResourceRegistry.findByAttributes("cores" to 3)
         assertEquals(0, result.size)
 
         //no matches
-        result = defaultYamlResourceRegistry.find()
+        result = defaultYamlResourceRegistry.findByAttributes()
         assertEquals(2, result.size)
 
         //only partial match
-        result = defaultYamlResourceRegistry.find(
+        result = defaultYamlResourceRegistry.findByAttributes(
                 "hostname" to "server02",
                 "cores" to 3
         )

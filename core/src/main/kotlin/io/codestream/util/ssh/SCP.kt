@@ -4,11 +4,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Files
 
 class SCP(val session: SSHSession) {
 
     protected fun waitForAck(input: InputStream): String? {
         val b = input.read()
+        println("CHARACTER -> ${b}")
         if (b == -1) {
             return "no response"
         } else if (b != 0) {
@@ -31,7 +33,7 @@ class SCP(val session: SSHSession) {
     }
 
     protected fun sendAck(out: OutputStream) {
-        out.write(0)
+        out.write(byteArrayOf(0))
         out.flush()
     }
 
@@ -94,16 +96,19 @@ class SCP(val session: SSHSession) {
         val cmd = "scp -t $remoteFile"
         var result: String? = null
         session.exec(cmd) { input, output, _ ->
+            println(file.length())
             val command = "C0644 ${file.length()} ${file.name}\n"
             output.write(command.toByteArray())
             output.flush()
             waitForAck(input)
-            file.forEachBlock(1024) { bytes, read ->
-                output.write(bytes, 0, read)
-            }
+            Files.copy(file.toPath(), output)
             output.flush()
             sendAck(output)
-            result = waitForAck(input)?.let { it }
+            output.flush()
+            output.flush()
+            result = waitForAck(input)
+            result = waitForAck(input)
+
         }
         return result
     }

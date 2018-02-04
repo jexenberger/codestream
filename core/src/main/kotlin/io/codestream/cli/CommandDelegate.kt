@@ -3,6 +3,7 @@ package io.codestream.cli
 import io.codestream.core.TaskError
 import io.codestream.core.TaskType
 import io.codestream.runtime.CodestreamRuntime
+import io.codestream.runtime.StreamContext
 import io.codestream.util.log.Log
 import java.io.File
 
@@ -41,7 +42,12 @@ fun task(log: Log, runtime: CodestreamRuntime, task: String?, parms: Map<String,
         log.error("Valid task type is a required parameter")
         return
     }
-    displayError(runtime.runTask(TaskType.fromString(task!!), parms.toMap(), debug = debug), log)
+    val ctx = StreamContext()
+    val taskType = TaskType.fromString(task!!)
+    val result = runtime.runTask(taskType, parms.toMap(), ctx, debug = debug)
+    displayError(result, log)
+    ctx.forEach { (k, v) -> log.info("[$k]=$v") }
+
 }
 
 fun help(log: Log, runtime: CodestreamRuntime, param: String?, parms: Map<String, Any?>, debug: Boolean) {

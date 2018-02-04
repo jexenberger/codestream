@@ -1,0 +1,27 @@
+stream: setup-codestream
+desc: Setups up codestream from source on your local machine
+tasks:
+  - exec:
+      cmd: gradle -x test build
+      echo: true
+  - exec:
+      cmd: unzip -o -v distro/build/distributions/distro-1.0-SNAPSHOT.zip -d /opt
+      echo: true
+  - exec:
+      cmd: chmod -R 775 /opt/distro-1.0-SNAPSHOT
+      echo: true
+  - exec:
+      cmd: ${"fgrep CS_HOME " + $os.homeDir + "/.bashrc"}
+      outputVar: exists
+      echo: true
+  - group:
+      condition: exists.trim().equals("")
+      tasks:
+        - echo:
+           value: "Appending paths to ~/.bashrc"
+        - io::append:
+            file: ${$os.homeDir + "/.bashrc"}
+            content: CS_HOME=/opt/distro-1.0-SNAPSHOT
+        - io::append:
+            file: ${$os.homeDir + "/.bashrc"}
+            content: PATH=$PATH:$CS_HOME/bin

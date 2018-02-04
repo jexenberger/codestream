@@ -1,8 +1,8 @@
 package io.codestream.module.gitmodule
 
-import io.codestream.TestSettings
 import io.codestream.module.coremodule.testId
 import io.codestream.runtime.StreamContext
+import io.codestream.util.git.BaseGitMockServer
 import io.codestream.util.git.GitRepository
 import org.junit.Before
 import org.junit.Test
@@ -10,13 +10,13 @@ import java.io.File
 import java.util.*
 import kotlin.test.assertNull
 
-class PushTaskTest {
+class PushTaskTest : BaseGitMockServer() {
 
-    private val settings: TestSettings = TestSettings
     private lateinit var repository: GitRepository
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         settings.clone()
         repository = settings.getRepo()
     }
@@ -36,7 +36,7 @@ class PushTaskTest {
 
         task.user = settings.gitUser
         task.password = settings.gitPassword
-        task.repoPath = settings.gitWorkingDir
+        task.repoPath = settings.repoPath
         task.force = true
         task.pushTags = true
         task.remote = "origin"

@@ -1,7 +1,9 @@
 package io.codestream.module.sshmodule
 
 import io.codestream.core.TaskError
+import io.codestream.core.TaskId
 import io.codestream.core.TaskProperty
+import io.codestream.core.taskFailed
 import io.codestream.util.ssh.SSHSession
 import io.codestream.util.ssh.SSHSessionBuilder
 import io.codestream.util.system
@@ -29,7 +31,7 @@ open class BaseSSHHandler {
     @TaskProperty(description = "Flag to enable strict host checking, default is 'true'")
     var strictHostChecking: Boolean = true
 
-    private var session: SSHSession? = null
+    protected var session: SSHSession? = null
 
     protected fun startSession(): String? {
         val builder = SSHSessionBuilder(user, host, port)
@@ -44,12 +46,18 @@ open class BaseSSHHandler {
     }
 
     protected fun shutdown() {
-        session?.let { it.disconnect() }
+        session?.disconnect()
     }
 
 
-    protected fun doInSession(handler: (SSHSession) -> TaskError?): TaskError? {
-        return session?.use(handler)
+    protected fun doInSession(id: TaskId, handler: (SSHSession) -> TaskError?): TaskError? {
+        try {
+            return startSession()?.let {
+                taskFailed(id, "Unable to create SSH Session -> $it")
+            } ?: session?.use(handler)
+        } finally {
+            session?.close()
+        }
     }
 
 }

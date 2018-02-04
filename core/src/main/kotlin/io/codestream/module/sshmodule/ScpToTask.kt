@@ -5,7 +5,7 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotBlank
 
-@TaskDescriptor("scp-to", description = "SCPs a remote file to the local filesystem")
+@TaskDescriptor("scp-to", description = "SCPs a local file to the remote filesystem")
 class ScpToTask : BaseSSHHandler(), Task {
 
     @TaskProperty(description = "Source file to copy from remote SSH server")
@@ -20,11 +20,10 @@ class ScpToTask : BaseSSHHandler(), Task {
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
         val file = File(src)
         if (!file.exists()) {
-            return invalidParameter(id, "$target does not exist")
+            return invalidParameter(id, "$src does not exist")
         }
-        return doInSession {
-            it.scpTo(src, target)
-            done()
+        return doInSession(id) {
+            it.scpTo(src, target)?.let { taskFailed(id, "Unable to copy to -> $it") } ?: done()
         }
     }
 }

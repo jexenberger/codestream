@@ -50,4 +50,10 @@ artifacts {
     testOutput jarTest
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.codestream.cli.Codestream'
+    }
+}
+
 artifacts.archives packageTests

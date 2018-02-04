@@ -29,5 +29,6 @@ class JavaKeyStoreTest {
         val newStore = JavaKeyStore(file, "changeit")
         assertNotNull(newStore["test"])
         println(newStore["test"])
+
     }
 }

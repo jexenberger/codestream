@@ -2,6 +2,7 @@ package io.codestream.runtime
 
 import io.codestream.core.Module
 import io.codestream.module.coremodule.CoreModule
+import io.codestream.module.cryptomodule.CryptoModule
 import io.codestream.module.gitmodule.GitModule
 import io.codestream.module.httpmodule.HttpModule
 import io.codestream.module.iomodule.IOModule
@@ -32,7 +33,8 @@ class ModuleLoader(private val paths: Array<String>, val log: Log = ConsoleLog()
                 IOModule(),
                 GitModule(),
                 SSHModule(),
-                HttpModule()
+                HttpModule(),
+                CryptoModule()
         )
         log.debug("Loading default modules")
         defaultModules.forEach {

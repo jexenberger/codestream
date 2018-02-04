@@ -3,7 +3,6 @@ package io.codestream.util.crypto
 import java.io.File
 import java.security.Key
 import java.security.KeyStore
-import java.security.PrivateKey
 import java.security.cert.X509Certificate
 
 class JavaKeyStore(val path: File, val password: String = "changeit") {
@@ -38,8 +37,14 @@ class JavaKeyStore(val path: File, val password: String = "changeit") {
     }
 
 
-    fun addKeyAndCertificate(alias: String, key: Key, certificate: X509Certificate) {
-        store.setKeyEntry(alias, key, password.toCharArray(), arrayOf(certificate))
+    fun addKeyAndCertificate(alias: String, key: Key, vararg certificate: X509Certificate) {
+        store.setKeyEntry(alias, key, password.toCharArray(), certificate)
+        save()
+    }
+
+
+    fun setCertificate(alias: String, certificate: X509Certificate) {
+        store.setCertificateEntry(alias, certificate)
         save()
     }
 

@@ -1,0 +1,15 @@
+stream: install
+desc: This install hazelcast on the correct environment
+tasks:
+  - ssh::session:
+      sessionVar: sshSession
+      host: qweqwewqe
+      strictHostChecking: false
+      user: qweqweqwe
+      password: qweqweqwe
+      tasks:
+        - echo:
+            value: "Hello world"
+        - ssh::shell:
+            cmd: ls
+            sessionVar: ${sshSession}

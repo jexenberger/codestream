@@ -4,7 +4,9 @@ interface ResourceRegistry {
 
     operator fun get(id: String): Resource?
 
-    fun find(vararg attributes: Pair<String, Any?>): Collection<Resource>
+    fun findByAttributes(vararg attributes: Pair<String, Any?>) = find(attributes.toMap())
+
+    fun find(attributes: Map<String, Any?>): Collection<Resource>
 
     fun findByType(type: String): Collection<Resource>
 

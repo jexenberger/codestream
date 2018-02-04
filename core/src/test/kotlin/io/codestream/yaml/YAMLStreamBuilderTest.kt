@@ -50,28 +50,42 @@ class YAMLStreamBuilderTest {
     @Test
     fun testBuild() {
         CodestreamRuntime.init(emptyArray(), force = true)
-        val builder = YAMLStreamBuilder(File("src/test/resources/sample.yml"))
+        val builder = YAMLStreamBuilder(File("src/test/resources/basic.yml"))
         val stream = builder.build()
         assertNotNull(stream)
         //assertEquals(3, stream.module.size)
-        assertEquals(1, stream.parameters.size)
+        assertEquals(2, stream.parameters.size)
         Module += CoreModule()
-        val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")))
+        val result = stream.run(mapOf(
+                "saying" to "#{\$os.user}",
+                "environment" to "uat"
+        ))
         assertNull(result, result?.toString())
+    }
+
+    @Test
+    fun testNested() {
+        CodestreamRuntime.init(emptyArray(), force = true)
+        val builder = YAMLStreamBuilder(File("src/test/resources/sample-nested-tasks.yaml"))
+        val stream = builder.build()
+        assertNotNull(stream)
     }
 
     @Test
     fun testBuild2() {
         CodestreamRuntime.init(emptyArray(), force = true)
-        val builder = YAMLStreamBuilder(File("src/test/resources/sample.yml"))
+        val builder = YAMLStreamBuilder(File("src/test/resources/basic.yml"))
         val stream = builder.build()
         assertNotNull(stream)
         //assertEquals(3, stream.module.size)
-        assertEquals(1, stream.parameters.size)
+        assertEquals(2, stream.parameters.size)
         Module += CoreModule()
         val ctx = StreamContext()
         ctx.log.debug = true
-        val result = stream.run(mapOf(Pair("saying", "#{\$os.user}")), ctx)
+        val result = stream.run(mapOf(
+                "saying" to "#{\$os.user}",
+                "environment" to "uat"
+        ), ctx)
         assertNull(result, result?.toString())
     }
 }

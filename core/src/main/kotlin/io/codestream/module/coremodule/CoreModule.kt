@@ -21,13 +21,16 @@ class CoreModule(override val name: String = "core",
             task(taskFromClass(ExecTask::class))
             task(taskFromClass(ExecTask::class))
             task(taskFromClass(SetVariableTask::class))
-            task(taskFromClass(JavaScriptTask::class))
-            task(taskFromClass(GroovyScriptTask::class))
+            task(taskFromClass(ScriptTask::class))
 
             groupTask(groupFromClass(WhileTask::class))
             groupTask(groupFromClass(GroupingTask::class))
             groupTask(groupFromClass(AsyncTask::class))
             groupTask(groupFromClass(ForEachTask::class))
         }
+    }
+
+    override fun functionObject(): Any? {
+        return CoreModuleFunctions()
     }
 }

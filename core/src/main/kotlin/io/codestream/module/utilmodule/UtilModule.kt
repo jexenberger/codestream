@@ -8,8 +8,7 @@ import io.codestream.runtime.classimpl.taskFromClass
 
 class UtilModule(override val name: String = "util",
                  override val factories: MutableMap<TaskType, Pair<Module.AllowedTypes, Factory<out Executable>>> = mutableMapOf()) : Module {
-    override val description: String
-        get() = "A set of utility tasks"
+    override val description = "A set of utility tasks"
 
 
     init {

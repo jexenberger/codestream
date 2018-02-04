@@ -28,7 +28,7 @@ interface Module {
 
     fun <T : Executable> binding(type: TaskType, parms: Map<String, Any?>): Binding<T>? {
         @Suppress("UNCHECKED_CAST")
-        return factories[type]?.second?.getBinding(parms) as Binding<T>
+        return factories[type]?.second?.getBinding(parms) as Binding<T>?
     }
 
     fun <T : Executable> create(type: ExecutableDefinition<T>, ctx: StreamContext): Either<out Executable, TaskError> {
@@ -114,7 +114,7 @@ interface Module {
 
         fun registerFunctionObjects(ctx: StreamContext) {
             moduleRegistry.forEach { t, u ->
-                u.functionObject()?.let { ctx[t] = it }
+                u.functionObject()?.let { ctx["_$t"] = it }
             }
         }
     }

@@ -19,7 +19,6 @@ import io.undertow.server.HttpHandler
 import io.undertow.servlet.Servlets
 import io.undertow.servlet.Servlets.deployment
 import io.undertow.servlet.Servlets.servlet
-import io.undertow.servlet.api.DeploymentInfo
 import io.undertow.servlet.api.InstanceFactory
 import io.undertow.servlet.api.InstanceHandle
 import io.undertow.servlet.api.ServletContainer
@@ -32,7 +31,6 @@ import java.io.IOException
 import java.security.Principal
 import java.util.*
 import java.util.Collections.singletonList
-import javax.servlet.ServletException
 
 
 /*
@@ -51,7 +49,7 @@ object MockGitServer {
     fun start() {
 
         val servletBuilder = deployment()
-                .setClassLoader(MockGitServer::class.java!!.getClassLoader())
+                .setClassLoader(MockGitServer::class.java.classLoader)
                 .setContextPath(PATH)
                 .setDeploymentName("test.war")
                 .addServlets(
@@ -76,7 +74,7 @@ object MockGitServer {
         val path = Handlers.path(Handlers.redirect(PATH))
                 .addPrefixPath(PATH, servletHandler)
         server = Undertow.builder()
-                .addHttpsListener(8080, "localhost", ctx)
+                .addHttpsListener(54321, "localhost", ctx)
                 .setHandler(addSecurity(path, identityManager))
                 .setWorkerThreads(5)
                 .build()
@@ -84,12 +82,12 @@ object MockGitServer {
     }
 
     internal fun addSecurity(toWrap: HttpHandler, identityManager: MapIdentityManager) : HttpHandler {
-                var handler = toWrap;
-        handler = AuthenticationCallHandler(handler);
-        handler = AuthenticationConstraintHandler(handler);
-        val mechanisms = singletonList<AuthenticationMechanism>(BasicAuthenticationMechanism("My Realm"));
-        handler = AuthenticationMechanismsHandler(handler, mechanisms);
-        handler = SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
+        var handler = toWrap
+        handler = AuthenticationCallHandler(handler)
+        handler = AuthenticationConstraintHandler(handler)
+        val mechanisms = singletonList<AuthenticationMechanism>(BasicAuthenticationMechanism("My Realm"))
+        handler = AuthenticationMechanismsHandler(handler, mechanisms)
+        handler = SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler)
         return handler
     }
 
@@ -196,7 +194,7 @@ internal class MapIdentityManager(private val users: Map<String, CharArray>) : I
 
     private fun verifyCredential(account: Account, credential: Credential): Boolean {
         if (credential is PasswordCredential) {
-            val password = (credential as PasswordCredential).password
+            val password = credential.password
             val expectedPassword = users[account.principal.name]
 
             return Arrays.equals(password, expectedPassword)

@@ -44,7 +44,7 @@ interface TaskBinder {
                     if (!type.property.returnType.isMarkedNullable && valueToSet == null) {
                         return taskParameterValidation(id, msg = "property '${input}' is required and does not allow null values")
                     }
-                    ctx.log.debug(id, "resolved binding cipherText to -> '$valueToSet' of type '${valueToSet?.let { it::class.qualifiedName }}' to property type ${type.property.returnType}")
+                    ctx.log.debug(id, "resolved binding '${input}' to -> '$valueToSet' of type '${valueToSet?.let { it::class.qualifiedName }}' to property type ${type.property.returnType}")
                     type.property.setter.call(task, valueToSet)
                     ctx.log.debug(id, "Property '$input' successfully been bound")
                 } catch (e: RuntimeException) {

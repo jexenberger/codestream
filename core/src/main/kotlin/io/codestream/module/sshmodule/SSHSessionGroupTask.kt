@@ -16,7 +16,9 @@ class SSHSessionGroupTask : BaseSSHHandler(), GroupTask {
 
     override fun before(id: TaskId, ctx: StreamContext): Either<GroupTask.BeforeAction, TaskError> {
         val session = startSession()
-        session?.let { ctx[sessionVar] = it }
+        if (session == null) {
+            ctx[sessionVar] = this.session!!
+        }
         return session?.let {
             fail<GroupTask.BeforeAction, TaskError>(taskFailedWithException(id, it))
         } ?: ok(GroupTask.BeforeAction.Continue)

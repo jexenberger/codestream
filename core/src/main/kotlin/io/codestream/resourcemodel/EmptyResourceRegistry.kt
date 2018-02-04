@@ -1,6 +1,11 @@
 package io.codestream.resourcemodel
 
 class EmptyResourceRegistry : ResourceRegistry {
+
+    override fun find(attributes: Map<String, Any?>): Collection<Resource> {
+        return emptyList()
+    }
+
     override fun findByType(type: String): Collection<Resource> {
         return emptyList()
     }
@@ -10,7 +15,4 @@ class EmptyResourceRegistry : ResourceRegistry {
     }
 
 
-    override fun find(vararg attributes: Pair<String, Any?>): Collection<Resource> {
-        return emptyList()
-    }
 }

@@ -5,3 +5,37 @@ dependencies {
   compile project(':atlassian')
   compile project(':server')
 }
+
+apply plugin: 'distribution'
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'io.codestream.cli.Codestream',
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+        )
+    }
+}
+
+
+distributions {
+    main {
+        baseName = project.name
+        contents {
+            into('lib/') {  // Copy the following jars to the lib/ directory in the distribution archive
+                from jar
+                from configurations.runtimeClasspath
+                dirMode = 0755
+                fileMode = 0644
+            }
+            into('bin/') {
+                from 'bin'
+                dirMode = 0755
+                fileMode = 0644
+            }
+            into('modules/') {
+                from 'modules'
+            }
+        }
+    }
+}

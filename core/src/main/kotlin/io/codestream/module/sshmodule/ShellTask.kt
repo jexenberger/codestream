@@ -23,12 +23,16 @@ class ShellTask : Task, SetOutput {
 
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
-        val session: SSHSession = ctx[sessionVar] as SSHSession? ?: return invalidParameter(id, "$sessionVar is not an instance of ${SSHSession::class.qualifiedName}")
-        return session.let {
-            var buffer = ""
-            it.shell(cmd, { buffer += it })
-            ctx[outputVar] = buffer
-            done()
-        } ?: invalidParameter(id, "$sessionVar is not present in context")
+        if (!ctx.containsKey(sessionVar)) {
+            return invalidParameter(id, "$sessionVar is not present in context")
+        }
+        val session = ctx[sessionVar]!!
+        if (!(session is SSHSession)) {
+            return invalidParameter(id, "$sessionVar is not an instance of ${SSHSession::class.qualifiedName}")
+        }
+        var buffer = ""
+        session.shell(cmd) { buffer += it }
+        ctx[outputVar] = buffer
+        return done()
     }
 }

@@ -7,6 +7,10 @@ import javax.crypto.spec.SecretKeySpec
 
 
 class DESede : CipherHandler {
+    override val algorithm: String
+        get() = ALGORITHM
+
+    override fun generateKey() = KeyGenerator.getInstance(algorithm).generateKey()
 
     override fun encrypt(plainText: ByteArray, key: ByteArray): ByteArray {
         val secretKey = SecretKeySpec(key, ALGORITHM)

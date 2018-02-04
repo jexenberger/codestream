@@ -87,15 +87,13 @@ class DefaultYamlResourceRegistry(val filePath: String, val log: Log = Codestrea
         return registry.values.filter { type.toString() == it.type }.toList()
     }
 
-    override fun find(vararg attributes: Pair<String, Any?>): Collection<Resource> {
+    override fun find(attributes: Map<String, Any?>): Collection<Resource> {
         if (attributes.isEmpty()) {
             return registry.values
         }
         return this.registry.values.filter { resource ->
-            attributes.map { query ->
-                resource.attributes[query.first]?.let {
-                    it.equals(query.second)
-                } ?: false
+            attributes.map {
+                resource[it.key]?.equals(it.value) ?: false
             }.foldRight(true) { a, b -> a and b }
         }
     }

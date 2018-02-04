@@ -6,7 +6,7 @@ import io.codestream.core.Parameter
 import io.codestream.core.invalidModule
 
 
-class StreamBuilder(name: String, group: String, desc: String = "", val echo: Boolean = true) {
+class StreamBuilder(var name: String, var group: String, var desc: String = "", val echo: Boolean = true) {
 
     var runnables = arrayOf<RunExecutable<*>>()
     val parameters: MutableMap<String, Parameter> = mutableMapOf()

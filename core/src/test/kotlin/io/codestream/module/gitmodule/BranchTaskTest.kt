@@ -1,29 +1,21 @@
 package io.codestream.module.gitmodule
 
-import io.codestream.TestSettings
 import io.codestream.module.coremodule.testId
 import io.codestream.runtime.StreamContext
-import io.codestream.util.git.mockserver.MockGitServer
-import org.junit.After
+import io.codestream.util.git.BaseGitMockServer
 import org.junit.Before
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertNull
 
-class BranchTaskTest {
-
-
-    val settings = TestSettings
+class BranchTaskTest : BaseGitMockServer() {
 
     @Before
-    fun setUp() {
-        MockGitServer.start()
+    override fun setUp() {
+        super.setUp()
+        settings.clone()
     }
 
-    @After
-    fun tearDown() {
-        MockGitServer.stop()
-    }
 
     @Test
     fun testExecute() {

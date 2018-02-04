@@ -4,6 +4,7 @@ import io.codestream.core.*
 import io.codestream.util.Credentials
 import io.codestream.util.git.GitRepository
 import io.codestream.util.system
+import java.io.File
 import javax.validation.constraints.NotBlank
 
 @TaskDescriptor("push", description = "Pushes a GIT repo to an upstream repo")
@@ -12,7 +13,7 @@ class PushTask : BaseGitAuthenticatedTask() {
 
     @TaskProperty(description = "Path to GIT repo")
     @NotBlank
-    var repoPath = system.pwd
+    var repoPath: File = File(system.pwd)
 
     @TaskProperty(description = "Force push, default is 'false'")
     @get:NotBlank
@@ -31,7 +32,7 @@ class PushTask : BaseGitAuthenticatedTask() {
     var branch = "master"
 
     override fun doWithCredentials(id: TaskId, credentials: Credentials?): TaskError? {
-        val repository = GitRepository(repoPath, remote, credentials)
+        val repository = GitRepository(repoPath.absolutePath, remote, credentials)
         repository.push(branch, remote, credentials, force, pushTags)
         return done()
     }

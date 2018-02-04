@@ -18,12 +18,12 @@ import javax.script.Bindings
 import javax.script.ScriptEngine
 import kotlin.reflect.KClass
 
-data class StreamContext(val id: String = UUID.randomUUID().toString(),
-                         val timeStamp: LocalDateTime = LocalDateTime.now(),
-                         var variables: MutableMap<String, Any?> = mutableMapOf<String, Any?>(),
-                         var parent: StreamContext? = null,
-                         val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), CodestreamRuntime.log),
-                         var resources: ResourceRegistry = EmptyResourceRegistry()) : Bindings {
+class StreamContext(val id: String = UUID.randomUUID().toString(),
+                    val timeStamp: LocalDateTime = LocalDateTime.now(),
+                    var variables: MutableMap<String, Any?> = mutableMapOf<String, Any?>(),
+                    var parent: StreamContext? = null,
+                    val log: RunLog = RunLog(FileLog(createTempFile(suffix = id).absolutePath), CodestreamRuntime.log),
+                    var resources: ResourceRegistry = EmptyResourceRegistry()) : Bindings {
 
 
     init {
@@ -42,7 +42,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
         get() = parent?.let { 1 + it.depthCnt } ?: 0
 
     fun asMap(): Map<String, Any?> {
-        val contextVar = mapOf<String, Any>(Pair("id", id), Pair("timeStamp", timeStamp))
+        val contextVar = mapOf(Pair("id", id), Pair("timeStamp", timeStamp))
         val varMap = (mapOf<String, Any?>() + variables).filterKeys { !fixedKeys().contains(it) }
         return parent?.let { mapOf(Pair("this", varMap), Pair("parent", it.asMap())) + contextVar }
                 ?: mapOf(Pair("this", varMap)) + contextVar
@@ -175,6 +175,7 @@ data class StreamContext(val id: String = UUID.randomUUID().toString(),
     @Synchronized
     override fun put(key: String?, value: Any?): Any? {
         Objects.requireNonNull(key, "Key cannot be null")
+        log.echo("Setting [$key] => $value")
         return parent?.let {
             if (it.containsKey(key)) {
                 return it.put(key, value)

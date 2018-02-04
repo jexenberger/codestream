@@ -5,7 +5,7 @@ import io.codestream.runtime.StreamContext
 import java.io.File
 import javax.validation.constraints.NotBlank
 
-@TaskDescriptor("scp-from", description = "SCPs a file from the local filesystem to a remote SSH server")
+@TaskDescriptor("scp-from", description = "SCPs a file from a remote SSH server to the local filesystem")
 class ScpFromTask : BaseSSHHandler(), Task {
 
     @TaskProperty(description = "Source file to copy")
@@ -21,12 +21,14 @@ class ScpFromTask : BaseSSHHandler(), Task {
 
     override fun execute(id: TaskId, ctx: StreamContext): TaskError? {
         val file = File(target)
-        if (file.isFile && !overwrite) {
-            return invalidParameter(id, "$target already exists")
+        if (!file.exists() && !file.mkdirs()) {
+            return taskFailed(id, "Attempted to create")
         }
-        return doInSession {
-            it.scpFrom(target, src)
-            done()
+        if (file.isFile && !overwrite) {
+            return invalidParameter(id, "$target already exists and overwrite disabled")
+        }
+        return doInSession(id) {
+            it.scpFrom(target, src)?.let { taskFailed(id, "Unable to scp -> $it") } ?: done()
         }
     }
 

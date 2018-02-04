@@ -93,9 +93,20 @@ data class Parameter(val required: Boolean,
             return types[type]
         }
 
+        fun arrayType(type: KClass<*>): String? {
+            val stringType = stringType(type) ?: return null
+
+            return if (isArrayType(stringType)) {
+                stringType
+            } else {
+                val type = "[$stringType]"
+                return if (types.containsKey(type)) type else null
+            }
+        }
+
         fun stringType(type: KClass<*>): String? = types.filterValues { it == type }.keys.singleOrNull()
 
-        private fun resolveAllowedValues(stringType: String, allowedValuesList: String?): Array<Any> {
+        fun resolveAllowedValues(stringType: String, allowedValuesList: String?): Array<Any> {
             val isArray = isArrayType(stringType)
             val conversionType = if (isArray) typeFor(stringType) else typeFor("[$stringType]")
             if (allowedValuesList != null && !allowedValuesList.trim().isBlank() && !isArray) {

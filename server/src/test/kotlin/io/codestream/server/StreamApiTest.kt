@@ -15,18 +15,12 @@ class StreamApiTest {
         val sampleBody = """{
             "async" : false,
             "parameters" : {
-               "saying" : "hello world"
+               "saying" : "hello world",
+               "environment" : "uat"
              }}"""
         val runStream = mapper.readValue<StreamRun>(sampleBody)
         val result = StreamApi().runStream("src/test","resources","sample", runStream)
         println(result)
-        result.map({
-            println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(it))
-            true
-        }, {
-            println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(it))
-            false
-        })
         assertTrue { result.ok() }
     }
 }
